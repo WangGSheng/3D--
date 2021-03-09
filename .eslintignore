@@ -1,0 +1,9 @@
+/node_modules/
+/src/bui/_plugin/
+/src/bui/_updataBui/
+/src/bui/_libs/
+/devTools/
+/config/
+/public/
+/dist/
+./*.js

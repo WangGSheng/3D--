@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>${title}</title>
+
+    <style>
+        blockquote{
+            border-left:6px solid #A5D6A7;
+            font-size:16px;
+            line-height:1.5;
+            padding:0em 8px;
+            margin:1em 0em 2em;
+        }
+    </style>
+    <script>window.buiVersion = "2.4.85"</script>
+</head>
+<body>
+<div>
+    <h2>BUI的核心库 -  <span id="buiVersion"></span></h2>
+<script>
+document.getElementById('buiVersion').innerHTML = window.buiVersion
+</script>
+<blockquote>
+<p>项目中安装方法</p>
+</blockquote>
+<pre><code class="language-bash"># 首次安装
+npm run devInstall
+
+# 更新bui核心库
+npm run updateBui
+</code></pre>
+<blockquote>
+<p>手动安装&amp;更新核心组件方法</p>
+</blockquote>
+<pre><code class="language-bash"># 安装
+npm --registry http://203.6.237.211:4873 i bui2
+
+# 更新
+npm --registry http://203.6.237.211:4873 update bui2
+</code></pre>
+
+</div>
+</body>
+</html>

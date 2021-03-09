@@ -1,0 +1,27 @@
+/*************
+*覆盖elementUI样式
+**************/
+.fade-enter-active, .fade-leave-active {
+    transition: opacity .7s;
+}
+
+.fade-enter, .fade-leave-to {
+    opacity: 0;
+}
+
+// 自定义提示框样式
+.my-notify{
+    background: rgba(#000, .7) !important;
+    border:none;
+    .el-notification__content{
+        margin: 0;
+    }
+
+    .el-notification__closeBtn {
+        top: 15px;
+    }
+}
+
+.el-icon-circle-close:before{
+    background:transparent !important;
+}

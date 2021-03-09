@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<% var min = (process.env.NODE_ENV === "production" )?'.min':'' %>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <link type="image/png" href="<%= BASE_URL %>static/favicon.ico" rel="shortcut icon"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>智能化机房运维管控系统 </title>
+    <link href="<%= BASE_URL %>static/libs/element-ui/index.css" rel="stylesheet">
+    <link href="<%= BASE_URL %>static/libs/main-loading.css" rel="stylesheet">
+    <script>window.DEBUG = true</script>
+</head>
+<body>
+<!-- <div class="main-loading">
+    <div class="main-loading-box"><div class="main-loading-txt">LOADING</div><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+</div> -->
+
+<div id="app"></div>
+
+<script type=text/javascript src="<%= BASE_URL %>static/libs/baseurl.js"></script>
+<!-- 苗条版的jquery -->
+<script type=text/javascript src="<%= BASE_URL %>static/libs/jquery/jquery.slim.min.js"></script>
+<!-- vue及全家桶 -->
+<!--<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>-->
+<script type=text/javascript src="<%= BASE_URL %>static/libs/vue/vue<%= min %>.js"></script>
+<script type=text/javascript src="<%= BASE_URL %>static/libs/vue/vue-router<%= min %>.js"></script>
+<script type=text/javascript src="<%= BASE_URL %>static/libs/vuex/vuex.min.js"></script>
+<script type=text/javascript src="<%= BASE_URL %>static/libs/axios/axios.min.js"></script>
+
+<!--echarts-->
+<script type=text/javascript src="<%= BASE_URL %>static/libs/echarts/echarts.min.js"></script>
+<script type=text/javascript src="https://cdn.bootcdn.net/ajax/libs/peity/3.3.0/jquery.peity.min.js"></script>
+
+<!-- element-UI -->
+<!--<script src="https://unpkg.com/element-ui/lib/index.js"></script>-->
+<script type=text/javascript src="<%= BASE_URL %>static/libs/element-ui/mod.js"></script>
+
+<!-- mxGraph -->
+<!--<script type=text/javascript src="<%= BASE_URL %>static/libs/jquery/jquery.mousewheel.js"></script>-->
+<!--<script type=text/javascript src="<%= BASE_URL %>static/libs/mxGraph/js/mxClient.js"></script>-->
+
+
+<script src="<%= BASE_URL %>static/three/three.js"></script>
+<script src="<%= BASE_URL %>static/three/DragControls.js"></script>
+<script src="<%= BASE_URL %>static/three/GLTFLoader.js"></script>
+<script src="<%= BASE_URL %>static/three/TransformControls.js"></script>
+</body>
+</html>

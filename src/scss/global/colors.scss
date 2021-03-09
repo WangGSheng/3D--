@@ -1,0 +1,39 @@
+/*header*/
+$header-bg: #12182d;
+$header-txt:#fff;
+$header-heightLight:#25B7D3;
+
+/*sidebar*/
+$sidebar-bg: #141A30;
+$sidebar-title:#12182E;
+$sidebar-txt:#fff;
+$sidebar-topbar:#12182E;
+$sidebar-heightLight:#25B7D3;
+$sidebar-toggle-txt:rgba($sidebar-txt, .6);
+$sidebar-toggle-txt-hover:rgba($sidebar-txt, 1);
+$sidebar-toggle-bg:rgba($sidebar-bg, .1);
+$sidebar-toggle-shadow:-1px 0 1px 0 rgba(0, 0, 0, .3);
+$sidebar-topbar-shadow:0 1px 1px rgba(0, 0, 0, .3);
+$sidebar-topbar-hover: rgba($sidebar-txt, 1);
+$sidebar-splitLine:1px rgba(#fff, .2) dashed;
+$sidebar-active:$sidebar-txt;
+$sidebar-active-icon:rgba($sidebar-txt, .7);
+
+/*content*/
+$content-bg: #fff;
+$content-item-bg:#EEF1F6;
+$content-txt:#000;
+$content-heightLight: #25b7d3;
+$content-title-bg:#fff;
+$content-title-txt:#000;
+$content-success:#D3EEC7;
+$content-info:#C9E4FF;
+$content-warning:rgb(248, 215, 143);
+$content-danger:#FA5555;
+$content-primary:#2185D0;
+$content-success:#67c23a;
+$content-border: #000000;
+$content-table-header-bg:#f5f7fa;
+
+/*footer*/
+$footer-bg: #f9f9f9;

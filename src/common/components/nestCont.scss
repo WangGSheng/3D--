@@ -1,0 +1,177 @@
+.nest-cont {
+    background: rgba(#1B1F3B, 1);
+    
+    .header {
+        background: #141A30;
+        height: 40px;
+        line-height: 40px;
+        
+        .close {
+            cursor: pointer;
+            float: right;
+            
+            display: inline-block;
+            height: 40px;
+            width: 40px;
+            margin: 0;
+            
+            &:hover {
+                background: #e23623;
+            }
+        }
+    }
+    
+    /deep/ #dragBar {
+        background-color: #141A30 !important;
+    }
+}
+
+%transition {
+    transition: all .3s;
+}
+
+.toolbar {
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-top: 30px solid rgba(#000, .3);
+    border-left: 30px solid transparent;
+    /*cursor: pointer;*/
+    z-index: 999;
+    right: 0;
+    @extend %transition;
+    
+    > div {
+        position: absolute;
+        height: 30px;
+        width: 0;
+        line-height: 27px;
+        top: -30px;
+        right: 0;
+        @extend %transition;
+        font-size: 12px;
+        opacity: 0;
+        overflow: hidden;
+        white-space: nowrap;
+        // 解决显示时弹出多余内容
+        .mask {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            @extend %transition;
+        }
+        
+        > a {
+            &:hover {
+                /*color: #f90;*/
+                > span {
+                    display: inline-block;
+                }
+            }
+            
+            > span {
+                position: absolute;
+                display: none;
+                width: auto;
+                height: auto;
+                top: 16px;
+                left: -10px;
+                padding: 10px;
+                
+                > span {
+                    display: block;
+                    background: rgba(#000, .5);
+                    padding: 0 10px;
+                    
+                    &:hover {
+                        background: rgba(#000, 1);
+                        color: #fff;
+                    }
+                    
+                    .icon.times {
+                        position: relative;
+                        top: 2px;
+                        left: 5px;
+                        transform: scale(.8, .8);
+                    }
+                    
+                    .icon.times:hover {
+                        color: #f00;
+                    }
+                }
+            }
+        }
+    }
+    
+    &.single:hover {
+        width: 130px;
+        
+        > div {
+            width: 90px;
+        }
+    }
+    
+    &:hover {
+        border-top: 30px solid rgba(#000, .7);
+        width: 200px;
+        
+        .mask {
+            height: 0;
+        }
+        
+        &::before {
+            color: transparent;
+        }
+        
+        > div {
+            width: 170px;
+            padding-left: 10px;
+            opacity: 1;
+            overflow: inherit;
+            
+            > a {
+                position: relative;
+                
+                &::after {
+                    position: absolute;
+                    content: '';
+                    height: 10px;
+                    width: 1px;
+                    right: 0;
+                    bottom: 1px;
+                    background: rgba(255, 255, 255, .2);
+                    transform: rotate(-40deg);
+                }
+                
+                &:last-child {
+                    &::after {
+                        display: none
+                    }
+                }
+                
+                /*border-right: 1px solid rgba(#fff, .1);*/
+                margin: 0 15px 0 0;
+                padding: 0 15px 0 0;
+            }
+        }
+    }
+    
+    &::before {
+        position: absolute;
+        top: -30px;
+        right: 3px;
+        font-size: 12px;
+        font-weight: bolder;
+        color: rgba(#fff, .5);
+        font-family: Icons;
+        content: '\f013';
+        transform: scale(.7, .7);
+    }
+}
+
+.my-notify {
+    opacity: 0;
+}

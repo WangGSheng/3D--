@@ -1,0 +1,25 @@
+{
+    "returnData":{
+        "userPermission":{
+            "userId":"10003",
+            "roleName":"\u7ba1\u7406\u5458",
+            "menuList":["article","role","user"],
+            "permissionList":[
+                "pages_PersonnelManagement_PersonnelList:refresh",
+                "role:update",
+                "role:list",
+                "article:list",
+                "role:delete",
+                "role:add",
+                "article:update",
+                "article:add",
+                "user:list",
+                "user:add"
+            ],
+            "roleId":1,
+            "nickname":"\u8d85\u7ea7\u7528\u623723"
+        }
+    },
+    "returnMsg":"\u8bf7\u6c42\u6210\u529f",
+    "returnCode":"100"
+}
