@@ -87,7 +87,8 @@ export default {
                 comp: () => import('./editRoom.vue'), // 注意: 需要懒加载的vue文件必须使用下划线前缀
                 params: { // 参数将传给加载的_test.vue页面, 在_test.vue你可以通过this.$parent.params来调用此参数
                     title: '我是标题',
-                    selected: vm.cubeList
+                    selected: vm.cubeList,
+                    wallList:vm.wallList
                 },
                 callback : (item) => {
                     if (item && item.cabinetData.length) {

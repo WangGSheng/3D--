@@ -112,6 +112,11 @@ export default {
                     wall:[]
                 });
             }
+
+
+            setTimeout(()=>{
+                this.initWallData();
+            })
         })
         this.$parent.params.selected && this.$parent.params.selected.forEach(item => {
             this.act.push(item.id);
@@ -124,8 +129,26 @@ export default {
                 })
             })
         })
+
     },
     methods: {
+        initWallData() {
+            this.$parent.params.wallList && this.$parent.params.wallList.forEach(item => {
+                this.wallData.push(item)
+                this.actWall.push(item.id)
+                let dom = document.getElementById(`room-${item.id}`);
+                let newStyle = '3px solid rgba(200,200,10,1)';
+                item.wall.forEach(wall => {
+                    if (wall === 'verticalWall') {
+                        dom.style.borderLeft = newStyle;
+                        dom.setAttribute('borderLeft', 'true');
+                    }else {
+                        dom.style.borderTop = newStyle;
+                        dom.setAttribute('borderTop', 'true');
+                    }
+                })
+            })
+        },
         select(item) {
             if (this.editType === 'room') {
                 if (this.act.length && this.act.includes(item.id)) {
@@ -167,6 +190,7 @@ export default {
                         }
                     } else if (this.wallType === 'vertical'
                         && dom.getAttribute('borderLeft') === 'true') {
+                        console.log('---------')
                         dom.style.borderLeft = oldStyle
                         dom.setAttribute('borderLeft', 'false');
 
