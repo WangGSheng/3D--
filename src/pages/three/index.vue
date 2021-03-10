@@ -35,7 +35,8 @@ export default {
             near: 1,
             far: 1000,
             selectedMesh: [],
-            cubeList: []
+            cubeList: [],
+            wallList: [],
         }
     },
     mounted() {
@@ -89,19 +90,26 @@ export default {
                     selected: vm.cubeList
                 },
                 callback : (item) => {
-                    if (item && item.length) {
-                        vm.cubeList = item;
-                        vm.removeMesh();
+                    if (item && item.cabinetData.length) {
+                        vm.cubeList = item.cabinetData;
+                        vm.removeMesh('cube');
                         vm.createCube();
-                        camera.position.set(vm.objects[0].position.x * 5,30, 70);
-                        camera.lookAt(scene.position);//对准的焦点
+                        // camera.position.set(vm.objects[0].position.x * 5,30, 70);
+                        // camera.lookAt(scene.position);//对准的焦点
+                    }
+                    if (item && item.wallData.length) {
+                        vm.wallList = item.wallData;
+                        vm.removeMesh('wall');
+                        vm.createGround('wall');
                     }
                 }
             })
         },
-        removeMesh() {
+        removeMesh(type) {
             this.objects.forEach(item => {
-                group.remove(item);
+                if (item.type === type) {
+                    group.remove(item.obj);
+                }
             })
         },
         addCamera() {
@@ -125,7 +133,7 @@ export default {
             scene.add(group);
             // 加载辅助坐标系 实际应用的时候需要注释此代码
             const axisHelper = new THREE.AxisHelper(250)
-            axisHelper.position.set(-10, 0, 0);//位置
+            axisHelper.position.set(0, 0, 0);//位置
             scene.add(axisHelper)
         },
         initCamera() {
@@ -148,22 +156,47 @@ export default {
             // light.position.set(0, 0, 100);
             scene.add(light);
         },
-        createGround(type) {
+        createWall(item,type) {
+            let width = 4, height = 10,rotate = false,x = item.x,z = item.z;
+            if (type === 'verticalWall') {
+                rotate = true;
+                // z -= 2;
+                x -= 2;
+            }else {
+                // x += 2;
+                z -= 2;
+            }
 
+            let material = new THREE.MeshBasicMaterial({
+                color: '#fff',
+                side: THREE.DoubleSide,
+                opacity: 0.5,
+                transparent: true
+            });
+
+            let geometry = new THREE.PlaneGeometry(width, height);
+
+            let plane = new THREE.Mesh(geometry, material);
+            plane.position.set(x, 5, z)
+            if (rotate) plane.rotateY(Math.PI / 2);
+            group.add(plane);
+            this.objects.push({
+                type:'wall',
+                obj:plane
+            })
+        },
+        createGround(type) {
             if (type === 'wall') {
-                let width = 10, height = 10;
-                let geometry = new THREE.PlaneGeometry(width, height, 32);
-                let material = new THREE.MeshBasicMaterial({
-                    color: '#fff',
-                    side: THREE.DoubleSide,
-                    opacity: 0.5,
-                    transparent: true
-                });
-                let plane = new THREE.Mesh(geometry, material);
-                plane.position.set(width * this.wallCount, 5, 0)
-                this.wallCount++;
-                scene.add(plane);
-                this.objects.push(plane)
+                this.wallList.forEach((item) => {
+                    console.log(item)
+                    if (item.wall.length > 1) {
+                        this.createWall(item, item.wall[0]);
+                        this.createWall(item, item.wall[1]);
+                    }else {
+                        this.createWall(item, item.wall[0]);
+                    }
+                })
+
             } else {
                 let width = 15, height = 15;
                 let geometry = new THREE.PlaneGeometry(width, height, 4);
@@ -172,8 +205,11 @@ export default {
                 plane.position.set(width * this.groundCount, 0, 0)
                 this.groundCount++;
                 plane.rotateX(-Math.PI / 2);
-                scene.add(plane);
-                this.objects.push(plane)
+                group.add(plane);
+                this.objects.push({
+                    type:'ground',
+                    obj:plane
+                })
             }
             // this.initDragControls()
         },
@@ -344,7 +380,10 @@ export default {
                     }else if (item.pos.includes('right')) {
                         cube.rotateY(Math.PI / 2);
                     }
-                    this.objects.push(cube);
+                    this.objects.push({
+                        type:'cube',
+                        obj:cube
+                    })
                     group.add(cube);
                 })
             }

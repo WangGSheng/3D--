@@ -57,6 +57,7 @@ export default {
             roomList: [],
             act: [],
             actWall: [],
+            wallData: [],
             selected: [],
             selectedPos: [],
             editType: "room",
@@ -107,7 +108,8 @@ export default {
                     x: x,
                     z: z,
                     id: i,
-                    pos: ['head']
+                    pos: ['head'],
+                    wall:[]
                 });
             }
         })
@@ -145,44 +147,89 @@ export default {
                     if (this.wallType === 'vertical' &&
                         (!dom.getAttribute('borderLeft') || dom.getAttribute('borderLeft') === 'false')) {
                         dom.style.borderLeft = newStyle;
-                        dom.setAttribute('borderLeft','true')
+                        dom.setAttribute('borderLeft','true');
+                        this.changeWall(item.id,'vertical','add');
                     }else if (this.wallType === 'horizontal' &&
                         (!dom.getAttribute('borderTop') || dom.getAttribute('borderTop') === 'false')) {
                         dom.style.borderTop = newStyle
-                        dom.setAttribute('borderTop','true')
+                        dom.setAttribute('borderTop','true');
+                        this.changeWall(item.id,'horizontal','add');
                     }else if (this.wallType === 'horizontal'
                         && dom.getAttribute('borderTop') === 'true') {
                         dom.style.borderTop = oldStyle
                         dom.setAttribute('borderTop', 'false');
+
                         if (!dom.getAttribute('borderLeft')
                             || dom.getAttribute('borderLeft') === 'false') {
-                            this.actWall = this.actWall.filter((source) => {
-                                return item.id !== source;
-                            });
+                            this.deleteData(item.id);
+                        }else{
+                            this.changeWall(item.id,'horizontal','delete');
                         }
                     } else if (this.wallType === 'vertical'
                         && dom.getAttribute('borderLeft') === 'true') {
                         dom.style.borderLeft = oldStyle
                         dom.setAttribute('borderLeft', 'false');
+
                         if (!dom.getAttribute('borderTop')
                             || dom.getAttribute('borderTop') === 'false') {
-                            this.actWall = this.actWall.filter((source) => {
-                                return item.id !== source;
-                            });
+                            this.deleteData(item.id);
+                        }else{
+                            this.changeWall(item.id,'vertical','delete');
                         }
                     }
                 } else {
                     if (this.wallType === 'horizontal') {
                         dom.style.borderTop = '3px solid rgba(200,200,10,1)';
                         dom.setAttribute('borderTop', 'true');
+                        item.wall.push('horizontalWall');
                     } else {
                         dom.style.borderLeft = '3px solid rgba(200,200,10,1)';
                         dom.setAttribute('borderLeft', 'true');
+                        item.wall.push('verticalWall');
                     }
+                    this.wallData.push(item)
                     this.actWall.push(item.id);
                 }
 
             }
+        },
+        changeWall(id,type,methods) {
+            let remove = (data,source) => {
+                data.forEach((item,index) => {
+                    if (item === source) {
+                        data.splice(index, 1);
+                    }
+                })
+            }
+            if (methods === 'add') {
+                this.wallData.forEach(item => {
+                    if (id === item.id) {
+                        if (type === 'vertical') {
+                            item.wall.push('verticalWall')
+                        }else {
+                            item.wall.push('horizontalWall');
+                        }
+                    }
+                });
+            }else{
+                this.wallData.forEach(item => {
+                    if (id === item.id) {
+                        if (type === 'vertical') {
+                            remove(item.wall, 'verticalWall');
+                        }else {
+                            remove(item.wall, 'horizontalWall');
+                        }
+                    }
+                });
+            }
+        },
+        deleteData(id) {
+            this.actWall = this.actWall.filter((source) => {
+                return id !== source;
+            });
+            this.wallData = this.wallData.filter((source) => {
+                return id !== source.id;
+            });
         },
         changeSelect(id, pos) {
             this.selected.forEach(item => {
@@ -192,7 +239,10 @@ export default {
             })
         },
         submit() {
-            this.$parent.close(this.selected);
+            this.$parent.close({
+                cabinetData: this.selected,
+                wallData: this.wallData
+            });
         }
     }
 }
