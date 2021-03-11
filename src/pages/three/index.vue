@@ -56,7 +56,7 @@ export default {
         // 创建光源
         this.initLight();
         // 创建地板
-        this.createGround();
+        // this.createGround();
         // 创建立方体
         this.createCube();
         // 鼠标控制器
@@ -68,7 +68,7 @@ export default {
         // 添加删除事件
         // this.initDeleteEvent();
 
-        this.addCamera()
+        // this.addCamera()
         this.render();
 
         //加入事件监听器,窗口自适应
@@ -101,7 +101,8 @@ export default {
                     if (item && item.wallData.length) {
                         vm.wallList = item.wallData;
                         vm.removeMesh('wall');
-                        vm.createGround('wall');
+                        vm.createPlane('wall');
+                        vm.createPlane('ground');
                     }
                 }
             })
@@ -148,7 +149,7 @@ export default {
                 antialias: true,
                 alpha: true
             });
-            renderer.setClearColor('#919bff', 1);// 设置渲染颜色（背景底色
+            renderer.setClearColor('#000', 1);// 设置渲染颜色（背景底色
             renderer.setSize(window.innerWidth, window.innerHeight);// 渲染面大小（在二维平面上的窗口大小）
             this.$refs.threeDom.appendChild(renderer.domElement);
         },
@@ -161,17 +162,15 @@ export default {
             let width = 4, height = 10,rotate = false,x = item.x,z = item.z;
             if (type === 'verticalWall') {
                 rotate = true;
-                // z -= 2;
                 x -= 2;
             }else {
-                // x += 2;
                 z -= 2;
             }
 
             let material = new THREE.MeshBasicMaterial({
-                color: '#fff',
+                color: '#7f7d7d',
                 side: THREE.DoubleSide,
-                opacity: 0.5,
+                opacity: 0.7,
                 transparent: true
             });
 
@@ -186,10 +185,9 @@ export default {
                 obj:plane
             })
         },
-        createGround(type) {
+        createPlane(type) {
             if (type === 'wall') {
                 this.wallList.forEach((item) => {
-                    console.log(item)
                     if (item.wall.length > 1) {
                         this.createWall(item, item.wall[0]);
                         this.createWall(item, item.wall[1]);
@@ -199,21 +197,97 @@ export default {
                 })
 
             } else {
-                let width = 15, height = 15;
-                let geometry = new THREE.PlaneGeometry(width, height, 4);
-                let material = new THREE.MeshBasicMaterial({color: '#1d1c49', side: THREE.DoubleSide});
-                let plane = new THREE.Mesh(geometry, material);
-                plane.position.set(width * this.groundCount, 0, 0)
-                this.groundCount++;
-                plane.rotateX(-Math.PI / 2);
-                group.add(plane);
-                this.objects.push({
-                    type:'ground',
-                    obj:plane
+                let zRes = [];
+                let res = [];
+
+                let source = [];
+
+
+                for (let i = 0; i < this.wallList.length; i++) {
+                    if (this.wallList[i].wall.length === 1 && this.wallList[i].wall[0] === 'verticalWall') {
+                        continue;
+                    }else {
+                        source.push(this.wallList[i])
+                    }
+                }
+
+
+                // let xArr = this.unique(source,'x');
+                // xArr.forEach(xdata => {
+                //     let arr = []
+                //     source.forEach(item => {
+                //         if (xdata.x === item.x) {
+                //             arr.push(item)
+                //         }
+                //     })
+                //     zRes.push(arr)
+                // })
+
+                // source.forEach(item => {
+                //     let maxZ = Math.max.apply(Math, item.map(function(o) {return o.z}))
+                //     let minZ = Math.min.apply(Math, item.map(function(o) {return o.z}))
+                //     let maxX = Math.max.apply(Math, item.map(function(o) {return o.x}))
+                //     let minX = Math.min.apply(Math, item.map(function(o) {return o.x}))
+                //     res.push({
+                //         x: item[0].x,
+                //         maxZ:maxZ + 4,
+                //         minZ:minZ + 4,
+                //         maxX:maxX + 4,
+                //         minX:minX + 4,
+                //     })
+                // })
+                let maxZ = Math.max.apply(Math, source.map(function(o) {return o.z}))
+                let minZ = Math.min.apply(Math, source.map(function(o) {return o.z}))
+                let maxX = Math.max.apply(Math, source.map(function(o) {return o.x}))
+                let minX = Math.min.apply(Math, source.map(function(o) {return o.x}))
+                res.push({
+                    maxZ:maxZ + 4,
+                    minZ:minZ - 4,
+                    maxX:maxX + 4,
+                    minX:minX - 4,
                 })
+
+
+                this.createGround(res)
             }
-            // this.initDragControls()
         },
+        createGround(arr) {
+            arr.forEach(item => {
+                console.log(item)
+                let len = ((item.maxX - item.minX) / 4) * ((item.maxZ - item.minZ) / 4);
+                console.log(len)
+                let x = item.minX,z = item.minZ;
+                for (let i = 1; i <= len; i++) {
+                    if (x > item.maxX) {
+                        x = item.x;
+                        z += 4;
+                    }else {
+                        x += 4;
+                    }
+                    let width = 4, height = 4;
+                    let geometry = new THREE.PlaneGeometry(width, height);
+                    let material = new THREE.MeshBasicMaterial({color: '#fff', side: THREE.DoubleSide});
+                    let plane = new THREE.Mesh(geometry, material);
+                    plane.position.set(x, 0, z)
+                    plane.rotateX(Math.PI / 2);
+                    let edgesMtl = new THREE.LineBasicMaterial({color: '#000'})
+                    let cubeEdges = new THREE.EdgesGeometry(geometry, 1);
+                    let cubeLine = new THREE.LineSegments(cubeEdges, edgesMtl);
+                    plane.add(cubeLine);
+                    group.add(plane);
+                    this.objects.push({
+                        type:'ground',
+                        obj:plane
+                    })
+                }
+
+            })
+        },
+        unique(arr,key) {
+            const res = new Map();
+            return arr.filter((a) => !res.has(a[key]) && res.set(a[key], 1))
+        },
+
         initTransformControl() {
             // 添加平移控件
             transformControls = new THREE.TransformControls(camera, renderer.domElement);

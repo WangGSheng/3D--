@@ -2,8 +2,8 @@
     <ui-main title="编辑机房">
         <div class="toolbar">
             <el-radio-group v-model="editType">
-                <el-radio label="room">编辑机柜</el-radio>
-                <el-radio label="wall">编辑围墙</el-radio>
+                <el-radio-button label="room">编辑机柜</el-radio-button>
+                <el-radio-button label="wall">编辑围墙</el-radio-button>
             </el-radio-group>
             <el-radio-group v-model="wallType" class="m-l-20" :disabled="editType === 'room'">
                 <el-radio label="horizontal">—</el-radio>
@@ -18,21 +18,16 @@
                      :id="'room-' + item.id"
                      @click.stop="select(item)">
                     <template v-if="act.includes(item.id)">
-                        <el-popover
-                            placement="top"
-                            title="机柜门方向"
-                            width="180"
-                            trigger="hover"
-                            :key="item.id">
-                            <el-checkbox-group v-model="item.pos" class="w-100p"
-                                               @change="changeSelect(item.id,item.pos)">
-                                <el-checkbox v-for="pos in position" :label="pos.id" :key="pos.id + 'popover'">
-                                    {{ pos.label }}
-                                </el-checkbox>
-                            </el-checkbox-group>
-                            <div slot="reference"
-                                 class="w-100p h-100p"></div>
-                        </el-popover>
+                        <div class="item-position">
+                            <div class="pos-up" :class="{active:item.pos.includes('back')}"
+                                 @click.stop="changeSelect(item,'back')"><i class="icon caret up"></i></div>
+                            <div class="pos-left" :class="{active:item.pos.includes('left')}"
+                                 @click.stop="changeSelect(item,'left')"><i class="icon caret left"></i></div>
+                            <div class="pos-right" :class="{active:item.pos.includes('right')}"
+                                 @click.stop="changeSelect(item,'right')"><i class="icon caret right"></i></div>
+                            <div class="pos-down" :class="{active:item.pos.includes('head')}"
+                                 @click.stop="changeSelect(item,'head')"><i class="icon caret down"></i></div>
+                        </div>
                     </template>
                 </div>
             </template>
@@ -60,6 +55,7 @@ export default {
             wallData: [],
             selected: [],
             selectedPos: [],
+            posData: [],
             editType: "room",
             wallType: "horizontal",
             position: [
@@ -86,14 +82,16 @@ export default {
         }
     },
     created() {
-        window.onmousedown = (e) => {
-            if (e.button == 2) {
+        window.onkeydown = (e) => {
+            if (e.code === 'Tab') {
                 e.preventDefault();
+                this.changeWallType();
             }
         }
     },
     mounted() {
         this.$nextTick(() => {
+            console.log(this.$refs.checkbox)
             // this.widthNum = parseInt(this.$el.lastElementChild.clientWidth / 40)
             // this.heightNum = parseInt((this.$el.lastElementChild.clientHeight - 10) / 40)
             let x = 0;
@@ -109,12 +107,12 @@ export default {
                     z: z,
                     id: i,
                     pos: ['head'],
-                    wall:[]
+                    wall: []
                 });
             }
 
 
-            setTimeout(()=>{
+            setTimeout(() => {
                 this.initWallData();
             })
         })
@@ -142,7 +140,7 @@ export default {
                     if (wall === 'verticalWall') {
                         dom.style.borderLeft = newStyle;
                         dom.setAttribute('borderLeft', 'true');
-                    }else {
+                    } else {
                         dom.style.borderTop = newStyle;
                         dom.setAttribute('borderTop', 'true');
                     }
@@ -170,14 +168,14 @@ export default {
                     if (this.wallType === 'vertical' &&
                         (!dom.getAttribute('borderLeft') || dom.getAttribute('borderLeft') === 'false')) {
                         dom.style.borderLeft = newStyle;
-                        dom.setAttribute('borderLeft','true');
-                        this.changeWall(item.id,'vertical','add');
-                    }else if (this.wallType === 'horizontal' &&
+                        dom.setAttribute('borderLeft', 'true');
+                        this.changeWall(item.id, 'vertical', 'add');
+                    } else if (this.wallType === 'horizontal' &&
                         (!dom.getAttribute('borderTop') || dom.getAttribute('borderTop') === 'false')) {
                         dom.style.borderTop = newStyle
-                        dom.setAttribute('borderTop','true');
-                        this.changeWall(item.id,'horizontal','add');
-                    }else if (this.wallType === 'horizontal'
+                        dom.setAttribute('borderTop', 'true');
+                        this.changeWall(item.id, 'horizontal', 'add');
+                    } else if (this.wallType === 'horizontal'
                         && dom.getAttribute('borderTop') === 'true') {
                         dom.style.borderTop = oldStyle
                         dom.setAttribute('borderTop', 'false');
@@ -185,20 +183,19 @@ export default {
                         if (!dom.getAttribute('borderLeft')
                             || dom.getAttribute('borderLeft') === 'false') {
                             this.deleteData(item.id);
-                        }else{
-                            this.changeWall(item.id,'horizontal','delete');
+                        } else {
+                            this.changeWall(item.id, 'horizontal', 'delete');
                         }
                     } else if (this.wallType === 'vertical'
                         && dom.getAttribute('borderLeft') === 'true') {
-                        console.log('---------')
                         dom.style.borderLeft = oldStyle
                         dom.setAttribute('borderLeft', 'false');
 
                         if (!dom.getAttribute('borderTop')
                             || dom.getAttribute('borderTop') === 'false') {
                             this.deleteData(item.id);
-                        }else{
-                            this.changeWall(item.id,'vertical','delete');
+                        } else {
+                            this.changeWall(item.id, 'vertical', 'delete');
                         }
                     }
                 } else {
@@ -217,9 +214,15 @@ export default {
 
             }
         },
-        changeWall(id,type,methods) {
-            let remove = (data,source) => {
-                data.forEach((item,index) => {
+        changeWallType() {
+            if (this.editType !== 'room') {
+                this.wallType === 'horizontal' ?
+                    this.wallType = 'vertical' : this.wallType = 'horizontal';
+            }
+        },
+        changeWall(id, type, methods) {
+            let remove = (data, source) => {
+                data.forEach((item, index) => {
                     if (item === source) {
                         data.splice(index, 1);
                     }
@@ -230,17 +233,17 @@ export default {
                     if (id === item.id) {
                         if (type === 'vertical') {
                             item.wall.push('verticalWall')
-                        }else {
+                        } else {
                             item.wall.push('horizontalWall');
                         }
                     }
                 });
-            }else{
+            } else {
                 this.wallData.forEach(item => {
                     if (id === item.id) {
                         if (type === 'vertical') {
                             remove(item.wall, 'verticalWall');
-                        }else {
+                        } else {
                             remove(item.wall, 'horizontalWall');
                         }
                     }
@@ -255,12 +258,20 @@ export default {
                 return id !== source.id;
             });
         },
-        changeSelect(id, pos) {
-            this.selected.forEach(item => {
-                if (item.id === id) {
-                    item.pos = pos;
+        changeSelect(item, pos) {
+            this.selected.forEach(data => {
+                if (data.id === item.id) {
+                    // data.pos = pos;
+                    if (data.pos.indexOf(pos) > -1) {
+                        data.pos.splice(data.pos.indexOf(pos), 1)
+                        item.pos.splice(item.pos.indexOf(pos), 1)
+                    } else {
+                        data.pos.push(pos);
+                        item.pos.push(pos)
+                    }
                 }
             })
+
         },
         submit() {
             this.$parent.close({
@@ -287,8 +298,63 @@ export default {
         cursor: pointer;
 
         &.active {
-            background-color: rgb(238, 217, 146);
+            background-color: #d3ea7f;
         }
+    }
+}
+
+.item-position {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    font-size: 12px;
+    color: rgba(0, 0, 0, .5);
+
+    .active {
+        color: #409eff;
+    }
+
+    .pos-up {
+        line-height: 100%;
+        position: absolute;
+        top: 0;
+        left: 50%;
+        margin-top: -2px;
+        transform: translateX(-50%);
+        z-index: 99;
+    }
+
+    .pos-left {
+        line-height: 100%;
+        position: absolute;
+        left: 2px;
+        text-align: center;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .pos-right {
+        line-height: 100%;
+        position: absolute;
+        right: 2px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .pos-down {
+        line-height: 100%;
+        position: absolute;
+        bottom: -2px;
+        text-align: center;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .icon {
+        width: unset !important;
+        height: unset !important;
+        margin: unset !important;
+        padding: unset !important;
     }
 }
 
