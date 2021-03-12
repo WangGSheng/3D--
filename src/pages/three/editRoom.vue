@@ -40,6 +40,21 @@
                 <el-button size="medium" @click="$parent.close()">取消</el-button>
             </div>
         </div>
+
+
+        <template v-if="showContextmenu">
+
+            <div class="contextmenu-box" :style="`left:${offsetX}px;top:${offsetY}px`">
+                <div class="content-title">摄像头(朝向)</div>
+                <div class="camera-pos">
+                    <template v-for="(item) in cameraPos">
+<!--                        <div v-if="index === 4" :key="index" class="center-item"></div>-->
+                        <div class="camera-item" :class="{active:item.id === currentSense}" :key="item.id"
+                        @click="selectCamera(item.id)">{{item.label}}</div>
+                    </template>
+                </div>
+            </div>
+        </template>
     </ui-main>
 </template>
 
@@ -49,6 +64,7 @@ export default {
     data() {
         return {
             visible: false,
+            showContextmenu: false,
             roomList: [],
             act: [],
             actWall: [],
@@ -56,29 +72,25 @@ export default {
             selected: [],
             selectedPos: [],
             posData: [],
+            cameraPos: [
+                {label:'右后',id:'rightBack'},
+                {label:'正后',id:'back'},
+                {label:'左后',id:'leftBack'},
+                {label:'正右',id:'right'},
+                {label:'球型',id:'center'},
+                {label:'正左',id:'leftT'},
+                {label:'右前',id:'rightHead'},
+                {label:'正前',id:'head'},
+                {label:'左前',id:'leftHead'},
+            ],
+            currentSense: '',
             editType: "room",
             wallType: "horizontal",
-            position: [
-                {
-                    label: '前',
-                    id: 'head'
-                },
-                {
-                    label: '后',
-                    id: 'back'
-                },
-                {
-                    label: '左',
-                    id: 'left'
-                },
-                {
-                    label: '右',
-                    id: 'right'
-                },
-            ],
             widthNum: 36,
             heightNum: 50,
             domKey: 1,
+            offsetX:1,
+            offsetY:1,
         }
     },
     created() {
@@ -87,6 +99,13 @@ export default {
                 e.preventDefault();
                 this.changeWallType();
             }
+        }
+        window.oncontextmenu = (e) => {
+            console.log(e)
+            e.preventDefault();
+            this.offsetX = e.target.offsetLeft + 20;
+            this.offsetY = e.target.offsetTop + 20;
+            this.showContextmenu = true;
         }
     },
     mounted() {
@@ -272,6 +291,10 @@ export default {
             })
 
         },
+        selectCamera(id) {
+            console.log(id)
+            this.currentSense = id;
+        },
         submit() {
             this.$parent.close({
                 cabinetData: this.selected,
@@ -283,6 +306,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
+/*网格*/
 .grid-box {
     width: 1460px;
     //height: 100%;
@@ -302,6 +326,7 @@ export default {
     }
 }
 
+/*机柜方向*/
 .item-position {
     width: 100%;
     height: 100%;
@@ -357,4 +382,47 @@ export default {
     }
 }
 
+/*右键菜单*/
+.contextmenu-box {
+    width: 200px;
+    height: 400px;
+    position: absolute;
+    border: 1px solid rgba(0, 0, 0, .2);
+    border-radius: 10px;
+    background-color: #fff;
+    overflow: hidden;
+    .content-title {
+        padding: 10px 5px;
+        font-size: 18px;
+        background-color: #235193;
+        color: white;
+        margin-bottom: 5px;
+    }
+
+    .camera-pos {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(3, 40px);
+
+        .center-item {
+            background-image: url("./center.png");
+            background-size: 100% 100%;
+        }
+
+        .camera-item {
+            line-height: 40px;
+            text-align: center;
+            cursor: pointer;
+            border: 1px solid rgba(0, 0, 0, .2);
+            //border-radius: 10px;
+
+            &.active {
+                background-color: #d3ea7f;
+            }
+            &:hover {
+                background-color: #45c2d0;
+            }
+        }
+    }
+}
 </style>

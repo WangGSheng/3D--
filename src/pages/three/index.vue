@@ -68,7 +68,7 @@ export default {
         // 添加删除事件
         // this.initDeleteEvent();
 
-        // this.addCamera()
+        this.addCamera()
         this.render();
 
         //加入事件监听器,窗口自适应
@@ -114,13 +114,13 @@ export default {
         },
         addCamera() {
             let loader = new THREE.GLTFLoader();
-            loader.load('static/three/model/camera.glb', function (gltf) {
+            loader.load('static/three/model/监控摄像头.glb', function (gltf) {
                     let model = gltf.scene;
-                    model.scale.set(40, 40, 40)
                     model.position.set(10, 10, 10)
                     model.rotateY(Math.PI / 2)
-                    model.rotateZ(Math.PI / 2)
+                    // model.rotateZ(Math.PI / 2)
                     model.isCustomer = true
+                    model.scale.set(0.02,0.02,0.02) // scale here
                     scene.add(model)
                 }, undefined,
                 function (error) {
@@ -147,7 +147,7 @@ export default {
                 antialias: true,
                 alpha: true
             });
-            renderer.setClearColor('#000', 1);// 设置渲染颜色（背景底色
+            renderer.setClearColor('#ddd', 1);// 设置渲染颜色（背景底色
             renderer.setSize(window.innerWidth, window.innerHeight);// 渲染面大小（在二维平面上的窗口大小）
             this.$refs.threeDom.appendChild(renderer.domElement);
         },
