@@ -91,7 +91,6 @@ export default {
     },
     mounted() {
         this.$nextTick(() => {
-            console.log(this.$refs.checkbox)
             // this.widthNum = parseInt(this.$el.lastElementChild.clientWidth / 40)
             // this.heightNum = parseInt((this.$el.lastElementChild.clientHeight - 10) / 40)
             let x = 0;
@@ -285,11 +284,11 @@ export default {
 
 <style scoped lang="scss">
 .grid-box {
-    //width: 100%;
+    width: 1460px;
     //height: 100%;
     display: grid;
     overflow-x: auto;
-    margin-top: 10px;
+    margin: 10px auto 0 auto;
     //grid-template-columns: repeat(20, 40px);
     //grid-template-rows: repeat(20, 40px);
 

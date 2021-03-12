@@ -17,7 +17,7 @@ let light = null;
 let transformControls = null;
 let rayCaster = null;
 let mouse = null;
-let dragControls = null;
+// let dragControls = null;
 
 // import * as THREE from 'three'
 import OrbitControls from 'three-orbitcontrols' //鼠标
@@ -88,15 +88,13 @@ export default {
                 params: { // 参数将传给加载的_test.vue页面, 在_test.vue你可以通过this.$parent.params来调用此参数
                     title: '我是标题',
                     selected: vm.cubeList,
-                    wallList:vm.wallList
+                    wallList: vm.wallList
                 },
-                callback : (item) => {
+                callback: (item) => {
                     if (item && item.cabinetData.length) {
                         vm.cubeList = item.cabinetData;
                         vm.removeMesh('cube');
                         vm.createCube();
-                        // camera.position.set(vm.objects[0].position.x * 5,30, 70);
-                        // camera.lookAt(scene.position);//对准的焦点
                     }
                     if (item && item.wallData.length) {
                         vm.wallList = item.wallData;
@@ -134,9 +132,9 @@ export default {
             group = new THREE.Group();
             scene.add(group);
             // 加载辅助坐标系 实际应用的时候需要注释此代码
-            const axisHelper = new THREE.AxisHelper(250)
-            axisHelper.position.set(0, 0, 0);//位置
-            scene.add(axisHelper)
+            // const axisHelper = new THREE.AxisHelper(250)
+            // axisHelper.position.set(0, 0, 0);//位置
+            // scene.add(axisHelper)
         },
         initCamera() {
             camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, this.near, this.far);
@@ -158,17 +156,17 @@ export default {
             // light.position.set(0, 0, 100);
             scene.add(light);
         },
-        createWall(item,type) {
-            let width = 4, height = 10,rotate = false,x = item.x,z = item.z;
+        createWall(item, type) {
+            let width = 4, height = 10, rotate = false, x = item.x, z = item.z;
             if (type === 'verticalWall') {
                 rotate = true;
                 x -= 2;
-            }else {
+            } else {
                 z -= 2;
             }
 
             let material = new THREE.MeshBasicMaterial({
-                color: '#7f7d7d',
+                color: '#5e81ec',
                 side: THREE.DoubleSide,
                 opacity: 0.7,
                 transparent: true
@@ -181,8 +179,8 @@ export default {
             if (rotate) plane.rotateY(Math.PI / 2);
             group.add(plane);
             this.objects.push({
-                type:'wall',
-                obj:plane
+                type: 'wall',
+                obj: plane
             })
         },
         createPlane(type) {
@@ -191,99 +189,63 @@ export default {
                     if (item.wall.length > 1) {
                         this.createWall(item, item.wall[0]);
                         this.createWall(item, item.wall[1]);
-                    }else {
+                    } else {
                         this.createWall(item, item.wall[0]);
                     }
                 })
 
             } else {
-                let zRes = [];
-                let res = [];
-
-                let source = [];
-
-
-                for (let i = 0; i < this.wallList.length; i++) {
-                    if (this.wallList[i].wall.length === 1 && this.wallList[i].wall[0] === 'verticalWall') {
-                        continue;
-                    }else {
-                        source.push(this.wallList[i])
-                    }
+                let maxZ = Math.max.apply(Math, this.wallList.map(function (o) {
+                    return o.z
+                }))
+                let minZ = Math.min.apply(Math, this.wallList.map(function (o) {
+                    return o.z
+                }))
+                let maxX = Math.max.apply(Math, this.wallList.map(function (o) {
+                    return o.x
+                }))
+                let minX = Math.min.apply(Math, this.wallList.map(function (o) {
+                    return o.x
+                }))
+                let res = {
+                    maxZ: maxZ,
+                    minZ: minZ - 4,
+                    maxX: maxX,
+                    minX: minX - 4,
                 }
-
-
-                // let xArr = this.unique(source,'x');
-                // xArr.forEach(xdata => {
-                //     let arr = []
-                //     source.forEach(item => {
-                //         if (xdata.x === item.x) {
-                //             arr.push(item)
-                //         }
-                //     })
-                //     zRes.push(arr)
-                // })
-
-                // source.forEach(item => {
-                //     let maxZ = Math.max.apply(Math, item.map(function(o) {return o.z}))
-                //     let minZ = Math.min.apply(Math, item.map(function(o) {return o.z}))
-                //     let maxX = Math.max.apply(Math, item.map(function(o) {return o.x}))
-                //     let minX = Math.min.apply(Math, item.map(function(o) {return o.x}))
-                //     res.push({
-                //         x: item[0].x,
-                //         maxZ:maxZ + 4,
-                //         minZ:minZ + 4,
-                //         maxX:maxX + 4,
-                //         minX:minX + 4,
-                //     })
-                // })
-                let maxZ = Math.max.apply(Math, source.map(function(o) {return o.z}))
-                let minZ = Math.min.apply(Math, source.map(function(o) {return o.z}))
-                let maxX = Math.max.apply(Math, source.map(function(o) {return o.x}))
-                let minX = Math.min.apply(Math, source.map(function(o) {return o.x}))
-                res.push({
-                    maxZ:maxZ + 4,
-                    minZ:minZ - 4,
-                    maxX:maxX + 4,
-                    minX:minX - 4,
-                })
 
 
                 this.createGround(res)
             }
         },
-        createGround(arr) {
-            arr.forEach(item => {
-                console.log(item)
-                let len = ((item.maxX - item.minX) / 4) * ((item.maxZ - item.minZ) / 4);
-                console.log(len)
-                let x = item.minX,z = item.minZ;
-                for (let i = 1; i <= len; i++) {
-                    if (x > item.maxX) {
-                        x = item.x;
-                        z += 4;
-                    }else {
-                        x += 4;
-                    }
-                    let width = 4, height = 4;
-                    let geometry = new THREE.PlaneGeometry(width, height);
-                    let material = new THREE.MeshBasicMaterial({color: '#fff', side: THREE.DoubleSide});
-                    let plane = new THREE.Mesh(geometry, material);
-                    plane.position.set(x, 0, z)
-                    plane.rotateX(Math.PI / 2);
-                    let edgesMtl = new THREE.LineBasicMaterial({color: '#000'})
-                    let cubeEdges = new THREE.EdgesGeometry(geometry, 1);
-                    let cubeLine = new THREE.LineSegments(cubeEdges, edgesMtl);
-                    plane.add(cubeLine);
-                    group.add(plane);
-                    this.objects.push({
-                        type:'ground',
-                        obj:plane
-                    })
+        createGround(data) {
+            let len = ((data.maxX - data.minX + 4) / 4) * ((data.maxZ - data.minZ + 4) / 4);
+            let x = data.minX, z = data.minZ;
+            for (let i = 0; i < len; i++) {
+                if (x > data.maxX - 4) {
+                    x = data.minX;
+                    z += 4;
+                } else if (i > 0) {
+                    x += 4;
                 }
-
-            })
+                let width = 4, height = 4;
+                let geometry = new THREE.PlaneGeometry(width, height);
+                let material = new THREE.MeshBasicMaterial({color: '#fff', side: THREE.DoubleSide});
+                let plane = new THREE.Mesh(geometry, material);
+                plane.position.set(x, 0, z)
+                plane.rotateX(Math.PI / 2);
+                let edgesMtl = new THREE.LineBasicMaterial({color: '#000'})
+                let cubeEdges = new THREE.EdgesGeometry(geometry, 1);
+                let cubeLine = new THREE.LineSegments(cubeEdges, edgesMtl);
+                plane.add(cubeLine);
+                group.add(plane);
+                this.objects.push({
+                    type: 'ground',
+                    obj: plane
+                })
+            }
         },
-        unique(arr,key) {
+        unique(arr, key) {
             const res = new Map();
             return arr.filter((a) => !res.has(a[key]) && res.set(a[key], 1))
         },
@@ -326,85 +288,85 @@ export default {
                 }
             })
         },
-        clearScene() {
-            // 从scene中删除模型并释放内存
-            if (this.selectedMesh.length > 0) {
-                for (let i = 0; i < this.selectedMesh.length; i++) {
-                    let currObj = this.selectedMesh[i];
-
-                    // 判断类型
-                    if (currObj instanceof THREE.Scene) {
-                        let children = currObj.children;
-                        for (let i = 0; i < children.length; i++) {
-                            this.deleteGroup(children[i]);
-                        }
-                    } else {
-                        this.deleteGroup(currObj);
-                    }
-                    scene.remove(currObj);
-                }
-            }
-        },
-        deleteGroup(mesh) {
-            if (!mesh) return;
-            group.remove(mesh)
-            // 删除掉所有的模型组内的mesh
-            // group.traverse(item => {
-            //     if (item instanceof THREE.Mesh) {
-            //         group.remove(item) // 删除几何体
-            //         // item.material.dispose(); // 删除材质
-            //     }
-            // });
-            this.objects.splice(mesh, 1);
-            this.selectedMesh.splice(mesh, 1);
-        },
-        initDragControls() {
-            let vm = this;
-
-            // 过滤不是 Mesh 的物体,例如辅助网格对象
-            let objects = [];
-            for (let i = 0; i < scene.children.length; i++) {
-
-                if (scene.children[i] instanceof THREE.Group) {
-                    scene.children[i].children.forEach(item => {
-                        objects.push(item);
-                    })
-
-                }
-            }
-            // 初始化拖拽控件
-            dragControls = new THREE.DragControls(objects, camera, renderer.domElement);
-
-            // 鼠标略过事件
-            dragControls.addEventListener('hoveron', function (event) {
-                if (event.object.name != "cubeLine") {
-                    // if (event.object.children.length) {
-                    //   event.object.children[0].material.visible = true;
-                    // } else {
-                    //   vm.hiedLineSegment();
-                    // }
-                    // 让变换控件对象和选中的对象绑定
-                    transformControls.attach(event.object);
-                } else {
-                    event.target.enabled = false;
-                    // vm.hiedLineSegment()
-                }
-            });
-
-            // 鼠标离开事件
-            dragControls.addEventListener('hoveroff', function (event) {
-                // 让变换控件对象和选中的对象绑定
-                transformControls.detach(event.object);
-            });
-            // 开始拖拽
-            dragControls.addEventListener('dragstart', function (event) {
-                vm.controls.enabled = false;
-            });
-            // 拖拽结束
-            dragControls.addEventListener('dragend', function (event) {
-                vm.controls.enabled = true;
-            });
-        },
+        // clearScene() {
+        //     // 从scene中删除模型并释放内存
+        //     if (this.selectedMesh.length > 0) {
+        //         for (let i = 0; i < this.selectedMesh.length; i++) {
+        //             let currObj = this.selectedMesh[i];
+        //
+        //             // 判断类型
+        //             if (currObj instanceof THREE.Scene) {
+        //                 let children = currObj.children;
+        //                 for (let i = 0; i < children.length; i++) {
+        //                     this.deleteGroup(children[i]);
+        //                 }
+        //             } else {
+        //                 this.deleteGroup(currObj);
+        //             }
+        //             scene.remove(currObj);
+        //         }
+        //     }
+        // },
+        // deleteGroup(mesh) {
+        //     if (!mesh) return;
+        //     group.remove(mesh)
+        //     // 删除掉所有的模型组内的mesh
+        //     // group.traverse(item => {
+        //     //     if (item instanceof THREE.Mesh) {
+        //     //         group.remove(item) // 删除几何体
+        //     //         // item.material.dispose(); // 删除材质
+        //     //     }
+        //     // });
+        //     this.objects.splice(mesh, 1);
+        //     this.selectedMesh.splice(mesh, 1);
+        // },
+        // initDragControls() {
+        //     let vm = this;
+        //
+        //     // 过滤不是 Mesh 的物体,例如辅助网格对象
+        //     let objects = [];
+        //     for (let i = 0; i < scene.children.length; i++) {
+        //
+        //         if (scene.children[i] instanceof THREE.Group) {
+        //             scene.children[i].children.forEach(item => {
+        //                 objects.push(item);
+        //             })
+        //
+        //         }
+        //     }
+        //     // 初始化拖拽控件
+        //     dragControls = new THREE.DragControls(objects, camera, renderer.domElement);
+        //
+        //     // 鼠标略过事件
+        //     dragControls.addEventListener('hoveron', function (event) {
+        //         if (event.object.name != "cubeLine") {
+        //             // if (event.object.children.length) {
+        //             //   event.object.children[0].material.visible = true;
+        //             // } else {
+        //             //   vm.hiedLineSegment();
+        //             // }
+        //             // 让变换控件对象和选中的对象绑定
+        //             transformControls.attach(event.object);
+        //         } else {
+        //             event.target.enabled = false;
+        //             // vm.hiedLineSegment()
+        //         }
+        //     });
+        //
+        //     // 鼠标离开事件
+        //     dragControls.addEventListener('hoveroff', function (event) {
+        //         // 让变换控件对象和选中的对象绑定
+        //         transformControls.detach(event.object);
+        //     });
+        //     // 开始拖拽
+        //     dragControls.addEventListener('dragstart', function (event) {
+        //         vm.controls.enabled = false;
+        //     });
+        //     // 拖拽结束
+        //     dragControls.addEventListener('dragend', function (event) {
+        //         vm.controls.enabled = true;
+        //     });
+        // },
         getOrbitControls() {
             this.controls = new OrbitControls(camera, renderer.domElement)
             // 设置相机距离原点的最近距离
@@ -424,26 +386,26 @@ export default {
                     //直接使用材质数组来构建物体，数组里的材质分别对应物体的右、左、上、下、前、后
                     let material = [
 
-                        new THREE.MeshLambertMaterial({color: '#000'}),
-                        new THREE.MeshLambertMaterial({color: '#000'}),
-                        new THREE.MeshLambertMaterial({color: '#000'}),
+                        new THREE.MeshLambertMaterial({color: '#222'}),
+                        new THREE.MeshLambertMaterial({color: '#222'}),
+                        new THREE.MeshLambertMaterial({color: '#333'}),
                         new THREE.MeshLambertMaterial({color: '#000'}),
                         new THREE.MeshLambertMaterial(
                             item.pos.includes('head') ||
                             item.pos.includes('left') ||
                             item.pos.includes('right')
-                                ? {map: texture} : {color: '#000'}
+                                ? {map: texture} : {color: '#111'}
                         ),
                         new THREE.MeshLambertMaterial(
                             item.pos.includes('back') || (item.pos.includes('left') && item.pos.includes('right'))
-                                ? {map: texture} : {color: '#000'}
+                                ? {map: texture} : {color: '#111'}
                         ),
                     ]
                     //添加长方体
                     let geometry = new THREE.BoxGeometry(4, 8, 3);
                     let cube = new THREE.Mesh(geometry, material);
                     cube.position.set(item.x, 4, item.z);
-                    let edgesMtl = new THREE.LineBasicMaterial({color: '#9e9e9e'})
+                    let edgesMtl = new THREE.LineBasicMaterial({color: '#000',alpha:0.1})
                     let cubeEdges = new THREE.EdgesGeometry(geometry, 1);
                     let cubeLine = new THREE.LineSegments(cubeEdges, edgesMtl);
                     cubeLine.name = 'cubeLine';
@@ -452,12 +414,12 @@ export default {
                     cube.isCustomer = true
                     if (item.pos.includes('left')) {
                         cube.rotateY(Math.PI / -2);
-                    }else if (item.pos.includes('right')) {
+                    } else if (item.pos.includes('right')) {
                         cube.rotateY(Math.PI / 2);
                     }
                     this.objects.push({
-                        type:'cube',
-                        obj:cube
+                        type: 'cube',
+                        obj: cube
                     })
                     group.add(cube);
                 })
@@ -466,19 +428,19 @@ export default {
 
             // this.initDragControls()
         },
-        hiedLineSegment() {
-            for (let i = 0; i < scene.children.length; i++) {
-                if (scene.children[i].isMesh && scene.children[i].children.length) {
-                    let childArr = scene.children[i].children;
-                    for (let j = 0; j < childArr.length; j++) {
-                        if (childArr[j].type === 'LineSegments') {
-                            childArr[j].material.visible = false;
-                            break;
-                        }
-                    }
-                }
-            }
-        },
+        // hiedLineSegment() {
+        //     for (let i = 0; i < scene.children.length; i++) {
+        //         if (scene.children[i].isMesh && scene.children[i].children.length) {
+        //             let childArr = scene.children[i].children;
+        //             for (let j = 0; j < childArr.length; j++) {
+        //                 if (childArr[j].type === 'LineSegments') {
+        //                     childArr[j].material.visible = false;
+        //                     break;
+        //                 }
+        //             }
+        //         }
+        //     }
+        // },
         render() {
             requestAnimationFrame(this.render);
             renderer.render(scene, camera);
