@@ -16,7 +16,7 @@
             <template v-for="item in this.roomList">
                 <div :class="{'grid-item':true,active:act.includes(item.id)}" :key="item.id"
                      :id="'room-' + item.id"
-                     @click.stop="select(item)">
+                     @click.stop="select(item)" @contextmenu="selectSense(item)">
                     <template v-if="act.includes(item.id)">
                         <div class="item-position">
                             <div class="pos-up" :class="{active:item.pos.includes('back')}"
@@ -29,6 +29,13 @@
                                  @click.stop="changeSelect(item,'head')"><i class="icon caret down"></i></div>
                         </div>
                     </template>
+                    <div class="sense-pos" v-if="item.senseId">
+                        <template v-for="(camera,index) in cameraPos">
+                                <div v-if="index === 4" :key="index" class="center-item"></div>
+                            <div  @click.stop="deleteCamera(item,camera)" class="sense-item" :class="{active:camera.id === item.senseId}" :key="camera.id"></div>
+                        </template>
+                    </div>
+
                 </div>
             </template>
         </div>
@@ -42,387 +49,451 @@
         </div>
 
 
-        <template v-if="showContextmenu">
-
-            <div class="contextmenu-box" :style="`left:${offsetX}px;top:${offsetY}px`">
-                <div class="content-title">摄像头(朝向)</div>
-                <div class="camera-pos">
-                    <template v-for="(item) in cameraPos">
-<!--                        <div v-if="index === 4" :key="index" class="center-item"></div>-->
-                        <div class="camera-item" :class="{active:item.id === currentSense}" :key="item.id"
-                        @click="selectCamera(item.id)">{{item.label}}</div>
-                    </template>
-                </div>
+        <div class="contextmenu-box" :style="`left:${offsetX}px;top:${offsetY}px`" v-show="showContextmenu">
+            <div class="top-control" @click="showContextmenu = false"><i class="icon close m-5"></i></div>
+            <div class="content-title">摄像头(朝向)</div>
+            <div class="camera-pos">
+                <template v-for="(item,index) in cameraPos">
+                    <div v-if="index === 4" :key="index" class="center-item"></div>
+                    <div class="camera-item" :class="{active:item.id === currentSense.senseId}" :key="item.id"
+                         @click="selectCamera(item.id)">{{item.label}}
+                    </div>
+                </template>
             </div>
-        </template>
+        </div>
     </ui-main>
 </template>
 
 <script>
-export default {
-    name: "editRoom",
-    data() {
-        return {
-            visible: false,
-            showContextmenu: false,
-            roomList: [],
-            act: [],
-            actWall: [],
-            wallData: [],
-            selected: [],
-            selectedPos: [],
-            posData: [],
-            cameraPos: [
-                {label:'右后',id:'rightBack'},
-                {label:'正后',id:'back'},
-                {label:'左后',id:'leftBack'},
-                {label:'正右',id:'right'},
-                {label:'球型',id:'center'},
-                {label:'正左',id:'leftT'},
-                {label:'右前',id:'rightHead'},
-                {label:'正前',id:'head'},
-                {label:'左前',id:'leftHead'},
-            ],
-            currentSense: '',
-            editType: "room",
-            wallType: "horizontal",
-            widthNum: 36,
-            heightNum: 50,
-            domKey: 1,
-            offsetX:1,
-            offsetY:1,
-        }
-    },
-    created() {
-        window.onkeydown = (e) => {
-            if (e.code === 'Tab') {
-                e.preventDefault();
-                this.changeWallType();
+    export default {
+        name: "editRoom",
+        data() {
+            return {
+                visible: false,
+                showContextmenu: false,
+                roomList: [],
+                act: [],
+                actWall: [],
+                wallData: [],
+                senseData: [],
+                selected: [],
+                selectedPos: [],
+                posData: [],
+                cameraPos: [
+                    {label: '右后', id: 'rightBack'},
+                    {label: '正后', id: 'back'},
+                    {label: '左后', id: 'leftBack'},
+                    {label: '正右', id: 'right'},
+                    {label: '正左', id: 'left'},
+                    {label: '右前', id: 'rightHead'},
+                    {label: '正前', id: 'head'},
+                    {label: '左前', id: 'leftHead'},
+                ],
+                currentSense: {
+                    senseId: ''
+                },
+                editType: "room",
+                wallType: "horizontal",
+                widthNum: 36,
+                heightNum: 50,
+                domKey: 1,
+                offsetX: 1,
+                offsetY: 1,
             }
-        }
-        window.oncontextmenu = (e) => {
-            console.log(e)
-            e.preventDefault();
-            this.offsetX = e.target.offsetLeft + 20;
-            this.offsetY = e.target.offsetTop + 20;
-            this.showContextmenu = true;
-        }
-    },
-    mounted() {
-        this.$nextTick(() => {
-            // this.widthNum = parseInt(this.$el.lastElementChild.clientWidth / 40)
-            // this.heightNum = parseInt((this.$el.lastElementChild.clientHeight - 10) / 40)
-            let x = 0;
-            let z = 0
-            for (let i = 0; i < 36 * this.heightNum; i++) {
-                if (i > 0) x += 4;
-                if (i % this.widthNum === 0) {
-                    z += 4;
-                    x = 0;
-                }
-                this.roomList.push({
-                    x: x,
-                    z: z,
-                    id: i,
-                    pos: ['head'],
-                    wall: []
-                });
-            }
-
-
-            setTimeout(() => {
-                this.initWallData();
-            })
-        })
-        this.$parent.params.selected && this.$parent.params.selected.forEach(item => {
-            this.act.push(item.id);
-            this.selected.push(item);
-            setTimeout(() => {
-                this.roomList.forEach(room => {
-                    if (item.id === room.id) {
-                        room.pos = item.pos;
-                    }
-                })
-            })
-        })
-
-    },
-    methods: {
-        initWallData() {
-            this.$parent.params.wallList && this.$parent.params.wallList.forEach(item => {
-                this.wallData.push(item)
-                this.actWall.push(item.id)
-                let dom = document.getElementById(`room-${item.id}`);
-                let newStyle = '3px solid rgba(200,200,10,1)';
-                item.wall.forEach(wall => {
-                    if (wall === 'verticalWall') {
-                        dom.style.borderLeft = newStyle;
-                        dom.setAttribute('borderLeft', 'true');
-                    } else {
-                        dom.style.borderTop = newStyle;
-                        dom.setAttribute('borderTop', 'true');
-                    }
-                })
-            })
         },
-        select(item) {
-            if (this.editType === 'room') {
-                if (this.act.length && this.act.includes(item.id)) {
-                    this.act = this.act.filter((source) => {
-                        return item.id !== source;
-                    });
-                    this.selected = this.selected.filter((source) => {
-                        return item.id !== source.id;
-                    });
-                } else {
-                    this.act.push(item.id);
-                    this.selected.push(item);
+        created() {
+            window.onkeydown = (e) => {
+                if (e.code === 'Tab') {
+                    e.preventDefault();
+                    this.changeWallType();
                 }
-            } else {
-                let dom = document.getElementById(`room-${item.id}`);
-                if (this.actWall.length && this.actWall.includes(item.id)) {
-                    let oldStyle = '1px solid rgba(0, 0, 0, 0.2)';
-                    let newStyle = '3px solid rgba(200,200,10,1)';
-                    if (this.wallType === 'vertical' &&
-                        (!dom.getAttribute('borderLeft') || dom.getAttribute('borderLeft') === 'false')) {
-                        dom.style.borderLeft = newStyle;
-                        dom.setAttribute('borderLeft', 'true');
-                        this.changeWall(item.id, 'vertical', 'add');
-                    } else if (this.wallType === 'horizontal' &&
-                        (!dom.getAttribute('borderTop') || dom.getAttribute('borderTop') === 'false')) {
-                        dom.style.borderTop = newStyle
-                        dom.setAttribute('borderTop', 'true');
-                        this.changeWall(item.id, 'horizontal', 'add');
-                    } else if (this.wallType === 'horizontal'
-                        && dom.getAttribute('borderTop') === 'true') {
-                        dom.style.borderTop = oldStyle
-                        dom.setAttribute('borderTop', 'false');
-
-                        if (!dom.getAttribute('borderLeft')
-                            || dom.getAttribute('borderLeft') === 'false') {
-                            this.deleteData(item.id);
-                        } else {
-                            this.changeWall(item.id, 'horizontal', 'delete');
-                        }
-                    } else if (this.wallType === 'vertical'
-                        && dom.getAttribute('borderLeft') === 'true') {
-                        dom.style.borderLeft = oldStyle
-                        dom.setAttribute('borderLeft', 'false');
-
-                        if (!dom.getAttribute('borderTop')
-                            || dom.getAttribute('borderTop') === 'false') {
-                            this.deleteData(item.id);
-                        } else {
-                            this.changeWall(item.id, 'vertical', 'delete');
-                        }
+            }
+            window.oncontextmenu = () => {
+                return false
+            }
+        },
+        mounted() {
+            this.$nextTick(() => {
+                let x = 0;
+                let z = 0
+                for (let i = 0; i < 36 * this.heightNum; i++) {
+                    if (i > 0) x += 4;
+                    if (i % this.widthNum === 0) {
+                        z += 4;
+                        x = 0;
                     }
-                } else {
-                    if (this.wallType === 'horizontal') {
-                        dom.style.borderTop = '3px solid rgba(200,200,10,1)';
-                        dom.setAttribute('borderTop', 'true');
-                        item.wall.push('horizontalWall');
-                    } else {
-                        dom.style.borderLeft = '3px solid rgba(200,200,10,1)';
-                        dom.setAttribute('borderLeft', 'true');
-                        item.wall.push('verticalWall');
+                    this.roomList.push({
+                        x: x,
+                        z: z,
+                        id: i,
+                        pos: ['head'],
+                        wall: [],
+                        senseId: ''
+                    });
+                }
+
+
+                setTimeout(() => {
+                    this.initWallData();
+                    this.initSenseData();
+                })
+
+                this.$el.parentElement.addEventListener('mousedown', (e) => {
+                    console.log(e)
+                    if (e.button === 2) {
+                        let parentHeight = this.$el.parentElement.clientHeight;
+                        let parentWidth = this.$el.parentElement.clientWidth;
+                        console.log(parentHeight)
+                        if (parentWidth - e.clientX < 200) {
+                            this.offsetX = parentWidth - 200;
+                        }else {
+                            this.offsetX = e.clientX
+                        }
+
+
+                        if (parentHeight - e.clientY < 300) {
+                            this.offsetY = parentHeight - 300;
+                        }else {
+                            this.offsetY = e.clientY - 100;
+                        }
+
                     }
+
+                })
+            })
+            this.$parent.params.selected && this.$parent.params.selected.forEach(item => {
+                this.act.push(item.id);
+                this.selected.push(item);
+                setTimeout(() => {
+                    this.roomList.forEach(room => {
+                        if (item.id === room.id) {
+                            room.pos = item.pos;
+                        }
+                    })
+                })
+            })
+
+        },
+        methods: {
+            deleteCamera(item,camera) {
+
+            },
+            selectSense(item) {
+                this.showContextmenu = true;
+                this.currentSense = item;
+            },
+            initWallData() {
+                this.$parent.params.wallList && this.$parent.params.wallList.forEach(item => {
                     this.wallData.push(item)
-                    this.actWall.push(item.id);
-                }
+                    this.actWall.push(item.id)
+                    let dom = document.getElementById(`room-${item.id}`);
+                    let newStyle = '3px solid rgba(200,200,10,1)';
+                    item.wall.forEach(wall => {
+                        if (wall === 'verticalWall') {
+                            dom.style.borderLeft = newStyle;
+                            dom.setAttribute('borderLeft', 'true');
+                        } else {
+                            dom.style.borderTop = newStyle;
+                            dom.setAttribute('borderTop', 'true');
+                        }
+                    })
+                })
+            },
+            initSenseData() {
+                this.$parent.params.senseList && this.$parent.params.senseList.forEach(item => {
+                    this.roomList.forEach(room => {
+                        if (room.id === item.id) {
+                            room.senseId = item.senseId;
+                        }
+                    })
+                })
+            },
+            select(item) {
+                if (this.editType === 'room') {
+                    if (this.act.length && this.act.includes(item.id)) {
+                        this.act = this.act.filter((source) => {
+                            return item.id !== source;
+                        });
+                        this.selected = this.selected.filter((source) => {
+                            return item.id !== source.id;
+                        });
+                    } else {
+                        this.act.push(item.id);
+                        this.selected.push(item);
+                    }
+                } else {
+                    let dom = document.getElementById(`room-${item.id}`);
+                    if (this.actWall.length && this.actWall.includes(item.id)) {
+                        let oldStyle = '1px solid rgba(0, 0, 0, 0.2)';
+                        let newStyle = '3px solid rgba(200,200,10,1)';
+                        if (this.wallType === 'vertical' &&
+                            (!dom.getAttribute('borderLeft') || dom.getAttribute('borderLeft') === 'false')) {
+                            dom.style.borderLeft = newStyle;
+                            dom.setAttribute('borderLeft', 'true');
+                            this.changeWall(item.id, 'vertical', 'add');
+                        } else if (this.wallType === 'horizontal' &&
+                            (!dom.getAttribute('borderTop') || dom.getAttribute('borderTop') === 'false')) {
+                            dom.style.borderTop = newStyle
+                            dom.setAttribute('borderTop', 'true');
+                            this.changeWall(item.id, 'horizontal', 'add');
+                        } else if (this.wallType === 'horizontal'
+                            && dom.getAttribute('borderTop') === 'true') {
+                            dom.style.borderTop = oldStyle
+                            dom.setAttribute('borderTop', 'false');
 
-            }
-        },
-        changeWallType() {
-            if (this.editType !== 'room') {
-                this.wallType === 'horizontal' ?
-                    this.wallType = 'vertical' : this.wallType = 'horizontal';
-            }
-        },
-        changeWall(id, type, methods) {
-            let remove = (data, source) => {
-                data.forEach((item, index) => {
-                    if (item === source) {
-                        data.splice(index, 1);
+                            if (!dom.getAttribute('borderLeft')
+                                || dom.getAttribute('borderLeft') === 'false') {
+                                this.deleteData(item.id);
+                            } else {
+                                this.changeWall(item.id, 'horizontal', 'delete');
+                            }
+                        } else if (this.wallType === 'vertical'
+                            && dom.getAttribute('borderLeft') === 'true') {
+                            dom.style.borderLeft = oldStyle
+                            dom.setAttribute('borderLeft', 'false');
+
+                            if (!dom.getAttribute('borderTop')
+                                || dom.getAttribute('borderTop') === 'false') {
+                                this.deleteData(item.id);
+                            } else {
+                                this.changeWall(item.id, 'vertical', 'delete');
+                            }
+                        }
+                    } else {
+                        if (this.wallType === 'horizontal') {
+                            dom.style.borderTop = '3px solid rgba(200,200,10,1)';
+                            dom.setAttribute('borderTop', 'true');
+                            item.wall.push('horizontalWall');
+                        } else {
+                            dom.style.borderLeft = '3px solid rgba(200,200,10,1)';
+                            dom.setAttribute('borderLeft', 'true');
+                            item.wall.push('verticalWall');
+                        }
+                        this.wallData.push(item)
+                        this.actWall.push(item.id);
+                    }
+
+                }
+            },
+            changeWallType() {
+                if (this.editType !== 'room') {
+                    this.wallType === 'horizontal' ?
+                        this.wallType = 'vertical' : this.wallType = 'horizontal';
+                }
+            },
+            changeWall(id, type, methods) {
+                let remove = (data, source) => {
+                    data.forEach((item, index) => {
+                        if (item === source) {
+                            data.splice(index, 1);
+                        }
+                    })
+                }
+                if (methods === 'add') {
+                    this.wallData.forEach(item => {
+                        if (id === item.id) {
+                            if (type === 'vertical') {
+                                item.wall.push('verticalWall')
+                            } else {
+                                item.wall.push('horizontalWall');
+                            }
+                        }
+                    });
+                } else {
+                    this.wallData.forEach(item => {
+                        if (id === item.id) {
+                            if (type === 'vertical') {
+                                remove(item.wall, 'verticalWall');
+                            } else {
+                                remove(item.wall, 'horizontalWall');
+                            }
+                        }
+                    });
+                }
+            },
+            deleteData(id) {
+                this.actWall = this.actWall.filter((source) => {
+                    return id !== source;
+                });
+                this.wallData = this.wallData.filter((source) => {
+                    return id !== source.id;
+                });
+            },
+            changeSelect(item, pos) {
+                this.selected.forEach(data => {
+                    if (data.id === item.id) {
+                        // data.pos = pos;
+                        if (data.pos.indexOf(pos) > -1) {
+                            data.pos.splice(data.pos.indexOf(pos), 1)
+                            item.pos.splice(item.pos.indexOf(pos), 1)
+                        } else {
+                            data.pos.push(pos);
+                            item.pos.push(pos)
+                        }
                     }
                 })
-            }
-            if (methods === 'add') {
-                this.wallData.forEach(item => {
-                    if (id === item.id) {
-                        if (type === 'vertical') {
-                            item.wall.push('verticalWall')
-                        } else {
-                            item.wall.push('horizontalWall');
-                        }
-                    }
-                });
-            } else {
-                this.wallData.forEach(item => {
-                    if (id === item.id) {
-                        if (type === 'vertical') {
-                            remove(item.wall, 'verticalWall');
-                        } else {
-                            remove(item.wall, 'horizontalWall');
-                        }
-                    }
-                });
-            }
-        },
-        deleteData(id) {
-            this.actWall = this.actWall.filter((source) => {
-                return id !== source;
-            });
-            this.wallData = this.wallData.filter((source) => {
-                return id !== source.id;
-            });
-        },
-        changeSelect(item, pos) {
-            this.selected.forEach(data => {
-                if (data.id === item.id) {
-                    // data.pos = pos;
-                    if (data.pos.indexOf(pos) > -1) {
-                        data.pos.splice(data.pos.indexOf(pos), 1)
-                        item.pos.splice(item.pos.indexOf(pos), 1)
-                    } else {
-                        data.pos.push(pos);
-                        item.pos.push(pos)
-                    }
-                }
-            })
 
-        },
-        selectCamera(id) {
-            console.log(id)
-            this.currentSense = id;
-        },
-        submit() {
-            this.$parent.close({
-                cabinetData: this.selected,
-                wallData: this.wallData
-            });
+            },
+            selectCamera(id) {
+                this.currentSense.senseId = id;
+                this.senseData.push(this.currentSense);
+                this.showContextmenu = false;
+            },
+            submit() {
+                this.$parent.close({
+                    cabinetData: this.selected,
+                    wallData: this.wallData,
+                    senseData: this.senseData
+                });
+            }
         }
     }
-}
 </script>
 
 <style scoped lang="scss">
-/*网格*/
-.grid-box {
-    width: 1460px;
-    //height: 100%;
-    display: grid;
-    overflow-x: auto;
-    margin: 10px auto 0 auto;
-    //grid-template-columns: repeat(20, 40px);
-    //grid-template-rows: repeat(20, 40px);
-
-    .grid-item {
-        border: 1px solid rgba(0, 0, 0, .2);
-        cursor: pointer;
-
-        &.active {
-            background-color: #d3ea7f;
-        }
-    }
-}
-
-/*机柜方向*/
-.item-position {
-    width: 100%;
-    height: 100%;
-    position: relative;
-    font-size: 12px;
-    color: rgba(0, 0, 0, .5);
-
-    .active {
-        color: #409eff;
-    }
-
-    .pos-up {
-        line-height: 100%;
-        position: absolute;
-        top: 0;
-        left: 50%;
-        margin-top: -2px;
-        transform: translateX(-50%);
-        z-index: 99;
-    }
-
-    .pos-left {
-        line-height: 100%;
-        position: absolute;
-        left: 2px;
-        text-align: center;
-        top: 50%;
-        transform: translateY(-50%);
-    }
-
-    .pos-right {
-        line-height: 100%;
-        position: absolute;
-        right: 2px;
-        top: 50%;
-        transform: translateY(-50%);
-    }
-
-    .pos-down {
-        line-height: 100%;
-        position: absolute;
-        bottom: -2px;
-        text-align: center;
-        left: 50%;
-        transform: translateX(-50%);
-    }
-
-    .icon {
-        width: unset !important;
-        height: unset !important;
-        margin: unset !important;
-        padding: unset !important;
-    }
-}
-
-/*右键菜单*/
-.contextmenu-box {
-    width: 200px;
-    height: 400px;
-    position: absolute;
-    border: 1px solid rgba(0, 0, 0, .2);
-    border-radius: 10px;
-    background-color: #fff;
-    overflow: hidden;
-    .content-title {
-        padding: 10px 5px;
-        font-size: 18px;
-        background-color: #235193;
-        color: white;
-        margin-bottom: 5px;
-    }
-
-    .camera-pos {
+    /*网格*/
+    .grid-box {
+        width: 1460px;
+        //height: 100%;
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        grid-template-rows: repeat(3, 40px);
+        overflow-x: auto;
+        margin: 10px auto 0 auto;
+        //grid-template-columns: repeat(20, 40px);
+        //grid-template-rows: repeat(20, 40px);
 
-        .center-item {
-            background-image: url("./center.png");
-            background-size: 100% 100%;
-        }
-
-        .camera-item {
-            line-height: 40px;
-            text-align: center;
-            cursor: pointer;
+        .grid-item {
             border: 1px solid rgba(0, 0, 0, .2);
-            //border-radius: 10px;
+            cursor: pointer;
 
             &.active {
                 background-color: #d3ea7f;
             }
+        }
+    }
+
+    /*机柜方向*/
+    .item-position {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        font-size: 12px;
+        color: rgba(0, 0, 0, .5);
+
+        .active {
+            color: #409eff;
+        }
+
+        .pos-up {
+            line-height: 100%;
+            position: absolute;
+            top: 0;
+            left: 50%;
+            margin-top: -2px;
+            transform: translateX(-50%);
+            z-index: 99;
+        }
+
+        .pos-left {
+            line-height: 100%;
+            position: absolute;
+            left: 2px;
+            text-align: center;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .pos-right {
+            line-height: 100%;
+            position: absolute;
+            right: 2px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .pos-down {
+            line-height: 100%;
+            position: absolute;
+            bottom: -2px;
+            text-align: center;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .icon {
+            width: unset !important;
+            height: unset !important;
+            margin: unset !important;
+            padding: unset !important;
+        }
+    }
+
+    /*右键菜单*/
+    .contextmenu-box {
+        width: 200px;
+        height: 400px;
+        position: absolute;
+        border: 1px solid rgba(0, 0, 0, .2);
+        /*border-radius: 10px;*/
+        background-color: #fff;
+        overflow: hidden;
+        .top-control {
+            float: right;
+            margin-bottom: 5px;
             &:hover {
-                background-color: #45c2d0;
+                color: red;
+                cursor: pointer;
+            }
+        }
+        .content-title {
+            clear: both;
+            padding: 10px 5px;
+            font-size: 18px;
+            background-color: #235193;
+            color: white;
+            margin-bottom: 5px;
+        }
+
+        .camera-pos {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 40px);
+
+            .center-item {
+                /*background-image: url("./center.png");*/
+                background-size: 100% 100%;
+            }
+
+            .camera-item {
+                line-height: 40px;
+                text-align: center;
+                cursor: pointer;
+                border: 1px solid rgba(0, 0, 0, .2);
+                //border-radius: 10px;
+
+                &.active {
+                    background-color: #d3ea7f;
+                }
+                &:hover {
+                    background-color: #45c2d0;
+                }
             }
         }
     }
-}
+
+    /*摄像头回显*/
+    .sense-pos {
+        position: relative;
+        display: grid;
+        width: 100%;
+        height: 100%;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(3, 1fr);
+
+        .sense-item {
+            &.active {
+                background-color: #6876ff;
+            }
+        }
+
+    }
 </style>
