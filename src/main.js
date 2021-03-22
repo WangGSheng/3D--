@@ -5,6 +5,8 @@ import Vue from 'vue'
 //semantic-UI
 import '@/scss/index.scss'
 
+import '@/iconfont/iconfont.css'
+
 // vuex 状态管理
 import store from './store'
 

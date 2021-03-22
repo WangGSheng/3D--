@@ -32,7 +32,7 @@
                     <div class="sense-pos" v-if="item.senseId">
                         <template v-for="(camera,index) in cameraPos">
                                 <div v-if="index === 4" :key="index" class="center-item"></div>
-                            <div  @click.stop="deleteCamera(item,camera)" class="sense-item" :class="{active:camera.id === item.senseId}" :key="camera.id"></div>
+                            <div  @click.stop="deleteCamera(item,camera)" :class="{'sense-item':true,iconfont:camera.id === item.senseId} + `${camera.icon}`" :key="camera.id"></div>
                         </template>
                     </div>
 
@@ -56,7 +56,9 @@
                 <template v-for="(item,index) in cameraPos">
                     <div v-if="index === 4" :key="index" class="center-item"></div>
                     <div class="camera-item" :class="{active:item.id === currentSense.senseId}" :key="item.id"
-                         @click="selectCamera(item.id)">{{item.label}}
+                         @click="selectCamera(item.id)">
+<!--                        {{item.label}}-->
+                        <i :class="`w-100p h-100p iconfont ${item.icon}`"></i>
                     </div>
                 </template>
             </div>
@@ -80,14 +82,14 @@
                 selectedPos: [],
                 posData: [],
                 cameraPos: [
-                    {label: '右后', id: 'rightBack'},
-                    {label: '正后', id: 'back'},
-                    {label: '左后', id: 'leftBack'},
-                    {label: '正右', id: 'right'},
-                    {label: '正左', id: 'left'},
-                    {label: '右前', id: 'rightHead'},
-                    {label: '正前', id: 'head'},
-                    {label: '左前', id: 'leftHead'},
+                    {label: '左前', id: 'leftHead',icon:'icon-jiantou_zuoshang'},
+                    {label: '正前', id: 'head',icon:'icon-jiantou_xiangshang'},
+                    {label: '右前', id: 'rightHead',icon:'icon-jiantou_youshang'},
+                    {label: '正左', id: 'left',icon:'icon-jiantou_xiangzuo'},
+                    {label: '正右', id: 'right',icon:'icon-jiantou_xiangyou'},
+                    {label: '左后', id: 'leftBack',icon:'icon-jiantou_zuoxia'},
+                    {label: '正后', id: 'back',icon:'icon-jiantou_xiangxia'},
+                    {label: '右后', id: 'rightBack',icon:'icon-jiantou_youxia'},
                 ],
                 currentSense: {
                     senseId: ''
@@ -176,7 +178,7 @@
         },
         methods: {
             deleteCamera(item,camera) {
-
+                console.log(item,camera)
             },
             selectSense(item) {
                 this.showContextmenu = true;
@@ -429,6 +431,7 @@
 
     /*右键菜单*/
     .contextmenu-box {
+        z-index: 99;
         width: 200px;
         height: 400px;
         position: absolute;
@@ -436,6 +439,8 @@
         /*border-radius: 10px;*/
         background-color: #fff;
         overflow: hidden;
+        color: black;
+        font-size: 18px;
         .top-control {
             float: right;
             margin-bottom: 5px;
@@ -447,7 +452,6 @@
         .content-title {
             clear: both;
             padding: 10px 5px;
-            font-size: 18px;
             background-color: #235193;
             color: white;
             margin-bottom: 5px;
@@ -456,7 +460,7 @@
         .camera-pos {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            grid-template-rows: repeat(3, 40px);
+            grid-template-rows: repeat(3, 60px);
 
             .center-item {
                 /*background-image: url("./center.png");*/
@@ -464,11 +468,15 @@
             }
 
             .camera-item {
-                line-height: 40px;
+                line-height: 60px;
                 text-align: center;
                 cursor: pointer;
                 border: 1px solid rgba(0, 0, 0, .2);
                 //border-radius: 10px;
+
+                .iconfont {
+                    font-size: 28px;
+                }
 
                 &.active {
                     background-color: #d3ea7f;
