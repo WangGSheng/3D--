@@ -64,7 +64,8 @@ export default {
         // 添加删除事件
         // this.initDeleteEvent();
 
-        this.addScene()
+        // 传感器
+        // this.addScene()
         this.render();
 
         //加入事件监听器,窗口自适应
@@ -75,6 +76,7 @@ export default {
             camera.aspect = width / height;
             camera.updateProjectionMatrix();
         })
+        // 本地数据
         this.initData(room3D);
     },
     methods: {
@@ -107,6 +109,7 @@ export default {
                 },
                 callback: (item) => {
                     if (item) {
+                        console.log(item)
                         vm.initData(item);
                     }
                 }
@@ -140,7 +143,7 @@ export default {
             if (type === 'camera') {
                 this.senseList.forEach(item => {
                     console.log(item)
-                    loader.load('static/three/model/传感器.glb', function (gltf) {
+                    loader.load('static/three/model/监控摄像头.glb', function (gltf) {
                             let model = gltf.scene;
                             model.position.set(item.x, 10, item.z)
                             switch (item.senseId) {
@@ -197,7 +200,7 @@ export default {
         },
         initCamera() {
             camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, this.near, this.far);
-            camera.position.set(20, 30, 70);//位置
+            camera.position.set(140, 70, 190);//位置
             camera.lookAt(scene.position);//对准的焦点
         },
         initRenderer() {

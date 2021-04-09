@@ -1,5 +1,9 @@
 <template>
-    <ui-main title="编辑机房">
+    <ui-main title="编辑机房"
+             v-loading="loading"
+             element-loading-text="正在绘制,请稍等"
+             element-loading-spinner="el-icon-loading"
+             element-loading-background="rgba(0, 0, 0, 0.8)" >
         <div class="toolbar">
             <el-radio-group v-model="editType">
                 <el-radio-button label="room">编辑机柜</el-radio-button>
@@ -13,7 +17,7 @@
         </div>
         <div class="grid-box auto-center" :key="domKey"
              :style="`grid-template-columns:repeat(${widthNum}, 40px);grid-template-rows: repeat(${heightNum}, 40px)`">
-            <template v-for="item in this.roomList">
+            <template v-for="item in roomList">
                 <div :class="{'grid-item':true,active:act.includes(item.id)}" :key="item.id"
                      :id="'room-' + item.id"
                      @click.stop="select(item)" @contextmenu="selectSense(item)">
@@ -32,7 +36,7 @@
                     <div class="sense-pos" v-if="item.senseId">
                         <template v-for="(camera,index) in cameraPos">
                                 <div v-if="index === 4" :key="index" class="center-item"></div>
-                            <div  @click.stop="deleteCamera(item,camera)" :class="{'sense-item':true,iconfont:camera.id === item.senseId} + `${camera.icon}`" :key="camera.id"></div>
+                            <div  @click.stop="deleteCamera(item,camera)"  class="sense-item" :class="camera.id === item.senseId ?  `iconfont ${camera.icon}` :''" :key="camera.id"></div>
                         </template>
                     </div>
 
@@ -49,7 +53,7 @@
         </div>
 
 
-        <div class="contextmenu-box" :style="`left:${offsetX}px;top:${offsetY}px`" v-show="showContextmenu">
+        <div class="contextmenu-box" id="contextmenu-box" :style="`left:${offsetX}px;top:${offsetY}px`" v-show="showContextmenu">
             <div class="top-control" @click="showContextmenu = false"><i class="icon close m-5"></i></div>
             <div class="content-title">摄像头(朝向)</div>
             <div class="camera-pos">
@@ -72,6 +76,7 @@
         data() {
             return {
                 visible: false,
+                loading: true,
                 showContextmenu: false,
                 roomList: [],
                 act: [],
@@ -82,14 +87,15 @@
                 selectedPos: [],
                 posData: [],
                 cameraPos: [
-                    {label: '左前', id: 'leftHead',icon:'icon-jiantou_zuoshang'},
-                    {label: '正前', id: 'head',icon:'icon-jiantou_xiangshang'},
-                    {label: '右前', id: 'rightHead',icon:'icon-jiantou_youshang'},
-                    {label: '正左', id: 'left',icon:'icon-jiantou_xiangzuo'},
-                    {label: '正右', id: 'right',icon:'icon-jiantou_xiangyou'},
-                    {label: '左后', id: 'leftBack',icon:'icon-jiantou_zuoxia'},
-                    {label: '正后', id: 'back',icon:'icon-jiantou_xiangxia'},
-                    {label: '右后', id: 'rightBack',icon:'icon-jiantou_youxia'},
+                    {label: '左前', id: 'leftHead',icon:'ali-iconjiantou_zuoshang'},
+                    {label: '正前', id: 'head',icon:'ali-iconjiantou_xiangshang'},
+                    {label: '右前', id: 'rightHead',icon:'ali-iconjiantou_youshang'},
+                    {label: '正左', id: 'left',icon:'ali-iconjiantou_xiangzuo'},
+                    // {label: '删除', id: 'delete',icon:'ali-iconshanchu'},
+                    {label: '正右', id: 'right',icon:'ali-iconjiantou_xiangyou'},
+                    {label: '左后', id: 'leftBack',icon:'ali-iconjiantou_zuoxia'},
+                    {label: '正后', id: 'back',icon:'ali-iconjiantou_xiangxia'},
+                    {label: '右后', id: 'rightBack',icon:'ali-iconjiantou_youxia'},
                 ],
                 currentSense: {
                     senseId: ''
@@ -113,6 +119,10 @@
             window.oncontextmenu = () => {
                 return false
             }
+            document.addEventListener('click', function() {
+                this.showContextmenu = false
+            })
+
         },
         mounted() {
             this.$nextTick(() => {
@@ -138,14 +148,13 @@
                 setTimeout(() => {
                     this.initWallData();
                     this.initSenseData();
+                    this.loading = false;
                 })
 
                 this.$el.parentElement.addEventListener('mousedown', (e) => {
-                    console.log(e)
                     if (e.button === 2) {
                         let parentHeight = this.$el.parentElement.clientHeight;
                         let parentWidth = this.$el.parentElement.clientWidth;
-                        console.log(parentHeight)
                         if (parentWidth - e.clientX < 200) {
                             this.offsetX = parentWidth - 200;
                         }else {
