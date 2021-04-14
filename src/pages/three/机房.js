@@ -1,4 +1,4 @@
-export  default {
+export default {
     "cabinetData": [
         {
             "x": 44,
@@ -1989,46 +1989,71 @@ export  default {
             ]
         }
     ],
-    "senseData":[
+    "senseData": [
         {
-            "x": 100,
-            "z": 56,
-            "id": 493,
-            "pos": [
-                "head"
-            ],
-            "wall": [],
-            "senseId": "left"
+            type: 'camera',
+            data: {
+                "x": 100,
+                "z": 56,
+                "id": 493,
+                "pos": [
+                    "head"
+                ],
+                "wall": [],
+                "senseId": "left"
+            }
         },
         {
-            "x": 32,
-            "z": 56,
-            "id": 476,
-            "pos": [
-                "head"
-            ],
-            "wall": [],
-            "senseId": "right"
+            type:'camera',
+            data:{
+                "x": 32,
+                "z": 56,
+                "id": 476,
+                "pos": [
+                    "head"
+                ],
+                "wall": [],
+                "senseId": "right"
+            }
         },
         {
-            "x": 68,
-            "z": 12,
-            "id": 89,
-            "pos": [
-                "head"
-            ],
-            "wall": [],
-            "senseId": "back"
+            type:'camera',
+            data:{
+                "x": 68,
+                "z": 12,
+                "id": 89,
+                "pos": [
+                    "head"
+                ],
+                "wall": [],
+                "senseId": "back"
+            }
         },
         {
-            "x": 64,
-            "z": 104,
-            "id": 916,
-            "pos": [
-                "head"
-            ],
-            "wall": [],
-            "senseId": "head"
+            type:'camera',
+            data: {
+                "x": 64,
+                "z": 104,
+                "id": 916,
+                "pos": [
+                    "head"
+                ],
+                "wall": [],
+                "senseId": "head"
+            }
+        },
+        {
+            "type": "sense",
+            "data": {
+                "x": 72,
+                "z": 48,
+                "id": 414,
+                "pos": [
+                    "head"
+                ],
+                "wall": [],
+                "senseId": "sense"
+            }
         }
-    ]
+        ]
 }

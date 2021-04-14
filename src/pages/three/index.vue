@@ -94,7 +94,7 @@ export default {
             if (item.senseData && item.senseData.length) {
                 this.senseList = item.senseData;
 
-                this.createSense('camera');
+                this.createSense();
             }
         },
         drawRoom() {
@@ -109,7 +109,6 @@ export default {
                 },
                 callback: (item) => {
                     if (item) {
-                        console.log(item)
                         vm.initData(item);
                     }
                 }
@@ -122,71 +121,83 @@ export default {
                 // }
             })
         },
-        addScene() {
-            let loader = new THREE.GLTFLoader();
-            loader.load('static/three/model/传感器.glb', function (gltf) {
+        addScene(item, loader) {
+            let vm = this;
+            loader.load('static/three/model/温湿度传感器.glb', function (gltf) {
                     let model = gltf.scene;
-                    model.position.set(10, 10, 10)
-                    // model.rotateZ(Math.PI / 2)
+                    model.position.set(item.x + 6, 11, item.z + 2)
+                    model.rotateZ(Math.PI)
                     model.isCustomer = true
                     model.scale.set(1, 1, 1) // scale here
                     group.add(model)
-
+                    vm.objects.push({
+                        type: 'sense',
+                        obj: model
+                    })
 
                 }, undefined,
                 function (error) {
                     console.error(error)
                 });
         },
-        createSense(type) {
+        addCamera(item, loader) {
+            let vm = this;
+            loader.load('static/three/model/监控摄像头.glb', function (gltf) {
+                    let model = gltf.scene;
+                    model.position.set(item.x, 10, item.z)
+                    switch (item.senseId) {
+                        case 'rightBack':
+                            model.rotateY(Math.PI / 4);
+                            break;
+                        case 'back':
+                            // model.rotateY(Math.PI / 2);
+                            break;
+                        case 'leftBack':
+                            model.rotateY(Math.PI / -4);
+                            break;
+                        case 'right':
+                            model.rotateY(Math.PI / 2);
+                            break;
+                        case 'left':
+                            model.rotateY(Math.PI / -2);
+                            break;
+                        case 'rightHead':
+                            model.rotateY(Math.PI / 2 + Math.PI / 4);
+                            break;
+                        case 'head':
+                            model.rotateY(Math.PI);
+                            break;
+                        case 'leftHead':
+                            model.rotateY(Math.PI / -2 + Math.PI / -4);
+                            break;
+                        default:
+                            break;
+                    }
+
+                    // model.rotateZ(Math.PI / 2)
+                    model.isCustomer = true
+                    model.scale.set(0.02, 0.02, 0.02) // scale here
+                    group.add(model)
+                    vm.objects.push({
+                        type: 'camera',
+                        obj: model
+                    })
+
+                }, undefined,
+                function (error) {
+                    console.error(error)
+                });
+        },
+        createSense() {
             let loader = new THREE.GLTFLoader();
-            if (type === 'camera') {
-                this.senseList.forEach(item => {
-                    console.log(item)
-                    loader.load('static/three/model/监控摄像头.glb', function (gltf) {
-                            let model = gltf.scene;
-                            model.position.set(item.x, 10, item.z)
-                            switch (item.senseId) {
-                                case 'rightBack':
-                                    model.rotateY(Math.PI / 4);
-                                    break;
-                                case 'back':
-                                    // model.rotateY(Math.PI / 2);
-                                    break;
-                                case 'leftBack':
-                                    model.rotateY(Math.PI / -4);
-                                    break;
-                                case 'right':
-                                    model.rotateY(Math.PI / 2);
-                                    break;
-                                case 'left':
-                                    model.rotateY(Math.PI / -2);
-                                    break;
-                                case 'rightHead':
-                                    model.rotateY(Math.PI / 2 + Math.PI / 4);
-                                    break;
-                                case 'head':
-                                    model.rotateY(Math.PI);
-                                    break;
-                                case 'leftHead':
-                                    model.rotateY(Math.PI / -2 + Math.PI / -4);
-                                    break;
-                                default:
-                                    break;
-                            }
+            this.senseList.forEach(item => {
+                if (item.type === 'camera') {
+                    this.addCamera(item.data, loader)
+                } else {
+                    this.addScene(item.data, loader)
+                }
+            })
 
-                            // model.rotateZ(Math.PI / 2)
-                            model.isCustomer = true
-                            model.scale.set(0.02, 0.02, 0.02) // scale here
-                            group.add(model)
-
-
-                        }, undefined,
-                        function (error) {
-                            console.error(error)
-                        });
-                })
-            }
 
         },
         initScene() {

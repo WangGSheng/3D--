@@ -24,18 +24,19 @@
                     <template v-if="act.includes(item.id)">
                         <div class="item-position">
                             <div class="pos-up" :class="{active:item.pos.includes('back')}"
-                                 @click.stop="changeSelect(item,'back')"><i class="icon caret up"></i></div>
+                                 @click.stop="changePos(item,'back')"><i class="icon caret up"></i></div>
                             <div class="pos-left" :class="{active:item.pos.includes('left')}"
-                                 @click.stop="changeSelect(item,'left')"><i class="icon caret left"></i></div>
+                                 @click.stop="changePos(item,'left')"><i class="icon caret left"></i></div>
+                            <div class="pos-center" v-if="item.senseId === 'sense'"></div>
                             <div class="pos-right" :class="{active:item.pos.includes('right')}"
-                                 @click.stop="changeSelect(item,'right')"><i class="icon caret right"></i></div>
+                                 @click.stop="changePos(item,'right')"><i class="icon caret right"></i></div>
                             <div class="pos-down" :class="{active:item.pos.includes('head')}"
-                                 @click.stop="changeSelect(item,'head')"><i class="icon caret down"></i></div>
+                                 @click.stop="changePos(item,'head')"><i class="icon caret down"></i></div>
                         </div>
                     </template>
                     <div class="sense-pos" v-if="item.senseId">
-                        <template v-for="(camera,index) in cameraPos">
-                                <div v-if="index === 4" :key="index" class="center-item"></div>
+                        <template v-for="(camera) in cameraPos">
+<!--                                <div v-if="item.senseId === 'sense' && index === 4" :key="index" class="center-item"></div>-->
                             <div  @click.stop="deleteCamera(item,camera)"  class="sense-item" :class="camera.id === item.senseId ?  `iconfont ${camera.icon}` :''" :key="camera.id"></div>
                         </template>
                     </div>
@@ -55,16 +56,27 @@
 
         <div class="contextmenu-box" id="contextmenu-box" :style="`left:${offsetX}px;top:${offsetY}px`" v-show="showContextmenu">
             <div class="top-control" @click="showContextmenu = false"><i class="icon close m-5"></i></div>
-            <div class="content-title">摄像头(朝向)</div>
-            <div class="camera-pos">
-                <template v-for="(item,index) in cameraPos">
-                    <div v-if="index === 4" :key="index" class="center-item"></div>
+            <div class="content-title" v-if="canAddCamera">摄像头(朝向)</div>
+            <div class="camera-pos" v-if="canAddCamera">
+                <template v-for="(item) in cameraPos">
+<!--                    <div v-if="index === 4" :key="index" class="center-item"></div>-->
                     <div class="camera-item" :class="{active:item.id === currentSense.senseId}" :key="item.id"
                          @click="selectCamera(item.id)">
 <!--                        {{item.label}}-->
                         <i :class="`w-100p h-100p iconfont ${item.icon}`"></i>
                     </div>
                 </template>
+            </div>
+            <div class="content-title" v-if="canAddSense">传感器</div>
+            <div class="camera-pos" v-if="canAddSense">
+                <div class="camera-item" :class="{active:currentSense.senseId === 'sense'}"
+                     @click="selectCamera('sense')">
+                    <i class="w-100p h-100p iconfont ali-iconchuanganqi"></i>
+                </div>
+                <div class="camera-item"
+                     @click="selectCamera('delete')">
+                    <i class="w-100p h-100p iconfont ali-iconshanchu"></i>
+                </div>
             </div>
         </div>
     </ui-main>
@@ -78,6 +90,8 @@
                 visible: false,
                 loading: true,
                 showContextmenu: false,
+                canAddCamera: true,
+                canAddSense: true,
                 roomList: [],
                 act: [],
                 actWall: [],
@@ -91,7 +105,7 @@
                     {label: '正前', id: 'head',icon:'ali-iconjiantou_xiangshang'},
                     {label: '右前', id: 'rightHead',icon:'ali-iconjiantou_youshang'},
                     {label: '正左', id: 'left',icon:'ali-iconjiantou_xiangzuo'},
-                    // {label: '删除', id: 'delete',icon:'ali-iconshanchu'},
+                    {label: '删除', id: 'delete',icon:'ali-iconshanchu'},
                     {label: '正右', id: 'right',icon:'ali-iconjiantou_xiangyou'},
                     {label: '左后', id: 'leftBack',icon:'ali-iconjiantou_zuoxia'},
                     {label: '正后', id: 'back',icon:'ali-iconjiantou_xiangxia'},
@@ -186,13 +200,7 @@
 
         },
         methods: {
-            deleteCamera(item,camera) {
-                console.log(item,camera)
-            },
-            selectSense(item) {
-                this.showContextmenu = true;
-                this.currentSense = item;
-            },
+
             initWallData() {
                 this.$parent.params.wallList && this.$parent.params.wallList.forEach(item => {
                     this.wallData.push(item)
@@ -212,9 +220,10 @@
             },
             initSenseData() {
                 this.$parent.params.senseList && this.$parent.params.senseList.forEach(item => {
+                    this.senseData.push(item)
                     this.roomList.forEach(room => {
-                        if (room.id === item.id) {
-                            room.senseId = item.senseId;
+                        if (room.id === item.data.id) {
+                            room.senseId = item.data.senseId;
                         }
                     })
                 })
@@ -330,7 +339,7 @@
                     return id !== source.id;
                 });
             },
-            changeSelect(item, pos) {
+            changePos(item, pos) {
                 this.selected.forEach(data => {
                     if (data.id === item.id) {
                         // data.pos = pos;
@@ -345,10 +354,44 @@
                 })
 
             },
+            selectSense(item) {
+                if (this.act.includes(item.id)) {
+                    this.canAddCamera = false
+                    this.canAddSense = true
+                }else {
+                    this.canAddCamera = true
+                    this.canAddSense = false;
+                }
+                this.showContextmenu = true;
+                this.currentSense = item;
+
+            },
             selectCamera(id) {
-                this.currentSense.senseId = id;
-                this.senseData.push(this.currentSense);
+                if (id === 'delete') {
+                    this.senseData = this.senseData.filter((source) => {
+                        return this.currentSense.senseId !== source.data.senseId;
+                    });
+                    this.currentSense.senseId = '';
+                }else {
+                    this.currentSense.senseId = id;
+                    if (id === 'sense') {
+                        this.senseData.push({
+                            type:'sense',
+                            data:this.currentSense
+                        });
+                    }else {
+                        this.senseData.push({
+                            type:'camera',
+                            data:this.currentSense
+                        });
+                    }
+
+                }
+
                 this.showContextmenu = false;
+            },
+            deleteCamera(item,camera) {
+                console.log(item,camera)
             },
             submit() {
                 this.$parent.close({
@@ -413,6 +456,17 @@
             transform: translateY(-50%);
         }
 
+        .pos-center {
+            background-color: #cba15e;
+            width: 5px;
+            height: 5px;
+            position: absolute;
+            left: 50%;
+            text-align: center;
+            top: 50%;
+            transform: translate(-50%,-50%);
+        }
+
         .pos-right {
             line-height: 100%;
             position: absolute;
@@ -473,7 +527,7 @@
 
             .center-item {
                 /*background-image: url("./center.png");*/
-                background-size: 100% 100%;
+                background-color: #eaa447;
             }
 
             .camera-item {

@@ -6,6 +6,13 @@
   "description": "图标库",
   "glyphs": [
     {
+      "icon_id": "3001052",
+      "name": "传感器",
+      "font_class": "chuanganqi",
+      "unicode": "e651",
+      "unicode_decimal": 58961
+    },
+    {
       "icon_id": "7761519",
       "name": "删 除 ",
       "font_class": "shanchu",
