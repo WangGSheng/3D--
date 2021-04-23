@@ -59,8 +59,6 @@ export default {
         this.getOrbitControls()
         // 添加拖拽控件
         // this.initTransformControl();
-        // 添加点击事件
-        // this.initRayCaster();
         // 添加删除事件
         // this.initDeleteEvent();
 
@@ -78,6 +76,9 @@ export default {
         })
         // 本地数据
         this.initData(room3D);
+
+        // 添加点击事件
+        this.initRayCaster();
     },
     methods: {
         initData(item) {
@@ -116,7 +117,7 @@ export default {
         },
         removeMesh() {
             this.objects.forEach(item => {
-                group.remove(item.obj);
+                group.remove(item);
                 // if (item.type === type) {
                 // }
             })
@@ -130,10 +131,7 @@ export default {
                     model.isCustomer = true
                     model.scale.set(1, 1, 1) // scale here
                     group.add(model)
-                    vm.objects.push({
-                        type: 'sense',
-                        obj: model
-                    })
+                    vm.objects.push(model)
 
                 }, undefined,
                 function (error) {
@@ -177,11 +175,10 @@ export default {
                     // model.rotateZ(Math.PI / 2)
                     model.isCustomer = true
                     model.scale.set(0.02, 0.02, 0.02) // scale here
+                    model.name = 'camera';
                     group.add(model)
-                    vm.objects.push({
-                        type: 'camera',
-                        obj: model
-                    })
+                    // scene.add(model)
+                    vm.objects.push(model)
 
                 }, undefined,
                 function (error) {
@@ -222,6 +219,7 @@ export default {
             });
             renderer.setClearColor('#ddd', 1);// 设置渲染颜色（背景底色
             renderer.setSize(window.innerWidth, window.innerHeight);// 渲染面大小（在二维平面上的窗口大小）
+            renderer.setPixelRatio(window.devicePixelRatio); //设备像素比 可以清晰物体
             this.$refs.threeDom.appendChild(renderer.domElement);
         },
         initLight() {
@@ -251,10 +249,7 @@ export default {
             plane.position.set(x, 5, z)
             if (rotate) plane.rotateY(Math.PI / 2);
             group.add(plane);
-            this.objects.push({
-                type: 'wall',
-                obj: plane
-            })
+            // this.objects.push(plane)
         },
         createPlane(type) {
             if (type === 'wall') {
@@ -312,10 +307,7 @@ export default {
                 let cubeLine = new THREE.LineSegments(cubeEdges, edgesMtl);
                 plane.add(cubeLine);
                 group.add(plane);
-                this.objects.push({
-                    type: 'ground',
-                    obj: plane
-                })
+                // this.objects.push(plane)
             }
         },
         unique(arr, key) {
@@ -341,26 +333,25 @@ export default {
 
 
                 rayCaster.setFromCamera(mouse, camera);
-                let intersects = rayCaster.intersectObjects(this.objects);
-
-
+                let intersects = rayCaster.intersectObjects(this.objects,true);
                 if (intersects.length) {
-                    intersects[0].object.children[0].material.visible = !intersects[0].object.children[0].material.visible;
-                    if (intersects[0].object.children[0].material.visible) {
-                        this.selectedMesh.push(intersects[0].object);
-                    } else {
-                        this.selectedMesh.splice(intersects[0].object, 1)
-                    }
+                    console.log(intersects)
+                    // intersects[0].object.children[0].material.visible = !intersects[0].object.children[0].material.visible;
+                    // if (intersects[0].object.children[0].material.visible) {
+                    //     this.selectedMesh.push(intersects[0].object);
+                    // } else {
+                    //     this.selectedMesh.splice(intersects[0].object, 1)
+                    // }
                 }
             }, false)
         },
-        initDeleteEvent() {
-            document.addEventListener('keydown', ev => {
-                if (ev.key === 'Delete' && this.selectedMesh.length) {
-                    this.clearScene();
-                }
-            })
-        },
+        // initDeleteEvent() {
+        //     document.addEventListener('keydown', ev => {
+        //         if (ev.key === 'Delete' && this.selectedMesh.length) {
+        //             this.clearScene();
+        //         }
+        //     })
+        // },
         // clearScene() {
         //     // 从scene中删除模型并释放内存
         //     if (this.selectedMesh.length > 0) {
@@ -478,11 +469,11 @@ export default {
                     let geometry = new THREE.BoxGeometry(4, 8, 3);
                     let cube = new THREE.Mesh(geometry, material);
                     cube.position.set(item.x, 4, item.z);
-                    let edgesMtl = new THREE.LineBasicMaterial({color: '#000', alpha: 0.1})
+                    let edgesMtl = new THREE.LineBasicMaterial({color: '#999', alpha: 0.1})
                     let cubeEdges = new THREE.EdgesGeometry(geometry, 1);
                     let cubeLine = new THREE.LineSegments(cubeEdges, edgesMtl);
                     cubeLine.name = 'cubeLine';
-                    // cubeLine.material.visible = false;
+                    cubeLine.material.visible = false;
                     cube.add(cubeLine);
                     cube.isCustomer = true
                     if (item.pos.includes('left')) {
@@ -490,10 +481,7 @@ export default {
                     } else if (item.pos.includes('right')) {
                         cube.rotateY(Math.PI / 2);
                     }
-                    this.objects.push({
-                        type: 'cube',
-                        obj: cube
-                    })
+                    this.objects.push(cube)
                     group.add(cube);
                 })
             }
@@ -501,19 +489,19 @@ export default {
 
             // this.initDragControls()
         },
-        // hiedLineSegment() {
-        //     for (let i = 0; i < scene.children.length; i++) {
-        //         if (scene.children[i].isMesh && scene.children[i].children.length) {
-        //             let childArr = scene.children[i].children;
-        //             for (let j = 0; j < childArr.length; j++) {
-        //                 if (childArr[j].type === 'LineSegments') {
-        //                     childArr[j].material.visible = false;
-        //                     break;
-        //                 }
-        //             }
-        //         }
-        //     }
-        // },
+        hiedLineSegment() {
+            for (let i = 0; i < scene.children.length; i++) {
+                if (scene.children[i].isMesh && scene.children[i].children.length) {
+                    let childArr = scene.children[i].children;
+                    for (let j = 0; j < childArr.length; j++) {
+                        if (childArr[j].type === 'LineSegments') {
+                            childArr[j].material.visible = false;
+                            break;
+                        }
+                    }
+                }
+            }
+        },
         render() {
             requestAnimationFrame(this.render);
             renderer.render(scene, camera);

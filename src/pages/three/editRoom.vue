@@ -243,9 +243,10 @@
                     }
                 } else {
                     let dom = document.getElementById(`room-${item.id}`);
+                    let oldStyle = '1px solid rgba(0, 0, 0, 0.2)';
+                    let newStyle = '3px solid rgba(200,200,10,1)';
                     if (this.actWall.length && this.actWall.includes(item.id)) {
-                        let oldStyle = '1px solid rgba(0, 0, 0, 0.2)';
-                        let newStyle = '3px solid rgba(200,200,10,1)';
+
                         if (this.wallType === 'vertical' &&
                             (!dom.getAttribute('borderLeft') || dom.getAttribute('borderLeft') === 'false')) {
                             dom.style.borderLeft = newStyle;
@@ -281,11 +282,11 @@
                         }
                     } else {
                         if (this.wallType === 'horizontal') {
-                            dom.style.borderTop = '3px solid rgba(200,200,10,1)';
+                            dom.style.borderTop = newStyle;
                             dom.setAttribute('borderTop', 'true');
                             item.wall.push('horizontalWall');
                         } else {
-                            dom.style.borderLeft = '3px solid rgba(200,200,10,1)';
+                            dom.style.borderLeft = newStyle;
                             dom.setAttribute('borderLeft', 'true');
                             item.wall.push('verticalWall');
                         }
@@ -389,9 +390,6 @@
                 }
 
                 this.showContextmenu = false;
-            },
-            deleteCamera(item,camera) {
-                console.log(item,camera)
             },
             submit() {
                 this.$parent.close({
