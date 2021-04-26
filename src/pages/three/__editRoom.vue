@@ -13,15 +13,12 @@
                 <el-radio label="horizontal">—</el-radio>
                 <el-radio label="vertical">|</el-radio>
             </el-radio-group>
-            <div style="position:absolute;left: 50%;top: 0;text-align: center">
-                <i class="iconfont ali-iconjiantou_xiangshang"></i>
-                <div>视角朝向</div>
-            </div>
+
         </div>
         <div class="grid-box auto-center" :key="domKey"
              :style="`grid-template-columns:repeat(${widthNum}, 40px);grid-template-rows: repeat(${heightNum}, 40px)`">
             <template v-for="item in roomList">
-                <div :class="{'grid-item':true,active:act.includes(item.id),'left-border':item.leftBorder,'top-border':item.topBorder}" :key="item.id"
+                <div :class="{'grid-item':true,active:act.includes(item.id)}" :key="item.id"
                      :id="'room-' + item.id"
                      @click.stop="select(item)" @contextmenu="selectSense(item)">
                     <template v-if="act.includes(item.id)">
@@ -157,8 +154,6 @@
                         id: i,
                         pos: ['head'],
                         wall: [],
-                        leftBorder:false,
-                        topBorder:false,
                         senseId: ''
                     });
                 }
@@ -167,7 +162,6 @@
                 setTimeout(() => {
                     this.initWallData();
                     this.initSenseData();
-                    this.initCabinetPos();
                     this.loading = false;
                 })
 
@@ -192,34 +186,34 @@
 
                 })
             })
-        },
-        methods: {
-            initCabinetPos() {
-                this.$parent.params.selected && this.$parent.params.selected.forEach(item => {
-                    this.act.push(item.id);
-                    this.selected.push(item);
-                    setTimeout(() => {
-                        this.roomList.forEach(room => {
-                            if (item.id === room.id) {
-                                room.pos = item.pos;
-                            }
-                        })
+            this.$parent.params.selected && this.$parent.params.selected.forEach(item => {
+                this.act.push(item.id);
+                this.selected.push(item);
+                setTimeout(() => {
+                    this.roomList.forEach(room => {
+                        if (item.id === room.id) {
+                            room.pos = item.pos;
+                        }
                     })
                 })
-            },
+            })
+
+        },
+        methods: {
+
             initWallData() {
                 this.$parent.params.wallList && this.$parent.params.wallList.forEach(item => {
                     this.wallData.push(item)
                     this.actWall.push(item.id)
-                    this.roomList.forEach(room => {
-                        if (room.id === item.id) {
-                            if (item.wall.includes('verticalWall')) {
-                                room.leftBorder = true;
-                            }
-                            if (item.wall.includes('horizontalWall')) {
-                                room.topBorder = true;
-                            }
-
+                    let dom = document.getElementById(`room-${item.id}`);
+                    let newStyle = '3px solid rgba(200,200,10,1)';
+                    item.wall.forEach(wall => {
+                        if (wall === 'verticalWall') {
+                            dom.style.borderLeft = newStyle;
+                            dom.setAttribute('borderLeft', 'true');
+                        } else {
+                            dom.style.borderTop = newStyle;
+                            dom.setAttribute('borderTop', 'true');
                         }
                     })
                 })
@@ -248,26 +242,52 @@
                         this.selected.push(item);
                     }
                 } else {
+                    let dom = document.getElementById(`room-${item.id}`);
+                    let oldStyle = '1px solid rgba(0, 0, 0, 0.2)';
+                    let newStyle = '3px solid rgba(200,200,10,1)';
                     if (this.actWall.length && this.actWall.includes(item.id)) {
-                        if (this.wallType === 'vertical') {
-                            item.leftBorder = !item.leftBorder;
-                            this.changeWall(item.id, 'vertical', item.leftBorder ? 'add' : 'delete');
-                            if (!item.topBorder) {
+
+                        if (this.wallType === 'vertical' &&
+                            (!dom.getAttribute('borderLeft') || dom.getAttribute('borderLeft') === 'false')) {
+                            dom.style.borderLeft = newStyle;
+                            dom.setAttribute('borderLeft', 'true');
+                            this.changeWall(item.id, 'vertical', 'add');
+                        } else if (this.wallType === 'horizontal' &&
+                            (!dom.getAttribute('borderTop') || dom.getAttribute('borderTop') === 'false')) {
+                            dom.style.borderTop = newStyle
+                            dom.setAttribute('borderTop', 'true');
+                            this.changeWall(item.id, 'horizontal', 'add');
+                        } else if (this.wallType === 'horizontal'
+                            && dom.getAttribute('borderTop') === 'true') {
+                            dom.style.borderTop = oldStyle
+                            dom.setAttribute('borderTop', 'false');
+
+                            if (!dom.getAttribute('borderLeft')
+                                || dom.getAttribute('borderLeft') === 'false') {
                                 this.deleteData(item.id);
+                            } else {
+                                this.changeWall(item.id, 'horizontal', 'delete');
                             }
-                        } else if (this.wallType === 'horizontal') {
-                            item.topBorder = !item.topBorder;
-                            this.changeWall(item.id, 'horizontal', item.topBorder ? 'add' : 'delete');
-                            if (!item.leftBorder) {
+                        } else if (this.wallType === 'vertical'
+                            && dom.getAttribute('borderLeft') === 'true') {
+                            dom.style.borderLeft = oldStyle
+                            dom.setAttribute('borderLeft', 'false');
+
+                            if (!dom.getAttribute('borderTop')
+                                || dom.getAttribute('borderTop') === 'false') {
                                 this.deleteData(item.id);
+                            } else {
+                                this.changeWall(item.id, 'vertical', 'delete');
                             }
                         }
                     } else {
                         if (this.wallType === 'horizontal') {
-                            item.topBorder = true;
+                            dom.style.borderTop = newStyle;
+                            dom.setAttribute('borderTop', 'true');
                             item.wall.push('horizontalWall');
                         } else {
-                            item.leftBorder = true;
+                            dom.style.borderLeft = newStyle;
+                            dom.setAttribute('borderLeft', 'true');
                             item.wall.push('verticalWall');
                         }
                         this.wallData.push(item)
@@ -401,13 +421,6 @@
                 background-color: #d3ea7f;
             }
         }
-        .left-border {
-            border-left: 3px solid rgba(200,200,10,1);
-        }
-        .top-border {
-            border-top: 3px solid rgba(200,200,10,1);
-        }
-
     }
 
     /*机柜方向*/

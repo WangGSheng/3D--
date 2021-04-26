@@ -2,8 +2,8 @@
     <ui-main :title="$route.name" noPadding>
         <div ref="threeDom" class="w-100p h-100p"></div>
 
-        <div class="control">
-            <el-button @click="drawRoom" type="primary" style="margin-left: 16px;">编辑</el-button>
+        <div class="control" @click="drawRoom" title="编辑">
+            <i class="icon edit" ></i>
         </div>
     </ui-main>
 </template>
@@ -51,10 +51,12 @@ export default {
         this.initRenderer();
         // 创建光源
         this.initLight();
+        // 本地数据
+        this.initData(room3D);
         // 创建地板
         // this.createGround();
         // 创建立方体
-        this.createCube();
+        // this.createCube();
         // 鼠标控制器
         this.getOrbitControls()
         // 添加拖拽控件
@@ -74,8 +76,7 @@ export default {
             camera.aspect = width / height;
             camera.updateProjectionMatrix();
         })
-        // 本地数据
-        this.initData(room3D);
+
 
         // 添加点击事件
         this.initRayCaster();
@@ -141,45 +142,46 @@ export default {
         addCamera(item, loader) {
             let vm = this;
             loader.load('static/three/model/监控摄像头.glb', function (gltf) {
-                    let model = gltf.scene;
-                    model.position.set(item.x, 10, item.z)
+                    let mesh = gltf.scene;
+                    mesh.position.set(item.x, 10, item.z)
                     switch (item.senseId) {
                         case 'rightBack':
-                            model.rotateY(Math.PI / 4);
+                            mesh.rotateY(Math.PI / 4);
                             break;
                         case 'back':
-                            // model.rotateY(Math.PI / 2);
+                            // mesh.rotateY(Math.PI / 2);
                             break;
                         case 'leftBack':
-                            model.rotateY(Math.PI / -4);
+                            mesh.rotateY(Math.PI / -4);
                             break;
                         case 'right':
-                            model.rotateY(Math.PI / 2);
+                            mesh.rotateY(Math.PI / 2);
                             break;
                         case 'left':
-                            model.rotateY(Math.PI / -2);
+                            mesh.rotateY(Math.PI / -2);
                             break;
                         case 'rightHead':
-                            model.rotateY(Math.PI / 2 + Math.PI / 4);
+                            mesh.rotateY(Math.PI / 2 + Math.PI / 4);
                             break;
                         case 'head':
-                            model.rotateY(Math.PI);
+                            mesh.rotateY(Math.PI);
                             break;
                         case 'leftHead':
-                            model.rotateY(Math.PI / -2 + Math.PI / -4);
+                            mesh.rotateY(Math.PI / -2 + Math.PI / -4);
                             break;
                         default:
                             break;
                     }
+                    mesh.isCustomer = true
+                    mesh.scale.set(0.02, 0.02, 0.02) // scale here
+                    mesh.name = 'camera';
+                    scene.add(mesh);
+                    vm.objects.push(mesh)
 
-                    // model.rotateZ(Math.PI / 2)
-                    model.isCustomer = true
-                    model.scale.set(0.02, 0.02, 0.02) // scale here
-                    model.name = 'camera';
-                    group.add(model)
-                    // scene.add(model)
-                    vm.objects.push(model)
-
+                    // mesh.rotateZ(Math.PI / 2)
+                    //
+                    // group.add(mesh)
+                    // vm.objects.push(mesh)
                 }, undefined,
                 function (error) {
                     console.error(error)
@@ -194,8 +196,6 @@ export default {
                     this.addScene(item.data, loader)
                 }
             })
-
-
         },
         initScene() {
             scene = new THREE.Scene();
@@ -248,7 +248,7 @@ export default {
             let plane = new THREE.Mesh(geometry, material);
             plane.position.set(x, 5, z)
             if (rotate) plane.rotateY(Math.PI / 2);
-            group.add(plane);
+            scene.add(plane);
             // this.objects.push(plane)
         },
         createPlane(type) {
@@ -306,7 +306,7 @@ export default {
                 let cubeEdges = new THREE.EdgesGeometry(geometry, 1);
                 let cubeLine = new THREE.LineSegments(cubeEdges, edgesMtl);
                 plane.add(cubeLine);
-                group.add(plane);
+                scene.add(plane);
                 // this.objects.push(plane)
             }
         },
@@ -326,16 +326,24 @@ export default {
             rayCaster = new THREE.Raycaster();
             mouse = new THREE.Vector2();
             //监听全局点击事件,通过ray检测选中哪一个object
-            document.addEventListener("mousedown", (event) => {
+            renderer.domElement.addEventListener("mousedown", (event) => {
                 event.preventDefault();
+                if (event.button === 2) {
+                    return false;
+                }
+
                 mouse.x = (event.clientX / renderer.domElement.clientWidth) * 2 - 1;
                 mouse.y = -(event.clientY / renderer.domElement.clientHeight) * 2 + 1;
-
+                // mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+                // mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 
                 rayCaster.setFromCamera(mouse, camera);
-                let intersects = rayCaster.intersectObjects(this.objects,true);
+                let intersects = rayCaster.intersectObjects(scene.children,true);
                 if (intersects.length) {
-                    console.log(intersects)
+                    // console.log(intersects)
+                    intersects.forEach(item => {
+                        console.log(item.object.name,'------',item.object.type)
+                    })
                     // intersects[0].object.children[0].material.visible = !intersects[0].object.children[0].material.visible;
                     // if (intersects[0].object.children[0].material.visible) {
                     //     this.selectedMesh.push(intersects[0].object);
@@ -450,20 +458,20 @@ export default {
                     //直接使用材质数组来构建物体，数组里的材质分别对应物体的右、左、上、下、前、后
                     let material = [
 
-                        new THREE.MeshLambertMaterial({color: '#222'}),
-                        new THREE.MeshLambertMaterial({color: '#222'}),
-                        new THREE.MeshLambertMaterial({color: '#333'}),
-                        new THREE.MeshLambertMaterial({color: '#000'}),
+                        new THREE.MeshLambertMaterial({color: '#222'}),// 右
+                        new THREE.MeshLambertMaterial({color: '#222'}),// 左
+                        new THREE.MeshLambertMaterial({color: '#333'}),// 上
+                        new THREE.MeshLambertMaterial({color: '#000'}),// 下
                         new THREE.MeshLambertMaterial(
                             item.pos.includes('head') ||
                             item.pos.includes('left') ||
                             item.pos.includes('right')
                                 ? {map: texture} : {color: '#111'}
-                        ),
+                        ),                                                       // 前
                         new THREE.MeshLambertMaterial(
                             item.pos.includes('back') || (item.pos.includes('left') && item.pos.includes('right'))
                                 ? {map: texture} : {color: '#111'}
-                        ),
+                        ),                                                       // 后
                     ]
                     //添加长方体
                     let geometry = new THREE.BoxGeometry(4, 8, 3);
@@ -473,7 +481,7 @@ export default {
                     let cubeEdges = new THREE.EdgesGeometry(geometry, 1);
                     let cubeLine = new THREE.LineSegments(cubeEdges, edgesMtl);
                     cubeLine.name = 'cubeLine';
-                    cubeLine.material.visible = false;
+                    cubeLine.material.visible = true;
                     cube.add(cubeLine);
                     cube.isCustomer = true
                     if (item.pos.includes('left')) {
@@ -513,11 +521,23 @@ export default {
 <style scoped lang="scss">
 .control {
     position: absolute;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    padding: 10px 0 5px 6px;
+    cursor: pointer;
+    color: #ddd;
+    background-color: #7499d9;
     right: 10px;
-    top: 10px;
+    bottom: 10px;
+    font-size: 18px;
     //width: 200px;
     //background-color: rgba(0, 0, 0, .5);
+    border-radius: 50%;
 
+    &:hover {
+        color: #fff;
+    }
     .title {
         padding: 5px;
         background-color: #dff;
