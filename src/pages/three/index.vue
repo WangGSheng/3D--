@@ -23,7 +23,7 @@ let mouse = null;
 import OrbitControls from 'three-orbitcontrols' //鼠标
 /*eslint-disable*/
 import room3D from './机房.js'
-
+import { ConvertGLBtoGltf} from 'gltf-import-export';
 export default {
     data() {
         return {
@@ -40,6 +40,7 @@ export default {
             cubeList: [],
             wallList: [],
             senseList: [],
+            GLTFLoader:null
         }
     },
     mounted() {
@@ -51,6 +52,8 @@ export default {
         this.initRenderer();
         // 创建光源
         this.initLight();
+
+        this.initLoader();
         // 本地数据
         this.initData(room3D);
         // 创建地板
@@ -82,6 +85,9 @@ export default {
         this.initRayCaster();
     },
     methods: {
+        initLoader() {
+            this.GLTFLoader = new THREE.GLTFLoader();
+        },
         initData(item) {
             this.removeMesh();
             if (item.cabinetData && item.cabinetData.length) {
@@ -125,12 +131,14 @@ export default {
         },
         addScene(item, loader) {
             let vm = this;
-            loader.load('static/three/model/温湿度传感器.glb', function (gltf) {
+            loader.load('static/three/model/温湿度/scene.gltf', function (gltf) {
                     let model = gltf.scene;
-                    model.position.set(item.x + 6, 11, item.z + 2)
+                    model.position.set(item.x + 4, 11, item.z)
                     model.rotateZ(Math.PI)
+                    model.rotateY(Math.PI / 2)
                     model.isCustomer = true
-                    model.scale.set(1, 1, 1) // scale here
+                    let scale = 1;
+                    model.scale.set(scale, scale, scale) // scale here
                     group.add(model)
                     vm.objects.push(model)
 
@@ -141,8 +149,8 @@ export default {
         },
         addCamera(item, loader) {
             let vm = this;
-            loader.load('static/three/model/监控摄像头.glb', function (gltf) {
-                    let mesh = gltf.scene;
+            loader.load('static/three/model/scene.gltf', function (obj) {
+                    let mesh = obj.scene;
                     mesh.position.set(item.x, 10, item.z)
                     switch (item.senseId) {
                         case 'rightBack':
@@ -173,27 +181,27 @@ export default {
                             break;
                     }
                     mesh.isCustomer = true
-                    mesh.scale.set(0.02, 0.02, 0.02) // scale here
+                    let scale = 0.2
+                    mesh.scale.set(scale, scale, scale) // scale here
                     mesh.name = 'camera';
-                    scene.add(mesh);
-                    vm.objects.push(mesh)
+                    // scene.add(mesh);
+                    // vm.objects.push(mesh)
 
                     // mesh.rotateZ(Math.PI / 2)
                     //
-                    // group.add(mesh)
-                    // vm.objects.push(mesh)
+                    group.add(mesh)
+                    vm.objects.push(mesh)
                 }, undefined,
                 function (error) {
                     console.error(error)
                 });
         },
         createSense() {
-            let loader = new THREE.GLTFLoader();
             this.senseList.forEach(item => {
                 if (item.type === 'camera') {
-                    this.addCamera(item.data, loader)
+                    this.addCamera(item.data, this.GLTFLoader)
                 } else {
-                    this.addScene(item.data, loader)
+                    this.addScene(item.data, this.GLTFLoader)
                 }
             })
         },
@@ -338,11 +346,11 @@ export default {
                 // mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 
                 rayCaster.setFromCamera(mouse, camera);
-                let intersects = rayCaster.intersectObjects(scene.children,true);
+                let intersects = rayCaster.intersectObjects(this.objects,true);
                 if (intersects.length) {
                     // console.log(intersects)
                     intersects.forEach(item => {
-                        console.log(item.object.name,'------',item.object.type)
+                        console.log(item.object.name,'------',item.object.scale)
                     })
                     // intersects[0].object.children[0].material.visible = !intersects[0].object.children[0].material.visible;
                     // if (intersects[0].object.children[0].material.visible) {
