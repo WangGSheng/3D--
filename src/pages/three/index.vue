@@ -2,8 +2,11 @@
     <ui-main :title="$route.name" noPadding>
         <div ref="threeDom" class="w-100p h-100p"></div>
 
-        <div class="control" @click="drawRoom" title="编辑">
-            <i class="icon edit" ></i>
+        <div class="control" title="编辑" v-show="false">
+            <i class="icon edit"></i>
+        </div>
+
+        <div class="model-popup" v-show="false">
         </div>
     </ui-main>
 </template>
@@ -14,22 +17,23 @@ let group = null;
 let camera = null;
 let renderer = null;
 let light = null;
-let transformControls = null;
+// let transformControls = null;
 let rayCaster = null;
 let mouse = null;
 // let dragControls = null;
-
-// import * as THREE from 'three'
 import OrbitControls from 'three-orbitcontrols' //鼠标
+import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer'
 /*eslint-disable*/
 import room3D from './机房.js'
-import { ConvertGLBtoGltf} from 'gltf-import-export';
+import Vue from 'vue'
+import mapPopup from '@/pages/videoPlayer/_videoPopup.vue'
 export default {
     data() {
         return {
             threeDom: null,
             controls: null,
             drawer: false,
+            showVideo: false,
             objects: [],
             max: 0,
             groundCount: 1,
@@ -40,7 +44,11 @@ export default {
             cubeList: [],
             wallList: [],
             senseList: [],
-            GLTFLoader:null
+            GLTFLoader: null,
+            cssRender: null,
+            videoComponent:null,
+            videoVm:null,
+            beforeSelected:null
         }
     },
     mounted() {
@@ -59,17 +67,21 @@ export default {
         // 创建地板
         // this.createGround();
         // 创建立方体
-        // this.createCube();
-        // 鼠标控制器
-        this.getOrbitControls()
+        // this.createCabinet();
         // 添加拖拽控件
         // this.initTransformControl();
         // 添加删除事件
         // this.initDeleteEvent();
 
+        this.initCssRender();
         // 传感器
         // this.addScene()
-        this.render();
+
+        // 鼠标控制器
+        this.getOrbitControls()
+
+        // 添加点击事件
+        this.initRayCaster();
 
         //加入事件监听器,窗口自适应
         window.addEventListener('resize', function () {
@@ -80,19 +92,122 @@ export default {
             camera.updateProjectionMatrix();
         })
 
-
-        // 添加点击事件
-        this.initRayCaster();
+        this.$nextTick(()=>{
+            this.render();
+            this.showVideo = true
+        })
+        // vue实例
+        this.videoComponent = Vue.extend(mapPopup)
     },
     methods: {
+        // 创建场景
+        initScene() {
+            scene = new THREE.Scene();
+            group = new THREE.Group();
+            scene.add(group);
+            // 加载辅助坐标系 实际应用的时候需要注释此代码
+            const axisHelper = new THREE.AxisHelper(250)
+            axisHelper.position.set(0, 0, 0);//位置
+            scene.add(axisHelper)
+        },
+        // 初始化摄像机
+        initCamera() {
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, this.near, this.far);
+            camera.position.set(140, 70, 190);//位置
+            camera.lookAt(scene.position);//对准的焦点
+        },
+        // 初始化光源
+        initLight() {
+            light = new THREE.AmbientLight('#fff') // 光源颜色;
+            // light.position.set(0, 0, 100);
+            scene.add(light);
+        },
+        // 初始化渲染器
+        initRenderer() {
+            renderer = new THREE.WebGLRenderer({
+                //增加下面两个属性，可以抗锯齿
+                antialias: true,
+                alpha: true
+            });
+            renderer.setClearColor('#000', 1);// 设置渲染颜色（背景底色
+            renderer.setSize(window.innerWidth, window.innerHeight);// 渲染面大小（在二维平面上的窗口大小）
+            renderer.setPixelRatio(window.devicePixelRatio); //设备像素比 可以清晰物体
+            this.$refs.threeDom.appendChild(renderer.domElement);
+        },
+        // initTransformControl() {
+        //     // 添加平移控件
+        //     transformControls = new THREE.TransformControls(camera, renderer.domElement);
+        //     transformControls.setMode("translate");//translate，rotate，scale
+        //     transformControls.showY = false;
+        //     scene.add(transformControls);
+        // },
+        // 初始化点击事件
+        initRayCaster() {
+            rayCaster = new THREE.Raycaster();
+            mouse = new THREE.Vector2();
+            //监听全局点击事件,通过ray检测选中哪一个object
+            this.cssRender.domElement.addEventListener("mousedown", (event) => {
+                event.preventDefault();
+                if (event.button === 2) {
+                    return false;
+                }
+
+                mouse.x = (event.clientX / renderer.domElement.clientWidth) * 2 - 1;
+                mouse.y = -(event.clientY / renderer.domElement.clientHeight) * 2 + 1;
+
+                rayCaster.setFromCamera(mouse, camera);
+                let intersects = rayCaster.intersectObjects(this.objects, true);
+                if (intersects.length) {
+                    if (intersects[0].object.children[0] ?.isScene) {
+                        let dom = intersects[0].object.children[0].children[1].element;
+                        this.openOrClose(dom)
+
+                        if (!dom.children.length){
+                            const comp = new this.videoComponent({
+                                propsData: {
+                                    param:'1'
+                                }
+                            }).$mount();
+
+                            if (this.beforeSelected && this.beforeSelected.id !== intersects[0].object.id) {
+                                let oldDom = this.beforeSelected.children[0].children[1].element;
+                                this.videoVm.$destroy();
+                                this.videoVm= null;
+                                this.beforeSelected = null;
+                                this.openOrClose(oldDom)
+                                oldDom.firstElementChild.remove();
+                            }
+
+                            dom.append(comp.$el)
+                            this.videoVm = comp;
+                            this.beforeSelected = intersects[0].object;
+                        }else {
+                            this.videoVm.$destroy();
+                            dom.firstElementChild.remove();
+                            this.videoVm= null;
+                            this.beforeSelected = null;
+                        }
+
+                    }
+                }
+            }, false)
+        },
+        openOrClose(dom) {
+            dom.style.fontSize = dom.style.fontSize === '0px' ? '16px' : '0px';
+            dom.style.overflow = dom.style.overflow === 'hidden' ? 'unset' : 'hidden';
+            dom.style.width = dom.style.width === '0px' ? '400px' : '0px';
+            dom.style.padding = dom.style.padding === '0px' ? '5px' : '0px';
+        },
+        // 初始化外部模型加载器
         initLoader() {
             this.GLTFLoader = new THREE.GLTFLoader();
         },
+        // 初始化数据
         initData(item) {
             this.removeMesh();
             if (item.cabinetData && item.cabinetData.length) {
                 this.cubeList = item.cabinetData;
-                this.createCube();
+                this.createCabinet();
             }
             if (item.wallData && item.wallData.length) {
                 this.wallList = item.wallData;
@@ -105,6 +220,19 @@ export default {
                 this.createSense();
             }
         },
+        // 初始化弹窗渲染器
+        initCssRender() {
+            this.cssRender = new CSS2DRenderer();
+            this.cssRender.setSize(window.innerWidth, window.innerHeight);
+            this.cssRender.domElement.style.position = 'absolute';
+            this.cssRender.domElement.style.top = 0;
+            document.body.appendChild( this.cssRender.domElement );
+            let control = document.querySelector('.control').cloneNode(true)
+            control.style.display = 'block'
+            control.addEventListener('click',this.drawRoom)
+            document.body.appendChild(control);
+        },
+        // 机房编辑
         drawRoom() {
             let vm = this;
             this.$bui.drawer({
@@ -122,36 +250,55 @@ export default {
                 }
             })
         },
-        removeMesh() {
-            this.objects.forEach(item => {
-                group.remove(item);
-                // if (item.type === type) {
-                // }
-            })
-        },
+        // 添加温湿度传感器模型
         addScene(item, loader) {
             let vm = this;
             loader.load('static/three/model/温湿度/scene.gltf', function (gltf) {
                     let model = gltf.scene;
-                    model.position.set(item.x + 4, 11, item.z)
+
                     model.rotateZ(Math.PI)
-                    model.rotateY(Math.PI / 2)
+                    model.rotateY(Math.PI / -2)
                     model.isCustomer = true
                     let scale = 1;
                     model.scale.set(scale, scale, scale) // scale here
-                    group.add(model)
-                    vm.objects.push(model)
+                    model.name = '传感器-' + item.id
+                    // 给模型定制弹窗
+                    const popupDiv = document.getElementsByClassName('model-popup')[0].cloneNode(true);
+                    popupDiv.textContent = '传感器-' + item.id;
+                    popupDiv.style.marginTop = `-80px`;
+                    popupDiv.style.color = '#6d597a';
+                    popupDiv.style.overflow = 'hidden';
+                    popupDiv.style.width = '0px';
+                    popupDiv.style.padding = '0px';
+                    popupDiv.style.fontSize = '0px';
+                    let moonLabel = new CSS2DObject(popupDiv);
+                    moonLabel.position.set(0, 1, 0);
+                    model.add(moonLabel)
+
+
+                    // 添加一个透明的Mesh 将模型添加进去
+                    let geometry = new THREE.BoxBufferGeometry( 2, 2, 2 );
+                    let material = new THREE.MeshBasicMaterial( { color: 0xffffff} );
+                    material.transparent = true;
+                    material.opacity = 0;
+                    let other = new THREE.Mesh(geometry,material);
+                    other.position.set(item.x + 4, 11, item.z)
+                    other.add(model)
+
+
+                    group.add(other)
+                    vm.objects.push(other)
 
                 }, undefined,
                 function (error) {
                     console.error(error)
                 });
         },
+        // 添加摄像头模型
         addCamera(item, loader) {
             let vm = this;
             loader.load('static/three/model/scene.gltf', function (obj) {
                     let mesh = obj.scene;
-                    mesh.position.set(item.x, 10, item.z)
                     switch (item.senseId) {
                         case 'rightBack':
                             mesh.rotateY(Math.PI / 4);
@@ -183,19 +330,35 @@ export default {
                     mesh.isCustomer = true
                     let scale = 0.2
                     mesh.scale.set(scale, scale, scale) // scale here
-                    mesh.name = 'camera';
-                    // scene.add(mesh);
-                    // vm.objects.push(mesh)
+                    mesh.name = 'camera-' + item.senseId;
+                    const popupDiv = document.getElementsByClassName('model-popup')[0].cloneNode(true);
+                    // popupDiv.textContent = '摄像头方向-' + item.senseId;
+                    popupDiv.style.overflow = 'hidden';
+                    popupDiv.style.width = '0px';
+                    popupDiv.style.padding = '0px';
+                    popupDiv.style.fontSize = '0px';
+                    let moonLabel = new CSS2DObject(popupDiv);
+                    moonLabel.position.set(0, 1, 0);
+                    // moonLabel.visible = false;
+                    mesh.add(moonLabel)
 
-                    // mesh.rotateZ(Math.PI / 2)
-                    //
-                    group.add(mesh)
-                    vm.objects.push(mesh)
+                    // 添加一个透明的Mesh 将模型添加进去，用以点击
+                    let geometry = new THREE.BoxBufferGeometry( 2, 2, 2 );
+                    let material = new THREE.MeshBasicMaterial( { color: 0xffffff} );
+                    material.transparent = true;
+                    material.opacity = 0;
+                    let other = new THREE.Mesh(geometry,material);
+                    other.position.set(item.x, 10, item.z)
+                    other.add(mesh)
+
+                    group.add(other)
+                    vm.objects.push(other)
                 }, undefined,
                 function (error) {
                     console.error(error)
                 });
         },
+        // 创建各模型
         createSense() {
             this.senseList.forEach(item => {
                 if (item.type === 'camera') {
@@ -205,36 +368,7 @@ export default {
                 }
             })
         },
-        initScene() {
-            scene = new THREE.Scene();
-            group = new THREE.Group();
-            scene.add(group);
-            // 加载辅助坐标系 实际应用的时候需要注释此代码
-            // const axisHelper = new THREE.AxisHelper(250)
-            // axisHelper.position.set(0, 0, 0);//位置
-            // scene.add(axisHelper)
-        },
-        initCamera() {
-            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, this.near, this.far);
-            camera.position.set(140, 70, 190);//位置
-            camera.lookAt(scene.position);//对准的焦点
-        },
-        initRenderer() {
-            renderer = new THREE.WebGLRenderer({
-                //增加下面两个属性，可以抗锯齿
-                antialias: true,
-                alpha: true
-            });
-            renderer.setClearColor('#ddd', 1);// 设置渲染颜色（背景底色
-            renderer.setSize(window.innerWidth, window.innerHeight);// 渲染面大小（在二维平面上的窗口大小）
-            renderer.setPixelRatio(window.devicePixelRatio); //设备像素比 可以清晰物体
-            this.$refs.threeDom.appendChild(renderer.domElement);
-        },
-        initLight() {
-            light = new THREE.AmbientLight('#fff') // 光源颜色;
-            // light.position.set(0, 0, 100);
-            scene.add(light);
-        },
+        // 创建墙体
         createWall(item, type) {
             let width = 4, height = 10, rotate = false, x = item.x, z = item.z;
             if (type === 'verticalWall') {
@@ -259,6 +393,7 @@ export default {
             scene.add(plane);
             // this.objects.push(plane)
         },
+        // 创建面
         createPlane(type) {
             if (type === 'wall') {
                 this.wallList.forEach((item) => {
@@ -273,16 +408,18 @@ export default {
             } else {
                 let maxZ = Math.max.apply(Math, this.wallList.map(function (o) {
                     return o.z
-                }))
+                })) // 最大 Z 值
                 let minZ = Math.min.apply(Math, this.wallList.map(function (o) {
                     return o.z
-                }))
+                })) // 最小 Z 值
                 let maxX = Math.max.apply(Math, this.wallList.map(function (o) {
                     return o.x
-                }))
+                })) // 最大 X 值
                 let minX = Math.min.apply(Math, this.wallList.map(function (o) {
                     return o.x
-                }))
+                })) // 最小 X 值
+
+                // 减 4 是为了让地板往外延伸
                 let res = {
                     maxZ: maxZ,
                     minZ: minZ - 4,
@@ -294,7 +431,11 @@ export default {
                 this.createGround(res)
             }
         },
+        // 创建地板
         createGround(data) {
+            /*
+            * 计算地板的面积
+            * */
             let len = ((data.maxX - data.minX + 4) / 4) * ((data.maxZ - data.minZ + 4) / 4);
             let x = data.minX, z = data.minZ;
             for (let i = 0; i < len; i++) {
@@ -309,7 +450,7 @@ export default {
                 let material = new THREE.MeshBasicMaterial({color: '#b8b6b6', side: THREE.DoubleSide});
                 let plane = new THREE.Mesh(geometry, material);
                 plane.position.set(x, 0, z)
-                plane.rotateX(Math.PI / 2);
+                plane.rotateX(Math.PI / 2); // 沿 X 轴旋转 90°
                 let edgesMtl = new THREE.LineBasicMaterial({color: '#777'})
                 let cubeEdges = new THREE.EdgesGeometry(geometry, 1);
                 let cubeLine = new THREE.LineSegments(cubeEdges, edgesMtl);
@@ -318,49 +459,76 @@ export default {
                 // this.objects.push(plane)
             }
         },
+        // 创建机柜
+        createCabinet() {
+            //导入材质
+            let texture = new THREE.TextureLoader().load('static/images/fuwuqi.png')
+            texture.matrixAutoUpdate = false;
+
+            if (this.cubeList && this.cubeList.length) {
+                //添加长方体
+                let geometry = new THREE.BoxGeometry(4, 8, 3);
+                let edgesMtl = new THREE.LineBasicMaterial({color: '#999', alpha: 0.1})
+                this.cubeList.forEach(item => {
+                    //直接使用材质数组来构建物体，数组里的材质分别对应物体的右、左、上、下、前、后
+                    let material = [
+                        new THREE.MeshLambertMaterial({color: '#222'}),// 右
+                        new THREE.MeshLambertMaterial({color: '#222'}),// 左
+                        new THREE.MeshLambertMaterial({color: '#333'}),// 上
+                        new THREE.MeshLambertMaterial({color: '#000'}),// 下
+                        new THREE.MeshLambertMaterial(
+                            item.pos.includes('head') ||
+                            item.pos.includes('left') ||
+                            item.pos.includes('right')
+                                ? {map: texture} : {color: '#111'}
+                        ),                                                       // 前
+                        new THREE.MeshLambertMaterial(
+                            item.pos.includes('back') || (item.pos.includes('left') && item.pos.includes('right'))
+                                ? {map: texture} : {color: '#111'}
+                        ),                                                       // 后
+                    ]
+                    let cube = new THREE.Mesh(geometry, material);
+                    cube.position.set(item.x, 4, item.z);
+
+                    // 给模型添加描边
+                    let cubeEdges = new THREE.EdgesGeometry(geometry, 1);
+                    let cubeLine = new THREE.LineSegments(cubeEdges, edgesMtl);
+                    cubeLine.name = 'cubeLine';
+                    cubeLine.material.visible = true;
+                    cube.add(cubeLine);
+                    cube.isCustomer = true
+                    if (item.pos.includes('left')) {
+                        cube.rotateY(Math.PI / -2);
+                    } else if (item.pos.includes('right')) {
+                        cube.rotateY(Math.PI / 2);
+                    }
+                    this.objects.push(cube)
+                    group.add(cube);
+                })
+            }
+
+
+            // this.initDragControls()
+        },
+        // 移除所有Mesh
+        removeMesh() {
+            this.objects.forEach(item => {
+                //删除掉所有的模型组内的mesh
+                group.traverse((child)=>{
+                    if (child instanceof THREE.Mesh) {
+                        child.geometry.dispose(); //删除几何体
+                        // child.material.dispose(); //删除材质
+                    }
+                })
+
+                group.remove(item);
+            })
+        },
         unique(arr, key) {
             const res = new Map();
             return arr.filter((a) => !res.has(a[key]) && res.set(a[key], 1))
         },
 
-        initTransformControl() {
-            // 添加平移控件
-            transformControls = new THREE.TransformControls(camera, renderer.domElement);
-            transformControls.setMode("translate");//translate，rotate，scale
-            transformControls.showY = false;
-            scene.add(transformControls);
-        },
-        initRayCaster() {
-            rayCaster = new THREE.Raycaster();
-            mouse = new THREE.Vector2();
-            //监听全局点击事件,通过ray检测选中哪一个object
-            renderer.domElement.addEventListener("mousedown", (event) => {
-                event.preventDefault();
-                if (event.button === 2) {
-                    return false;
-                }
-
-                mouse.x = (event.clientX / renderer.domElement.clientWidth) * 2 - 1;
-                mouse.y = -(event.clientY / renderer.domElement.clientHeight) * 2 + 1;
-                // mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-                // mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-
-                rayCaster.setFromCamera(mouse, camera);
-                let intersects = rayCaster.intersectObjects(this.objects,true);
-                if (intersects.length) {
-                    // console.log(intersects)
-                    intersects.forEach(item => {
-                        console.log(item.object.name,'------',item.object.scale)
-                    })
-                    // intersects[0].object.children[0].material.visible = !intersects[0].object.children[0].material.visible;
-                    // if (intersects[0].object.children[0].material.visible) {
-                    //     this.selectedMesh.push(intersects[0].object);
-                    // } else {
-                    //     this.selectedMesh.splice(intersects[0].object, 1)
-                    // }
-                }
-            }, false)
-        },
         // initDeleteEvent() {
         //     document.addEventListener('keydown', ev => {
         //         if (ev.key === 'Delete' && this.selectedMesh.length) {
@@ -447,63 +615,17 @@ export default {
         //         vm.controls.enabled = true;
         //     });
         // },
+        // 创建鼠标控件
         getOrbitControls() {
-            this.controls = new OrbitControls(camera, renderer.domElement)
+            this.controls = new OrbitControls(camera, this.cssRender.domElement)
             // 设置相机距离原点的最近距离
             this.controls.minDistance = this.near;
             // 设置相机距离原点的最远距离
             this.controls.maxDistance = this.far;
             // 是否开启右键拖拽
             this.controls.enablePan = true
-        },
-        createCube() {
-            //导入材质
-            let texture = new THREE.TextureLoader().load('static/images/fuwuqi.png')
-            texture.matrixAutoUpdate = false;
-
-            if (this.cubeList && this.cubeList.length) {
-                this.cubeList.forEach(item => {
-                    //直接使用材质数组来构建物体，数组里的材质分别对应物体的右、左、上、下、前、后
-                    let material = [
-
-                        new THREE.MeshLambertMaterial({color: '#222'}),// 右
-                        new THREE.MeshLambertMaterial({color: '#222'}),// 左
-                        new THREE.MeshLambertMaterial({color: '#333'}),// 上
-                        new THREE.MeshLambertMaterial({color: '#000'}),// 下
-                        new THREE.MeshLambertMaterial(
-                            item.pos.includes('head') ||
-                            item.pos.includes('left') ||
-                            item.pos.includes('right')
-                                ? {map: texture} : {color: '#111'}
-                        ),                                                       // 前
-                        new THREE.MeshLambertMaterial(
-                            item.pos.includes('back') || (item.pos.includes('left') && item.pos.includes('right'))
-                                ? {map: texture} : {color: '#111'}
-                        ),                                                       // 后
-                    ]
-                    //添加长方体
-                    let geometry = new THREE.BoxGeometry(4, 8, 3);
-                    let cube = new THREE.Mesh(geometry, material);
-                    cube.position.set(item.x, 4, item.z);
-                    let edgesMtl = new THREE.LineBasicMaterial({color: '#999', alpha: 0.1})
-                    let cubeEdges = new THREE.EdgesGeometry(geometry, 1);
-                    let cubeLine = new THREE.LineSegments(cubeEdges, edgesMtl);
-                    cubeLine.name = 'cubeLine';
-                    cubeLine.material.visible = true;
-                    cube.add(cubeLine);
-                    cube.isCustomer = true
-                    if (item.pos.includes('left')) {
-                        cube.rotateY(Math.PI / -2);
-                    } else if (item.pos.includes('right')) {
-                        cube.rotateY(Math.PI / 2);
-                    }
-                    this.objects.push(cube)
-                    group.add(cube);
-                })
-            }
-
-
-            // this.initDragControls()
+            //监听鼠标事件，触发渲染函数，更新canvas画布渲染效果
+            // this.controls.addEventListener('change', this.render);
         },
         hiedLineSegment() {
             for (let i = 0; i < scene.children.length; i++) {
@@ -518,8 +640,10 @@ export default {
                 }
             }
         },
+        // 渲染
         render() {
             requestAnimationFrame(this.render);
+            this.cssRender.render(scene, camera)
             renderer.render(scene, camera);
         }
     }
@@ -528,6 +652,7 @@ export default {
 
 <style scoped lang="scss">
 .control {
+    z-index: 10;
     position: absolute;
     width: 40px;
     height: 40px;
@@ -546,6 +671,7 @@ export default {
     &:hover {
         color: #fff;
     }
+
     .title {
         padding: 5px;
         background-color: #dff;
@@ -574,6 +700,29 @@ export default {
             }
 
         }
+    }
+}
+
+/*弹窗*/
+.model-popup {
+    height: 230px;
+    //border: 1px solid rgba(#121b74, 0.1);
+    border-radius: 5px;
+    margin-top: -130px;
+    color: #B9EDF8;
+    background-color: rgba(#1F6ED4,1);
+    transition: all 0.2s linear;
+    &::before {
+        content: "";
+        position: absolute;
+        width: 0px;
+        height: 0px;
+        left:calc(50% - 8px);
+        bottom: -15px;
+        border-top: 8px solid #1F6ED4;
+        border-right: 8px solid transparent;
+        border-left: 8px solid transparent;
+        border-bottom: 8px solid transparent;
     }
 }
 </style>

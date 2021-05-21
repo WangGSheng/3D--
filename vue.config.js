@@ -110,12 +110,12 @@ module.exports = {
                     '^/api': '/api'
                 }
             },
-            '/upload': {
-                target: IP,
+            '/video': {
+                target: 'http://iermd.gzdict.cn:9000',
                 ws: true,
                 changeOrigin: false,
                 pathRewrite: {
-                    '^/upload': '/upload'
+                    '^/video': '/api'
                 }
             },
         }
