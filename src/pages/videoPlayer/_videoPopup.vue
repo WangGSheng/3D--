@@ -13,10 +13,6 @@
 <script>
 /* eslint-disable */
 export default {
-    // props: {
-    //     flvPlayer:null,
-    //     hlsPlayer:null,
-    // },
     data() {
         return {
             item:null,

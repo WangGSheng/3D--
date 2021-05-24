@@ -1,5 +1,96 @@
+<style scoped lang="scss">
+.control {
+    z-index: 10;
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    padding: 10px 0 5px 6px;
+    cursor: pointer;
+    color: #ddd;
+    background-color: #7499d9;
+    right: 10px;
+    bottom: 10px;
+    font-size: 18px;
+    //width: 200px;
+    //background-color: rgba(0, 0, 0, .5);
+    border-radius: 50%;
+
+    &:hover {
+        color: #fff;
+    }
+
+    .title {
+        padding: 5px;
+        background-color: #dff;
+    }
+
+    .item-box {;
+
+        .item-content {
+            background-color: grey;
+            display: flex;
+            padding: 10px;
+
+            .img {
+                width: 40px;
+                padding: 5px;
+
+                .item-content-name {
+                    color: #fff;
+                    text-align: center;
+                    letter-spacing: 2px;
+                }
+
+                &:hover {
+                    border: 1px solid;
+                }
+            }
+
+        }
+    }
+}
+
+/*弹窗*/
+.model-popup {
+    height: 230px;
+    //border: 1px solid rgba(#121b74, 0.1);
+    border-radius: 5px;
+    margin-top: -130px;
+    color: #B9EDF8;
+    background-color: rgba(#1F6ED4, 1);
+    transition: all 0.2s linear;
+
+    &::before {
+        content: "";
+        position: absolute;
+        width: 0px;
+        height: 0px;
+        left: calc(50% - 8px);
+        bottom: -15px;
+        border-top: 8px solid #1F6ED4;
+        border-right: 8px solid transparent;
+        border-left: 8px solid transparent;
+        border-bottom: 8px solid transparent;
+    }
+}
+
+/*统计面板*/
+.status-ui {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 150px;
+    height: 300px;
+}
+</style>
+
 <template>
-    <ui-main :title="$route.name" noPadding>
+    <ui-main :title="$route.name" noPadding
+             v-loading="loading"
+             element-loading-text="拼命绘制中"
+             element-loading-spinner="el-icon-loading"
+             element-loading-background="rgba(0, 0, 0, 0.8)">
         <div ref="threeDom" class="w-100p h-100p"></div>
 
         <div class="control" title="编辑" v-show="false">
@@ -8,32 +99,61 @@
 
         <div class="model-popup" v-show="false">
         </div>
+
+        <div class="status-ui" v-show="showStatusUi">
+            <table class="ui celled vertical-striped table compact w-100p">
+                <tr>
+                    <td class="w-50p t-r">机柜：</td>
+                    <td>{{ cabinetNum }}</td>
+                </tr>
+                <tr>
+                    <td class="w-50p t-r">摄像头：</td>
+                    <td>{{ cameraNum }}</td>
+                </tr>
+                <tr>
+                    <td class="w-50p t-r">传感器：</td>
+                    <td>{{ sensorNum }}</td>
+                </tr>
+            </table>
+        </div>
     </ui-main>
 </template>
 
 <script>
+// 场景
 let scene = null;
+// Mesh 集合
 let group = null;
+// 相机
 let camera = null;
+// 渲染器
 let renderer = null;
+// 灯光
 let light = null;
+// 实例平移
 // let transformControls = null;
+// 鼠标拾取射线
 let rayCaster = null;
+// 鼠标
 let mouse = null;
+// 鼠标拖拽
 // let dragControls = null;
-import OrbitControls from 'three-orbitcontrols' //鼠标
-import { CSS2DRenderer, CSS2DObject } from 'three/examples/jsm/renderers/CSS2DRenderer'
+// 鼠标控件 旋转缩放
+import OrbitControls from 'three-orbitcontrols'
+import {CSS2DRenderer, CSS2DObject} from 'three/examples/jsm/renderers/CSS2DRenderer'
 /*eslint-disable*/
-import room3D from './机房.js'
+import room3D from './机房2.js'
 import Vue from 'vue'
 import mapPopup from '@/pages/videoPlayer/_videoPopup.vue'
+
 export default {
     data() {
         return {
             threeDom: null,
             controls: null,
             drawer: false,
-            showVideo: false,
+            showStatusUi: false,
+            loading: true,
             objects: [],
             max: 0,
             groundCount: 1,
@@ -44,11 +164,15 @@ export default {
             cubeList: [],
             wallList: [],
             senseList: [],
-            GLTFLoader: null,
+            sensorList: [],
+            GLTFLoader: null,// 外部模型加载器 .GLTF，.GLB
             cssRender: null,
-            videoComponent:null,
-            videoVm:null,
-            beforeSelected:null
+            videoComponent: null,
+            videoVm: null,// 用以存储弹窗实例，用以销毁视频播放
+            beforeSelected: null,
+            cabinetNum: 0,
+            cameraNum: 0,
+            sensorNum: 0,
         }
     },
     mounted() {
@@ -73,6 +197,7 @@ export default {
         // 添加删除事件
         // this.initDeleteEvent();
 
+        // 加载CSS2DRenderer
         this.initCssRender();
         // 传感器
         // this.addScene()
@@ -92,10 +217,13 @@ export default {
             camera.updateProjectionMatrix();
         })
 
-        this.$nextTick(()=>{
+        setTimeout(() => {
             this.render();
-            this.showVideo = true
-        })
+            this.loading = false
+            this.showStatusUi = true
+            // 初始化各面板
+            this.initMyDom();
+        }, 1000)
         // vue实例
         this.videoComponent = Vue.extend(mapPopup)
     },
@@ -158,21 +286,21 @@ export default {
                 rayCaster.setFromCamera(mouse, camera);
                 let intersects = rayCaster.intersectObjects(this.objects, true);
                 if (intersects.length) {
-                    if (intersects[0].object.children[0] ?.isScene) {
+                    if (intersects[0].object.children[0]?.isScene) {
                         let dom = intersects[0].object.children[0].children[1].element;
                         this.openOrClose(dom)
 
-                        if (!dom.children.length){
+                        if (!dom.children.length) {
                             const comp = new this.videoComponent({
                                 propsData: {
-                                    param:'1'
+                                    param: '1'
                                 }
                             }).$mount();
 
                             if (this.beforeSelected && this.beforeSelected.id !== intersects[0].object.id) {
                                 let oldDom = this.beforeSelected.children[0].children[1].element;
                                 this.videoVm.$destroy();
-                                this.videoVm= null;
+                                this.videoVm = null;
                                 this.beforeSelected = null;
                                 this.openOrClose(oldDom)
                                 oldDom.firstElementChild.remove();
@@ -181,10 +309,10 @@ export default {
                             dom.append(comp.$el)
                             this.videoVm = comp;
                             this.beforeSelected = intersects[0].object;
-                        }else {
+                        } else {
                             this.videoVm.$destroy();
                             dom.firstElementChild.remove();
-                            this.videoVm= null;
+                            this.videoVm = null;
                             this.beforeSelected = null;
                         }
 
@@ -204,6 +332,9 @@ export default {
         },
         // 初始化数据
         initData(item) {
+            if (!item) {
+                return;
+            }
             this.removeMesh();
             if (item.cabinetData && item.cabinetData.length) {
                 this.cubeList = item.cabinetData;
@@ -219,6 +350,11 @@ export default {
 
                 this.createSense();
             }
+            setTimeout(() => {
+                this.render();
+                this.loading = false
+                this.showStatusUi = true;
+            }, 1000)
         },
         // 初始化弹窗渲染器
         initCssRender() {
@@ -226,15 +362,23 @@ export default {
             this.cssRender.setSize(window.innerWidth, window.innerHeight);
             this.cssRender.domElement.style.position = 'absolute';
             this.cssRender.domElement.style.top = 0;
-            document.body.appendChild( this.cssRender.domElement );
+            document.body.appendChild(this.cssRender.domElement);
+        },
+        initMyDom() {
+            // 编辑按钮
             let control = document.querySelector('.control').cloneNode(true)
             control.style.display = 'block'
-            control.addEventListener('click',this.drawRoom)
+            control.addEventListener('click', this.drawRoom)
             document.body.appendChild(control);
+
+            // 统计面板
+            let statusUi = this.$el.querySelector('.status-ui');
+            document.body.appendChild(statusUi);
         },
         // 机房编辑
         drawRoom() {
             let vm = this;
+            this.showStatusUi = false;
             this.$bui.drawer({
                 comp: () => import('./editRoom.vue'), // 注意: 需要懒加载的vue文件必须使用下划线前缀
                 params: { // 参数将传给加载的_test.vue页面, 在_test.vue你可以通过this.$parent.params来调用此参数
@@ -245,8 +389,13 @@ export default {
                 },
                 callback: (item) => {
                     if (item) {
+                        vm.loading = true;
+                        vm.showStatusUi = false;
                         vm.initData(item);
+                    } else {
+                        vm.showStatusUi = true;
                     }
+
                 }
             })
         },
@@ -265,8 +414,6 @@ export default {
                     // 给模型定制弹窗
                     const popupDiv = document.getElementsByClassName('model-popup')[0].cloneNode(true);
                     popupDiv.textContent = '传感器-' + item.id;
-                    popupDiv.style.marginTop = `-80px`;
-                    popupDiv.style.color = '#6d597a';
                     popupDiv.style.overflow = 'hidden';
                     popupDiv.style.width = '0px';
                     popupDiv.style.padding = '0px';
@@ -277,12 +424,17 @@ export default {
 
 
                     // 添加一个透明的Mesh 将模型添加进去
-                    let geometry = new THREE.BoxBufferGeometry( 2, 2, 2 );
-                    let material = new THREE.MeshBasicMaterial( { color: 0xffffff} );
+                    let geometry = new THREE.BoxBufferGeometry(2, 2, 2);
+                    let material = new THREE.MeshBasicMaterial({color: 0xffffff});
                     material.transparent = true;
                     material.opacity = 0;
-                    let other = new THREE.Mesh(geometry,material);
-                    other.position.set(item.x + 4, 11, item.z)
+                    let other = new THREE.Mesh(geometry, material);
+                    if (item.pos.includes('left') || item.pos.includes('right')) {
+                        other.position.set(item.x, 9, item.z);
+                    } else {
+                        other.position.set(item.x + 4, 9, item.z);
+                    }
+
                     other.add(model)
 
 
@@ -343,12 +495,12 @@ export default {
                     mesh.add(moonLabel)
 
                     // 添加一个透明的Mesh 将模型添加进去，用以点击
-                    let geometry = new THREE.BoxBufferGeometry( 2, 2, 2 );
-                    let material = new THREE.MeshBasicMaterial( { color: 0xffffff} );
+                    let geometry = new THREE.BoxBufferGeometry(2, 2, 2);
+                    let material = new THREE.MeshBasicMaterial({color: 0xffffff});
                     material.transparent = true;
                     material.opacity = 0;
-                    let other = new THREE.Mesh(geometry,material);
-                    other.position.set(item.x, 10, item.z)
+                    let other = new THREE.Mesh(geometry, material);
+                    other.position.set(item.x, 12, item.z)
                     other.add(mesh)
 
                     group.add(other)
@@ -362,8 +514,10 @@ export default {
         createSense() {
             this.senseList.forEach(item => {
                 if (item.type === 'camera') {
+                    this.cameraNum++;
                     this.addCamera(item.data, this.GLTFLoader)
                 } else {
+                    this.sensorNum++;
                     this.addScene(item.data, this.GLTFLoader)
                 }
             })
@@ -470,6 +624,7 @@ export default {
                 let geometry = new THREE.BoxGeometry(4, 8, 3);
                 let edgesMtl = new THREE.LineBasicMaterial({color: '#999', alpha: 0.1})
                 this.cubeList.forEach(item => {
+                    this.cabinetNum++;
                     //直接使用材质数组来构建物体，数组里的材质分别对应物体的右、左、上、下、前、后
                     let material = [
                         new THREE.MeshLambertMaterial({color: '#222'}),// 右
@@ -514,7 +669,7 @@ export default {
         removeMesh() {
             this.objects.forEach(item => {
                 //删除掉所有的模型组内的mesh
-                group.traverse((child)=>{
+                group.traverse((child) => {
                     if (child instanceof THREE.Mesh) {
                         child.geometry.dispose(); //删除几何体
                         // child.material.dispose(); //删除材质
@@ -523,6 +678,10 @@ export default {
 
                 group.remove(item);
             })
+            this.cabinetNum = 0;
+            this.cameraNum = 0;
+            this.sensorNum = 0;
+
         },
         unique(arr, key) {
             const res = new Map();
@@ -625,7 +784,7 @@ export default {
             // 是否开启右键拖拽
             this.controls.enablePan = true
             //监听鼠标事件，触发渲染函数，更新canvas画布渲染效果
-            // this.controls.addEventListener('change', this.render);
+            this.controls.addEventListener('change', this.render);
         },
         hiedLineSegment() {
             for (let i = 0; i < scene.children.length; i++) {
@@ -642,7 +801,7 @@ export default {
         },
         // 渲染
         render() {
-            requestAnimationFrame(this.render);
+            // requestAnimationFrame(this.render);
             this.cssRender.render(scene, camera)
             renderer.render(scene, camera);
         }
@@ -650,79 +809,3 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
-.control {
-    z-index: 10;
-    position: absolute;
-    width: 40px;
-    height: 40px;
-    text-align: center;
-    padding: 10px 0 5px 6px;
-    cursor: pointer;
-    color: #ddd;
-    background-color: #7499d9;
-    right: 10px;
-    bottom: 10px;
-    font-size: 18px;
-    //width: 200px;
-    //background-color: rgba(0, 0, 0, .5);
-    border-radius: 50%;
-
-    &:hover {
-        color: #fff;
-    }
-
-    .title {
-        padding: 5px;
-        background-color: #dff;
-    }
-
-    .item-box {;
-
-        .item-content {
-            background-color: grey;
-            display: flex;
-            padding: 10px;
-
-            .img {
-                width: 40px;
-                padding: 5px;
-
-                .item-content-name {
-                    color: #fff;
-                    text-align: center;
-                    letter-spacing: 2px;
-                }
-
-                &:hover {
-                    border: 1px solid;
-                }
-            }
-
-        }
-    }
-}
-
-/*弹窗*/
-.model-popup {
-    height: 230px;
-    //border: 1px solid rgba(#121b74, 0.1);
-    border-radius: 5px;
-    margin-top: -130px;
-    color: #B9EDF8;
-    background-color: rgba(#1F6ED4,1);
-    transition: all 0.2s linear;
-    &::before {
-        content: "";
-        position: absolute;
-        width: 0px;
-        height: 0px;
-        left:calc(50% - 8px);
-        bottom: -15px;
-        border-top: 8px solid #1F6ED4;
-        border-right: 8px solid transparent;
-        border-left: 8px solid transparent;
-        border-bottom: 8px solid transparent;
-    }
-}
-</style>

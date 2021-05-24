@@ -142,35 +142,8 @@
 
         },
         mounted() {
+            this.initDom();
             this.$nextTick(() => {
-                let x = 0;
-                let z = 0
-                for (let i = 0; i < 36 * this.heightNum; i++) {
-                    if (i > 0) x += 4;
-                    if (i % this.widthNum === 0) {
-                        z += 4;
-                        x = 0;
-                    }
-                    this.roomList.push({
-                        x: x,
-                        z: z,
-                        id: i,
-                        pos: ['head'],
-                        wall: [],
-                        leftBorder:false,
-                        topBorder:false,
-                        senseId: ''
-                    });
-                }
-
-
-                setTimeout(() => {
-                    this.initWallData();
-                    this.initSenseData();
-                    this.initCabinetPos();
-                    this.loading = false;
-                })
-
                 this.$el.parentElement.addEventListener('mousedown', (e) => {
                     if (e.button === 2) {
                         let parentHeight = this.$el.parentElement.clientHeight;
@@ -191,9 +164,34 @@
                     }
 
                 })
+                this.initWallData();
+                this.initSenseData();
+                this.initCabinetPos();
+                this.loading = false;
             })
         },
         methods: {
+            initDom() {
+                let x = 0;
+                let z = 0
+                for (let i = 0; i < 36 * this.heightNum; i++) {
+                    if (i > 0) x += 4;
+                    if (i % this.widthNum === 0) {
+                        z += 4;
+                        x = 0;
+                    }
+                    this.roomList.push({
+                        x: x,
+                        z: z,
+                        id: i,
+                        pos: ['head'],
+                        wall: [],
+                        leftBorder:false,
+                        topBorder:false,
+                        senseId: ''
+                    });
+                }
+            },
             initCabinetPos() {
                 this.$parent.params.selected && this.$parent.params.selected.forEach(item => {
                     this.act.push(item.id);
