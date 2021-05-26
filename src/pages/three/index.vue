@@ -54,25 +54,10 @@
 /*弹窗*/
 .model-popup {
     height: 230px;
-    //border: 1px solid rgba(#121b74, 0.1);
-    border-radius: 5px;
     margin-top: -130px;
     color: #B9EDF8;
-    background-color: rgba(#1F6ED4, 1);
+    background-color: transparent;
     transition: all 0.2s linear;
-
-    &::before {
-        content: "";
-        position: absolute;
-        width: 0px;
-        height: 0px;
-        left: calc(50% - 8px);
-        bottom: -15px;
-        border-top: 8px solid #1F6ED4;
-        border-right: 8px solid transparent;
-        border-left: 8px solid transparent;
-        border-bottom: 8px solid transparent;
-    }
 }
 
 /*统计面板*/
@@ -648,7 +633,7 @@ export default {
                     // 给模型添加描边
                     let cubeEdges = new THREE.EdgesGeometry(geometry, 1);
                     let cubeLine = new THREE.LineSegments(cubeEdges, edgesMtl);
-                    cubeLine.name = 'cubeLine';
+                    // cubeLine.name = 'cubeLine';
                     cubeLine.material.visible = true;
                     cube.add(cubeLine);
                     cube.isCustomer = true

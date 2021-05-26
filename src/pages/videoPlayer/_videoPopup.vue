@@ -1,9 +1,10 @@
 <template>
-    <div class="w-100p h-100p">
-        <div class="w-100p h-100p pos-a" style="z-index:0;top: 0;left: 0;bottom: 0;right: 0;" v-if="loading" v-loading="loading" element-loading-background="rgba(0, 0, 0, 0.5)"></div>
-        <div ref="box" class="w-100p h-100p" style="background-color: #000;" @dblclick.stop="full">
-            <video  ref="videoElement" width="100%" height="100%"></video>
-            <div class="toolbar">
+    <div class="w-100p h-100p video-box">
+        <div class="pos-a my-loading" style="z-index:0;top: 0;left: 0;bottom: 0;right: 0;" v-if="loading" v-loading="loading" element-loading-background="rgba(0, 0, 0, 0.5)"></div>
+        <div ref="box" class="w-100p h-100p box-content" style="background-color: #000;" @dblclick.stop="full">
+            <video  ref="videoElement"  width="100%" height="100%"></video>
+            <div class="toolbar ui flex">
+                <ui-tab-btn style="margin-top: 8px;margin-right: -10px;" :name="isMuted ?'静音':'打开'" :class="`iconfont ${isMuted ? 'ali-iconshengyin-kai':'ali-iconshengyin-guan'}`" @click="changeMuted" :key="muted"></ui-tab-btn>
                 <ui-tab-btn :name="isFull ?'缩小':'全屏'" :icon="`icon ${isFull ? 'compress':'expand'}`" @click="full" :key="changFull"></ui-tab-btn>
             </div>
         </div>
@@ -20,14 +21,21 @@ export default {
             hlsPlayer:null,
             loading:true,
             isFull:false,
+            isMuted:false,
             playing:false,
             changFull:0,
+            muted:0,
         }
     },
     mounted() {
         this.getUrl();
     },
     methods:{
+        changeMuted() {
+            this.muted = Math.random();
+            this.isMuted = !this.isMuted;
+            this.$refs.videoElement.muted = !this.$refs.videoElement.muted;
+        },
         getUrl() {
             // this.$http.get(`/video/getIermEngineroomCamerasVideo?id=${ id }`).then((resp) => {
             //     if (!resp) {
@@ -45,8 +53,9 @@ export default {
             //         return false
             //     }
             // })
-            // this.play('http://182.43.48.126:8082/1621562286015/1621562286015/hls.m3u8')
-            this.play('http://182.43.48.126:8082/1621562286015/1621562286015.flv')
+            // this.play('http://hls.cntv.lxdns.com/asp/hls/main/0303000a/3/default/978a64ddd3a1caa85ae70a23414e6540/main.m3u8')
+            this.play('http://ivi.bupt.edu.cn/hls/cctv6.m3u8')
+            // this.play('http://182.43.48.126:8082/1621562286015/1621562286015.flv')
         },
         play(url){
             // 播放flv格式视频流
@@ -92,6 +101,8 @@ export default {
                     video.muted = true
                 }
             }
+
+
         },
         full() {
             this.changFull = Math.random();
@@ -152,19 +163,46 @@ export default {
 
 <style scoped lang="scss">
 .video-box {
-    width: 100%;
-    height: 100%;
+    position: relative;
+    perspective: 1000px;     /* 景深 */
+    transform-style: preserve-3d;      /* 让我的元素成3D在舞台上呈现 */
+    padding: 5px;
+    .box-content{
+        transform:rotateY(20deg);
+        border: 2px solid rgba(#4793b9, 1);
+        border-radius: 5px;
+    }
+    .my-loading {
+        height: calc(100% - 10px);
+        width: calc(100% - 10px);
+    }
+    /deep/ .el-loading-mask,.my-loading{
+        transform:rotateY(20deg);
+    }
+    &::before {
+        content: "";
+        position: absolute;
+        width: 0px;
+        height: 0px;
+        left: calc(50% - 8px);
+        bottom: -11px;
+        border-top: 8px solid #4793b9;
+        border-right: 8px solid transparent;
+        border-left: 8px solid transparent;
+        border-bottom: 8px solid transparent;
+    }
+    .toolbar {
+        position: absolute;
+        right: 5px;
+        bottom: 5px;
+        /deep/ .el-button {
+            background-color: transparent;
+            border:unset;
+            & > i {
+                font-size: 20px !important;
+            }
+        }
+    }
 }
- .toolbar {
-     position: absolute;
-     right: 0;
-     bottom: 15px;
-     /deep/ .el-button {
-         background-color: transparent;
-         border:unset;
-         & > i {
-             font-size: 20px !important;
-         }
-     }
- }
+
 </style>

@@ -6,6 +6,20 @@
   "description": "图标库",
   "glyphs": [
     {
+      "icon_id": "18371944",
+      "name": "声音-关",
+      "font_class": "shengyin-guan",
+      "unicode": "e6bf",
+      "unicode_decimal": 59071
+    },
+    {
+      "icon_id": "18371945",
+      "name": "声音-开",
+      "font_class": "shengyin-kai",
+      "unicode": "e6c0",
+      "unicode_decimal": 59072
+    },
+    {
       "icon_id": "3001052",
       "name": "传感器",
       "font_class": "chuanganqi",
