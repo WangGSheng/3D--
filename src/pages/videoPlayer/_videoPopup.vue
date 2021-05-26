@@ -1,6 +1,6 @@
 <template>
     <div class="w-100p h-100p video-box">
-        <div class="pos-a my-loading" style="z-index:0;top: 0;left: 0;bottom: 0;right: 0;" v-if="loading" v-loading="loading" element-loading-background="rgba(0, 0, 0, 0.5)"></div>
+        <div class="pos-a my-loading" style="z-index:1;top: 7px;left: 1px;bottom: 0;right: 0;" v-if="loading" v-loading="loading" element-loading-background="rgba(0, 0, 0, 0.5)"></div>
         <div ref="box" class="w-100p h-100p box-content" style="background-color: #000;" @dblclick.stop="full">
             <video  ref="videoElement"  width="100%" height="100%"></video>
             <div class="toolbar ui flex">
@@ -24,7 +24,7 @@ export default {
             isMuted:false,
             playing:false,
             changFull:0,
-            muted:0,
+            muted:1,
         }
     },
     mounted() {
@@ -173,8 +173,8 @@ export default {
         border-radius: 5px;
     }
     .my-loading {
-        height: calc(100% - 10px);
-        width: calc(100% - 10px);
+        height: calc(100% - 13px);
+        width: calc(100% - 0px);
     }
     /deep/ .el-loading-mask,.my-loading{
         transform:rotateY(20deg);
