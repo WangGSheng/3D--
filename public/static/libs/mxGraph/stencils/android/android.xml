@@ -1,0 +1,58 @@
+<shapes name="mxgraph.android">
+    <shape h="80" w="80" name="reddanger" aspect="variable" strokewidth="inherit">
+        <foreground>
+            <fillcolor color="#C62223"/>
+            <ellipse x="0" y="0" w="80" h="80"/>
+            <fill/>
+        </foreground>
+    </shape>
+    <shape h="80" w="80" name="orgdanger" aspect="variable" strokewidth="inherit">
+        <foreground>
+            <fillcolor color="#EF7F1A"/>
+            <ellipse x="0" y="0" w="80" h="80"/>
+            <fill/>
+        </foreground>
+    </shape>
+    <shape h="80" w="80" name="yellowdanger" aspect="variable" strokewidth="inherit">
+        <foreground>
+            <fillcolor color="#FECC00"/>
+            <ellipse x="0" y="0" w="80" h="80"/>
+            <fill/>
+        </foreground>
+    </shape>
+    <shape h="80" w="80" name="bluedanger" aspect="variable" strokewidth="inherit">
+        <foreground>
+            <fillcolor color="#008DD2"/>
+            <ellipse x="0" y="0" w="80" h="80"/>
+            <fill/>
+        </foreground>
+    </shape>
+    <shape h="80" w="80" name="redalarm" aspect="variable" strokewidth="inherit">
+        <foreground>
+            <fillcolor color="#C62224"/>
+            <ellipse x="0" y="0" w="80" h="80"/>
+            <fill/>
+        </foreground>
+    </shape>
+    <shape h="80" w="80" name="orgalarm" aspect="variable" strokewidth="inherit">
+        <foreground>
+            <fillcolor color="#EF7F1B"/>
+            <ellipse x="0" y="0" w="80" h="80"/>
+            <fill/>
+        </foreground>
+    </shape>
+    <shape h="80" w="80" name="yellowalarm" aspect="variable" strokewidth="inherit">
+        <foreground>
+            <fillcolor color="#FECC01"/>
+            <ellipse x="0" y="0" w="80" h="80"/>
+            <fill/>
+        </foreground>
+    </shape>
+    <shape h="80" w="80" name="bluealarm" aspect="variable" strokewidth="inherit">
+        <foreground>
+            <fillcolor color="#008DD3"/>
+            <ellipse x="0" y="0" w="80" h="80"/>
+            <fill/>
+        </foreground>
+    </shape>
+</shapes>
