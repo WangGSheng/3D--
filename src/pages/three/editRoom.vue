@@ -23,7 +23,7 @@
             <template v-for="item in roomList">
                 <div :class="{'grid-item':true,active:act.includes(item.id),'left-border':item.leftBorder,'top-border':item.topBorder}" :key="item.id"
                      :id="'room-' + item.id"
-                     @click.stop="select(item)" @contextmenu="selectSense(item)">
+                     @click.stop="select(item);showContextmenu = false" @contextmenu="selectSense(item)">
                     <template v-if="act.includes(item.id)">
                         <div class="item-position">
                             <div class="pos-up" :class="{active:item.pos.includes('back')}"
@@ -86,6 +86,7 @@
 </template>
 
 <script>
+/* eslint-disable */
     export default {
         name: "editRoom",
         data() {
@@ -133,9 +134,9 @@
                     this.changeWallType();
                 }
             }
-            window.oncontextmenu = () => {
-                return false
-            }
+            // window.oncontextmenu = () => {
+            //     return false
+            // }
             document.addEventListener('click', function() {
                 this.showContextmenu = false
             })
@@ -144,24 +145,29 @@
         mounted() {
             this.initDom();
             this.$nextTick(() => {
-                this.$el.parentElement.addEventListener('mousedown', (e) => {
-                    if (e.button === 2) {
-                        let parentHeight = this.$el.parentElement.clientHeight;
-                        let parentWidth = this.$el.parentElement.clientWidth;
-                        if (parentWidth - e.clientX < 200) {
-                            this.offsetX = parentWidth - 200;
-                        }else {
-                            this.offsetX = e.clientX
-                        }
+                window.onclick = (e) => { this.showContextmenu = false; }
+                this.$el.addEventListener('contextmenu', (e) => {
+                    e.preventDefault();
+                    // let parentHeight = this.$el.parentElement.clientHeight;
+                    // let parentWidth = this.$el.parentElement.clientWidth;
+                    // if (parentWidth - e.clientX < 200) {
+                    //     this.offsetX = parentWidth - 200;
+                    // }else {
+                    //     this.offsetX = e.clientX
+                    // }
+
+                    var clientTop = $(window).scrollTop() + e.clientY,
+                        x = (150 + e.clientX < $(window).width()) ? e.clientX : e.clientX - 150,
+                        y = (253 + e.clientY < $(window).height()) ? clientTop - 100 : clientTop - 253;
 
 
-                        if (parentHeight - e.clientY < 300) {
-                            this.offsetY = parentHeight - 300;
-                        }else {
-                            this.offsetY = e.clientY - 100;
-                        }
-
-                    }
+                    // if (parentHeight - e.clientY < 300) {
+                    //     this.offsetY = parentHeight - 300;
+                    // }else {
+                    //     this.offsetY = e.clientY - 100;
+                    // }
+                    this.offsetY = y;
+                    this.offsetX = x;
 
                 })
                 this.initWallData();
@@ -478,15 +484,15 @@
     /*右键菜单*/
     .contextmenu-box {
         z-index: 99;
-        width: 200px;
-        height: 400px;
+        width: 150px;
+        height: 253px;
         position: absolute;
-        border: 1px solid rgba(0, 0, 0, .2);
-        /*border-radius: 10px;*/
+        border: 2px solid rgba(#000,.3);
+        border-radius: 5px;
         background-color: #fff;
         overflow: hidden;
-        color: black;
-        font-size: 18px;
+        color: #36b894;
+        font-size: 16px;
         .top-control {
             float: right;
             margin-bottom: 5px;
@@ -500,7 +506,7 @@
             padding: 10px 5px;
             background-color: #235193;
             color: white;
-            margin-bottom: 5px;
+            //margin-bottom: 5px;
         }
 
         .camera-pos {
@@ -521,7 +527,7 @@
                 //border-radius: 10px;
 
                 .iconfont {
-                    font-size: 28px;
+                    font-size: 16px;
                 }
 
                 &.active {

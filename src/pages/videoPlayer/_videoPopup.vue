@@ -184,8 +184,9 @@ export default {
         position: absolute;
         width: 0px;
         height: 0px;
+        transform:rotateY(20deg);
         left: calc(50% - 8px);
-        bottom: -11px;
+        bottom: -10px;
         border-top: 8px solid #4793b9;
         border-right: 8px solid transparent;
         border-left: 8px solid transparent;
