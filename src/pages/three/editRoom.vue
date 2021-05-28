@@ -328,9 +328,8 @@ export default {
                                 data: item
                             })
                         }
-                        vm.showMark = false;
                     }
-
+                    vm.showMark = false;
                 }
             })
         },

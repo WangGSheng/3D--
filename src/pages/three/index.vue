@@ -311,9 +311,9 @@ export default {
                             this.beforeSelected = intersects[0].object;
                         } else {
                             this.videoVm.$destroy();
-                            dom.firstElementChild.remove();
                             this.videoVm = null;
                             this.beforeSelected = null;
+                            dom.firstElementChild.remove();
                         }
 
                     }

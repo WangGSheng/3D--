@@ -1,2 +1,2 @@
-// backend
-                    Object.defineProperty(this, 'BASE_URL', {value:'/permission/'});
+// frontend
+                    Object.defineProperty(this, 'BASE_URL', {value:'/api/'});
