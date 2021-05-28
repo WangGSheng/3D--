@@ -20,7 +20,7 @@ if (stage.indexOf('--') !== -1) {
 // const IP = 'http://10.46.16.243:9000' //jiancheng
 // const IP = 'http://lbsksa.tooo.top:3810' //建成 外网
 // const IP = 'http://10.46.16.199:9000'  // xiaoyxiong
-const IP = 'http://182.43.86.226:9000'  // 远程
+const IP = 'http://iermd.gzdict.cn:9000'  // 远程
 
 module.exports = {
     publicPath: process.env.NODE_ENV === 'production' ? '/monitor/' : '/',

@@ -1,5 +1,6 @@
 <template>
     <div class="w-100p h-100p video-box">
+        <div class="title" v-if="title">{{title}}</div>
         <div class="pos-a my-loading" style="z-index:1;top: 7px;left: 1px;bottom: 0;right: 0;" v-if="loading" v-loading="loading" element-loading-background="rgba(0, 0, 0, 0.5)"></div>
         <div ref="box" class="w-100p h-100p box-content" style="background-color: #000;" @dblclick.stop="full">
             <video  ref="videoElement"  width="100%" height="100%"></video>
@@ -14,6 +15,9 @@
 <script>
 /* eslint-disable */
 export default {
+    props:{
+        param:Object
+    },
     data() {
         return {
             item:null,
@@ -25,9 +29,11 @@ export default {
             playing:false,
             changFull:0,
             muted:1,
+            title: ''
         }
     },
     mounted() {
+        this.title = this.param.name;
         this.getUrl();
     },
     methods:{
@@ -37,7 +43,37 @@ export default {
             this.$refs.videoElement.muted = !this.$refs.videoElement.muted;
         },
         getUrl() {
-            // this.$http.get(`/video/getIermEngineroomCamerasVideo?id=${ id }`).then((resp) => {
+            this.$axios({
+                url:`/api/getIermEngineroomCamerasVideo?id=${ this.param.id }`,
+                data:{
+                    id: this.param.id
+                },
+                method: 'get',
+                headers:{
+                    'Content-Type':'application/json',
+                    Authorization:'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJseHgiLCJpYXQiOjE2MjIxNzM4NzcsImV4cCI6MTYyMjc3ODY3N30.hdXqRwaO89xFvoZdVomappniIlK4Xk6lR-ZLwaEDiaKDb8MWcp_h-agiQfEyUQF6v58dmh7ccc0u5ExZ6b2qkg'
+                }
+            }).then(response => {
+                let resp = response.data;
+                if (!resp) {
+                    return false;
+                }
+
+                // 如果视频节点出现问题则不进行播放
+                if (resp.code !== 1000) {
+                    this.$message.error(`视频网络连接失败! (${ resp.msg })`);
+                    this.$parent.close();
+                    return false;
+                }
+                if (resp.data.resCode === '408') {
+                    this.getUrl(this.param.dataId)
+                    return false
+                }
+                this.play(resp.data.videoUrl.m3u8uri)
+            }).catch((e) => {
+                console.log(e)
+            })
+            // this.$http.get(`/video/getIermEngineroomCamerasVideo?id=${ this.param.dataId }`).then((resp) => {
             //     if (!resp) {
             //         return false;
             //     }
@@ -49,12 +85,13 @@ export default {
             //         return false;
             //     }
             //     if (resp.data.resCode === '408') {
-            //         this.getUrl(id)
+            //         this.getUrl(this.param.dataId)
             //         return false
             //     }
+            //     this.play(resp.data.videoUrl.m3u8uri)
             // })
             // this.play('http://hls.cntv.lxdns.com/asp/hls/main/0303000a/3/default/978a64ddd3a1caa85ae70a23414e6540/main.m3u8')
-            this.play('http://ivi.bupt.edu.cn/hls/cctv6.m3u8')
+            // this.play('http://ivi.bupt.edu.cn/hls/cctv6.m3u8')
             // this.play('http://182.43.48.126:8082/1621562286015/1621562286015.flv')
         },
         play(url){
@@ -167,6 +204,17 @@ export default {
     perspective: 1000px;     /* 景深 */
     transform-style: preserve-3d;      /* 让我的元素成3D在舞台上呈现 */
     padding: 5px;
+
+    .title {
+        width: auto;
+        height: 60px;
+        background-color: #4793b9;
+        position: absolute;
+        top: -30px;
+        padding: 5px;
+        border-radius: 5px;
+        transform:rotateY(20deg);
+    }
     .box-content{
         transform:rotateY(20deg);
         border: 2px solid rgba(#4793b9, 1);

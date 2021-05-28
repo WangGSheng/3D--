@@ -121,6 +121,10 @@ let light = null;
 let rayCaster = null;
 // 鼠标
 let mouse = null;
+// 时钟
+// let clock = null;
+//
+let mixer = null;
 // 鼠标拖拽
 // let dragControls = null;
 // 鼠标控件 旋转缩放
@@ -150,6 +154,7 @@ export default {
             wallList: [],
             senseList: [],
             sensorList: [],
+            linePoints: [],
             GLTFLoader: null,// 外部模型加载器 .GLTF，.GLB
             cssRender: null,
             videoComponent: null,
@@ -193,6 +198,8 @@ export default {
         // 添加点击事件
         this.initRayCaster();
 
+        // 轨迹动画
+        // this.animat();
         //加入事件监听器,窗口自适应
         window.addEventListener('resize', function () {
             let width = window.innerWidth;
@@ -231,18 +238,26 @@ export default {
         },
         // 初始化光源
         initLight() {
-            light = new THREE.AmbientLight('#fff') // 光源颜色;
+            light = new THREE.AmbientLight('#fff') // 环境光源颜色;
             // light.position.set(0, 0, 100);
             scene.add(light);
+
+            let spotLight = new THREE.SpotLight(0xffffff);  // 聚光
+
+            spotLight.position.set(5, 15, 10);
+
+            spotLight.castShadow = true;
+
+            scene.add(spotLight);
         },
         // 初始化渲染器
         initRenderer() {
             renderer = new THREE.WebGLRenderer({
-                //增加下面两个属性，可以抗锯齿
+                // 增加下面两个属性，可以抗锯齿
                 antialias: true,
                 alpha: true
             });
-            renderer.setClearColor('#000', 1);// 设置渲染颜色（背景底色
+            renderer.setClearColor('#000', 1);// 设置渲染颜色（背景底色）
             renderer.setSize(window.innerWidth, window.innerHeight);// 渲染面大小（在二维平面上的窗口大小）
             renderer.setPixelRatio(window.devicePixelRatio); //设备像素比 可以清晰物体
             this.$refs.threeDom.appendChild(renderer.domElement);
@@ -272,23 +287,23 @@ export default {
                 let intersects = rayCaster.intersectObjects(this.objects, true);
                 if (intersects.length) {
                     if (intersects[0].object.children[0]?.isScene) {
-                        let dom = intersects[0].object.children[0].children[1].element;
+                        let obj = intersects[0].object.children[0];
+                        // 给选中的模型添加弹窗或移除弹窗
+                        let dom = obj.children[1].element;
                         this.openOrClose(dom)
 
                         if (!dom.children.length) {
                             const comp = new this.videoComponent({
                                 propsData: {
-                                    param: '1'
+                                    param: {
+                                        id: obj.userData.dataId,
+                                        name:obj.name
+                                    }
                                 }
                             }).$mount();
 
                             if (this.beforeSelected && this.beforeSelected.id !== intersects[0].object.id) {
-                                let oldDom = this.beforeSelected.children[0].children[1].element;
-                                this.videoVm.$destroy();
-                                this.videoVm = null;
-                                this.beforeSelected = null;
-                                this.openOrClose(oldDom)
-                                oldDom.firstElementChild.remove();
+                                this.closeVideo()
                             }
 
                             dom.append(comp.$el)
@@ -304,6 +319,16 @@ export default {
                     }
                 }
             }, false)
+        },
+        closeVideo() {
+            if (this.beforeSelected) {
+                let oldDom = this.beforeSelected.children[0].children[1].element;
+                this.videoVm.$destroy();
+                this.videoVm = null;
+                this.beforeSelected = null;
+                this.openOrClose(oldDom)
+                oldDom.firstElementChild.remove();
+            }
         },
         openOrClose(dom) {
             dom.style.fontSize = dom.style.fontSize === '0px' ? '16px' : '0px';
@@ -364,6 +389,7 @@ export default {
         drawRoom() {
             let vm = this;
             this.showStatusUi = false;
+            this.closeVideo()
             this.$bui.drawer({
                 comp: () => import('./editRoom.vue'), // 注意: 需要懒加载的vue文件必须使用下划线前缀
                 params: { // 参数将传给加载的_test.vue页面, 在_test.vue你可以通过this.$parent.params来调用此参数
@@ -398,7 +424,7 @@ export default {
                     model.name = '传感器-' + item.id
                     // 给模型定制弹窗
                     const popupDiv = document.getElementsByClassName('model-popup')[0].cloneNode(true);
-                    popupDiv.textContent = '传感器-' + item.id;
+                    // popupDiv.textContent = '传感器-' + item.id;
                     popupDiv.style.overflow = 'hidden';
                     popupDiv.style.width = '0px';
                     popupDiv.style.padding = '0px';
@@ -467,7 +493,8 @@ export default {
                     mesh.isCustomer = true
                     let scale = 0.2
                     mesh.scale.set(scale, scale, scale) // scale here
-                    mesh.name = 'camera-' + item.senseId;
+                    mesh.name = item.dataName;
+                    mesh.userData.dataId = item.dataId;
                     const popupDiv = document.getElementsByClassName('model-popup')[0].cloneNode(true);
                     // popupDiv.textContent = '摄像头方向-' + item.senseId;
                     popupDiv.style.overflow = 'hidden';
@@ -499,10 +526,10 @@ export default {
         createSense() {
             this.senseList.forEach(item => {
                 if (item.type === 'camera') {
-                    this.cameraNum++;
+                    this.cameraNum ++;
                     this.addCamera(item.data, this.GLTFLoader)
                 } else {
-                    this.sensorNum++;
+                    this.sensorNum ++;
                     this.addScene(item.data, this.GLTFLoader)
                 }
             })
@@ -565,7 +592,61 @@ export default {
                     maxX: maxX,
                     minX: minX - 4,
                 }
+                let lineX = minX, lineY = 16, lineZ = minZ, change = false;
+                let num = maxZ - minZ;
+                for (let i = minX; i < maxX - minX; i += 4) {
 
+                    if (change) {
+                        num += 4;
+                        lineZ -= num;
+                    } else {
+                        num -= 4;
+                        lineZ += num;
+                    }
+
+                    if (lineZ > maxZ) {
+                        lineZ = maxZ;
+                        change = true;
+                    }
+                    if (lineZ < minZ) {
+                        lineZ = minZ;
+                        change = false
+                    }
+                    lineX += 4;
+                    this.linePoints.push({
+                        x: lineX,
+                        y: lineY,
+                        z: lineZ
+                    })
+                }
+
+                lineX = maxX, lineZ = maxZ, change = true;
+                num = maxZ - minZ;
+                for (let i = maxX - minX; i > minX; i -= 4) {
+
+                    if (change) {
+                        num += 4;
+                        lineZ -= num;
+                    } else {
+                        num -= 4;
+                        lineZ += num;
+                    }
+
+                    if (lineZ > maxZ) {
+                        lineZ = maxZ;
+                        change = true;
+                    }
+                    if (lineZ < minZ) {
+                        lineZ = minZ;
+                        change = false
+                    }
+                    lineX -= 4;
+                    this.linePoints.push({
+                        x: lineX,
+                        y: lineY,
+                        z: lineZ
+                    })
+                }
 
                 this.createGround(res)
             }
@@ -593,6 +674,8 @@ export default {
                 let edgesMtl = new THREE.LineBasicMaterial({color: '#777'})
                 let cubeEdges = new THREE.EdgesGeometry(geometry, 1);
                 let cubeLine = new THREE.LineSegments(cubeEdges, edgesMtl);
+
+                plane.receiveShadow = true; // 接受阴影
                 plane.add(cubeLine);
                 scene.add(plane);
                 // this.objects.push(plane)
@@ -671,6 +754,89 @@ export default {
         unique(arr, key) {
             const res = new Map();
             return arr.filter((a) => !res.has(a[key]) && res.set(a[key], 1))
+        },
+
+        /*沿线动画*/
+        animat() {
+            let other;
+            let vm = this;
+            this.GLTFLoader.load('static/three/model/scene.gltf', function (obj) {
+                    let mesh = obj.scene;
+                    let scale = 0.5
+                    mesh.scale.set(scale, scale, scale) // scale here
+                    // 添加一个透明的Mesh 将模型添加进去，用以点击
+                    let geometry = new THREE.BoxBufferGeometry(2, 2, 2);
+                    let material = new THREE.MeshBasicMaterial({color: 0xffffff});
+                    material.transparent = true;
+                    material.opacity = 0;
+                    other = new THREE.Mesh(geometry, material);
+                    other.add(mesh)
+                    other.position.set(10, 15, 20)
+                    scene.add(other);
+
+                    let pointsArr = []
+                    vm.linePoints.forEach(item => {
+                        pointsArr.push(
+                            new THREE.Vector3(item.x, item.y, item.z),
+                        )
+                    })
+                    pointsArr.push(
+                        new THREE.Vector3(vm.linePoints[0].x, vm.linePoints[0].y, vm.linePoints[0].z)
+                    )
+                    // 通过类CatmullRomCurve3创建一个3D样条曲线
+                    let curve = new THREE.CatmullRomCurve3(pointsArr);
+
+                    // 样条曲线均匀分割200分，返回102个顶点坐标
+                    let points = curve.getPoints(200);
+                    // console.log('points', points);//控制台查看返回的顶点坐标
+                    let geometryLine = new THREE.Geometry();
+                    // 把从曲线轨迹上获得的顶点坐标赋值给几何体
+                    geometryLine.vertices = points
+                    let lineMaterial = new THREE.LineBasicMaterial({
+                        color: "#dbb14a"
+                    });
+                    let line = new THREE.Line(geometryLine, lineMaterial);
+                    scene.add(line)
+
+                    // 通过Threejs的帧动画相关API播放网格模型沿着曲线做动画运动
+
+                    // 声明一个数组用于存储时间序列
+                    let arr = []
+                    for (let i = 0; i < 201; i++) {
+                        arr.push(i)
+                    }
+
+                    // 生成一个时间序列
+                    let times = new Float32Array(arr);
+
+                    let posArr = []
+                    points.forEach(elem => {
+                        posArr.push(elem.x, elem.y, elem.z)
+                    });
+                    // 创建一个和时间序列相对应的位置坐标系列
+                    let values = new Float32Array(posArr);
+                    // 创建一个帧动画的关键帧数据，曲线上的位置序列对应一个时间序列
+                    let posTrack = new THREE.KeyframeTrack('.position', times, values);
+                    let duration = 201;
+                    let clip = new THREE.AnimationClip("default", duration, [posTrack]);
+                    mixer = new THREE.AnimationMixer(other);
+                    let AnimationAction = mixer.clipAction(clip);
+                    AnimationAction.timeScale = 10;
+                    AnimationAction.play();
+
+                    clock = new THREE.Clock();//声明一个时钟对象
+                }, undefined,
+                function (error) {
+                    console.error(error)
+                });
+            // // 创建一个模型，用于沿着三维曲线运动
+            // let box = new THREE.BoxGeometry(5, 5, 5);
+            // let material = new THREE.MeshLambertMaterial({
+            //     color: 0x0000ff
+            // }); //材质对象
+            // let mesh = new THREE.Mesh(box, material);
+
+
         },
 
         // initDeleteEvent() {
@@ -789,6 +955,8 @@ export default {
             // requestAnimationFrame(this.render);
             this.cssRender.render(scene, camera)
             renderer.render(scene, camera);
+            // 更新帧动画的时间
+            // mixer.update(clock.getDelta());
         }
     }
 }
