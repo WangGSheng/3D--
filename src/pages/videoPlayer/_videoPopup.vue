@@ -201,23 +201,25 @@ export default {
 <style scoped lang="scss">
 .video-box {
     position: relative;
-    perspective: 1000px;     /* 景深 */
-    transform-style: preserve-3d;      /* 让我的元素成3D在舞台上呈现 */
+    //perspective: 1000px;     /* 景深 */
+    //transform-style: preserve-3d;      /* 让我的元素成3D在舞台上呈现 */
     padding: 5px;
 
     .title {
         width: auto;
         height: 60px;
-        background-color: #4793b9;
+        background-color: #0ff;
+        color: #fff;
         position: absolute;
         top: -30px;
-        padding: 5px;
+        left: 12.1px;
+        padding: 8px;
         border-radius: 5px;
         transform:rotateY(20deg);
     }
     .box-content{
         transform:rotateY(20deg);
-        border: 2px solid rgba(#4793b9, 1);
+        border: 2px solid rgba(#0ff, 1);
         border-radius: 5px;
     }
     .my-loading {
@@ -235,7 +237,7 @@ export default {
         transform:rotateY(20deg);
         left: calc(50% - 8px);
         bottom: -10px;
-        border-top: 8px solid #4793b9;
+        border-top: 8px solid #0ff;
         border-right: 8px solid transparent;
         border-left: 8px solid transparent;
         border-bottom: 8px solid transparent;

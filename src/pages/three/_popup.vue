@@ -31,11 +31,11 @@
         <template v-else>
             <div class="content-title">传感器</div>
             <div class="ui flex w-100p">
-                <div class="camera-item" :class="{active:currentSelect === 'sense'}"
+                <div class="sense-item" :class="{active:currentSelect === 'sense'}"
                      @click="selectChange('sense','sense')">
                     <i class="w-50p h-100p iconfont ali-iconchuanganqi"></i>
                 </div>
-                <div class="camera-item"
+                <div class="sense-item"
                      @click="selectChange('delete')">
                     <i class="w-50p h-100p t-red iconfont ali-iconshanchu"></i>
                 </div>
@@ -182,7 +182,8 @@ export default {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 70px);
-    margin-bottom: 10px;
+    grid-gap: 5px;
+    margin-bottom: 5px;
 
     .center-item {
         /*background-image: url("./center.png");*/
@@ -209,9 +210,30 @@ export default {
     }
 }
 
+.sense-item {
+    width: 70px;
+    height: 70px;
+    line-height: 70px;
+    text-align: center;
+    cursor: pointer;
+    border: 1px solid rgba(0, 0, 0, .2);
+    //border-radius: 10px;
+    margin: 0 5px 5px  5px;
+    .iconfont {
+        font-size: 28px;
+    }
+
+    &.active {
+        background-color: #d3ea7f;
+    }
+    &:hover {
+        background-color: #45c2d0;
+    }
+}
+
 .content-list-box {
     padding: 0 5px;
-    height: calc(100% - 460px);
+    height: calc(100% - 60px);
     overflow-y: scroll;
     overflow-x: hidden;
 
