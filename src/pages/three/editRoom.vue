@@ -109,13 +109,11 @@ export default {
         this.$nextTick(() => {
             setTimeout(()=>{
                 this.initDom();
-            },500)
-            setTimeout(()=>{
                 this.initWallData();
                 this.initCabinetPos();
                 this.initSenseData();
                 this.loading = false;
-            },1000)
+            },500)
         })
     },
     methods: {
