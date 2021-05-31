@@ -1,28 +1,372 @@
 export default {
     "cabinetData": [
         {
+            "x": 48,
+            "z": 24,
+            "id": 192,
+            "pos": [
+                "head"
+            ],
+            "leftBorder": false,
+            "topBorder": false,
+            "senseId": "",
+            "num": "A1"
+        },
+        {
+            "x": 52,
+            "z": 24,
+            "id": 193,
+            "pos": [
+                "head"
+            ],
+            "leftBorder": false,
+            "topBorder": false,
+            "senseId": "",
+            "num": "A2"
+        },
+        {
+            "x": 56,
+            "z": 24,
+            "id": 194,
+            "pos": [
+                "head"
+            ],
+            "leftBorder": false,
+            "topBorder": false,
+            "senseId": "",
+            "num": "A3"
+        },
+        {
+            "x": 60,
+            "z": 24,
+            "id": 195,
+            "pos": [
+                "head"
+            ],
+            "leftBorder": false,
+            "topBorder": false,
+            "senseId": "",
+            "num": "A4"
+        },
+        {
+            "x": 64,
+            "z": 24,
+            "id": 196,
+            "pos": [
+                "head"
+            ],
+            "leftBorder": false,
+            "topBorder": false,
+            "senseId": "",
+            "num": "A5"
+        },
+        {
+            "x": 48,
+            "z": 36,
+            "id": 300,
+            "pos": [
+                "head"
+            ],
+            "leftBorder": false,
+            "topBorder": false,
+            "senseId": "",
+            "num": "B1"
+        },
+        {
+            "x": 52,
+            "z": 36,
+            "id": 301,
+            "pos": [
+                "head"
+            ],
+            "leftBorder": false,
+            "topBorder": false,
+            "senseId": "",
+            "num": "B2"
+        },
+        {
+            "x": 56,
+            "z": 36,
+            "id": 302,
+            "pos": [
+                "head"
+            ],
+            "leftBorder": false,
+            "topBorder": false,
+            "senseId": "sense",
+            "num": "B3",
+            "dataId": "b62ce1e491ca11eb908d0242ac110004",
+            "dataName": "E15机柜"
+        },
+        {
+            "x": 60,
+            "z": 36,
+            "id": 303,
+            "pos": [
+                "head"
+            ],
+            "leftBorder": false,
+            "topBorder": false,
+            "senseId": "",
+            "num": "B4"
+        },
+        {
+            "x": 64,
+            "z": 36,
+            "id": 304,
+            "pos": [
+                "head"
+            ],
+            "leftBorder": false,
+            "topBorder": false,
+            "senseId": "sense",
+            "num": "B5",
+            "dataId": "b62ce1e491ca11eb908d0242ac110004",
+            "dataName": "E15机柜"
+        },
+        {
+            "x": 68,
+            "z": 36,
+            "id": 305,
+            "pos": [
+                "head"
+            ],
+            "leftBorder": false,
+            "topBorder": false,
+            "senseId": "",
+            "num": "B6"
+        },
+        {
+            "x": 72,
+            "z": 36,
+            "id": 306,
+            "pos": [
+                "head"
+            ],
+            "leftBorder": false,
+            "topBorder": false,
+            "senseId": "",
+            "num": "B7"
+        },
+        {
+            "x": 80,
+            "z": 36,
+            "id": 308,
+            "pos": [
+                "head"
+            ],
+            "leftBorder": false,
+            "topBorder": false,
+            "senseId": "",
+            "num": "B8"
+        },
+        {
+            "x": 84,
+            "z": 36,
+            "id": 309,
+            "pos": [
+                "head"
+            ],
+            "leftBorder": false,
+            "topBorder": false,
+            "senseId": "",
+            "num": "B9"
+        },
+        {
+            "x": 88,
+            "z": 36,
+            "id": 310,
+            "pos": [
+                "head"
+            ],
+            "leftBorder": false,
+            "topBorder": false,
+            "senseId": "",
+            "num": "B10"
+        },
+        {
+            "x": 48,
+            "z": 48,
+            "id": 408,
+            "pos": [
+                "head"
+            ],
+            "leftBorder": false,
+            "topBorder": false,
+            "senseId": "",
+            "num": "C2"
+        },
+        {
+            "x": 52,
+            "z": 48,
+            "id": 409,
+            "pos": [
+                "head"
+            ],
+            "leftBorder": false,
+            "topBorder": false,
+            "senseId": "",
+            "num": "C3"
+        },
+        {
+            "x": 56,
+            "z": 48,
+            "id": 410,
+            "pos": [
+                "head"
+            ],
+            "leftBorder": false,
+            "topBorder": false,
+            "senseId": "",
+            "num": "C4"
+        },
+        {
+            "x": 60,
+            "z": 48,
+            "id": 411,
+            "pos": [
+                "head"
+            ],
+            "leftBorder": false,
+            "topBorder": false,
+            "senseId": "",
+            "num": "C5"
+        },
+        {
+            "x": 44,
+            "z": 48,
+            "id": 407,
+            "pos": [
+                "head"
+            ],
+            "leftBorder": false,
+            "topBorder": false,
+            "senseId": "",
+            "num": "C1"
+        },
+        {
+            "x": 68,
+            "z": 48,
+            "id": 413,
+            "pos": [
+                "head"
+            ],
+            "leftBorder": false,
+            "topBorder": false,
+            "senseId": "",
+            "num": "C6"
+        },
+        {
+            "x": 72,
+            "z": 48,
+            "id": 414,
+            "pos": [
+                "head"
+            ],
+            "leftBorder": false,
+            "topBorder": false,
+            "senseId": "",
+            "num": "C7"
+        },
+        {
+            "x": 76,
+            "z": 48,
+            "id": 415,
+            "pos": [
+                "head"
+            ],
+            "leftBorder": false,
+            "topBorder": false,
+            "senseId": "sense",
+            "num": "C8",
+            "dataId": "b62ce1e491ca11eb908d0242ac110004",
+            "dataName": "E15机柜"
+        },
+        {
+            "x": 80,
+            "z": 48,
+            "id": 416,
+            "pos": [
+                "head"
+            ],
+            "leftBorder": false,
+            "topBorder": false,
+            "senseId": "",
+            "num": "C9"
+        },
+        {
+            "x": 84,
+            "z": 48,
+            "id": 417,
+            "pos": [
+                "head"
+            ],
+            "leftBorder": false,
+            "topBorder": false,
+            "senseId": "",
+            "num": "C10"
+        },
+        {
+            "x": 88,
+            "z": 48,
+            "id": 418,
+            "pos": [
+                "head"
+            ],
+            "leftBorder": false,
+            "topBorder": false,
+            "senseId": "",
+            "num": "C11"
+        },
+        {
+            "x": 92,
+            "z": 48,
+            "id": 419,
+            "pos": [
+                "head"
+            ],
+            "leftBorder": false,
+            "topBorder": false,
+            "senseId": "",
+            "num": "C12"
+        }
+    ],
+    "wallData": [
+        {
+            "x": 44,
+            "z": 16,
+            "id": 119,
+            "pos": [
+                "head"
+            ],
+            "leftBorder": false,
+            "topBorder": true,
+            "senseId": "",
+            "num": ""
+        },
+        {
+            "x": 48,
+            "z": 16,
+            "id": 120,
+            "pos": [
+                "head"
+            ],
+            "leftBorder": false,
+            "topBorder": true,
+            "senseId": "",
+            "num": ""
+        },
+        {
             "x": 52,
             "z": 16,
             "id": 121,
             "pos": [
                 "head"
             ],
-            "wall": [],
             "leftBorder": false,
-            "topBorder": false,
-            "senseId": ""
-        },
-        {
-            "x": 56,
-            "z": 16,
-            "id": 122,
-            "pos": [
-                "head"
-            ],
-            "wall": [],
-            "leftBorder": false,
-            "topBorder": false,
-            "senseId": "sense"
+            "topBorder": true,
+            "senseId": "",
+            "num": ""
         },
         {
             "x": 60,
@@ -31,10 +375,22 @@ export default {
             "pos": [
                 "head"
             ],
-            "wall": [],
             "leftBorder": false,
-            "topBorder": false,
-            "senseId": "sense"
+            "topBorder": true,
+            "senseId": "",
+            "num": ""
+        },
+        {
+            "x": 56,
+            "z": 16,
+            "id": 122,
+            "pos": [
+                "head"
+            ],
+            "leftBorder": false,
+            "topBorder": true,
+            "senseId": "",
+            "num": ""
         },
         {
             "x": 64,
@@ -43,10 +399,10 @@ export default {
             "pos": [
                 "head"
             ],
-            "wall": [],
             "leftBorder": false,
-            "topBorder": false,
-            "senseId": "sense"
+            "topBorder": true,
+            "senseId": "",
+            "num": ""
         },
         {
             "x": 68,
@@ -55,10 +411,10 @@ export default {
             "pos": [
                 "head"
             ],
-            "wall": [],
             "leftBorder": false,
-            "topBorder": false,
-            "senseId": "sense"
+            "topBorder": true,
+            "senseId": "",
+            "num": ""
         },
         {
             "x": 72,
@@ -67,10 +423,10 @@ export default {
             "pos": [
                 "head"
             ],
-            "wall": [],
             "leftBorder": false,
-            "topBorder": false,
-            "senseId": ""
+            "topBorder": true,
+            "senseId": "",
+            "num": ""
         },
         {
             "x": 76,
@@ -79,637 +435,190 @@ export default {
             "pos": [
                 "head"
             ],
-            "wall": [],
-            "leftBorder": false,
+            "leftBorder": true,
             "topBorder": false,
-            "senseId": ""
+            "senseId": "",
+            "num": ""
         },
         {
-            "x": 80,
-            "z": 16,
-            "id": 128,
+            "x": 76,
+            "z": 20,
+            "id": 163,
             "pos": [
                 "head"
             ],
-            "wall": [],
-            "leftBorder": false,
+            "leftBorder": true,
             "topBorder": false,
-            "senseId": ""
+            "senseId": "",
+            "num": ""
         },
         {
-            "x": 48,
-            "z": 32,
-            "id": 264,
+            "x": 76,
+            "z": 24,
+            "id": 199,
             "pos": [
-                "right",
-                "right"
+                "head"
             ],
-            "wall": [],
-            "leftBorder": false,
+            "leftBorder": true,
             "topBorder": false,
-            "senseId": ""
+            "senseId": "",
+            "num": ""
         },
         {
-            "x": 48,
-            "z": 36,
-            "id": 300,
+            "x": 76,
+            "z": 28,
+            "id": 235,
             "pos": [
-                "right",
-                "right"
+                "head"
             ],
-            "wall": [],
             "leftBorder": false,
-            "topBorder": false,
-            "senseId": "sense"
-        },
-        {
-            "x": 48,
-            "z": 40,
-            "id": 336,
-            "pos": [
-                "right",
-                "right"
-            ],
-            "wall": [],
-            "leftBorder": false,
-            "topBorder": false,
-            "senseId": ""
-        },
-        {
-            "x": 48,
-            "z": 44,
-            "id": 372,
-            "pos": [
-                "right",
-                "right"
-            ],
-            "wall": [],
-            "leftBorder": false,
-            "topBorder": false,
-            "senseId": "sense"
-        },
-        {
-            "x": 48,
-            "z": 48,
-            "id": 408,
-            "pos": [
-                "right",
-                "right"
-            ],
-            "wall": [],
-            "leftBorder": false,
-            "topBorder": false,
-            "senseId": ""
+            "topBorder": true,
+            "senseId": "",
+            "num": ""
         },
         {
             "x": 80,
             "z": 28,
             "id": 236,
             "pos": [
-                "left",
-                "left"
+                "head"
             ],
-            "wall": [],
             "leftBorder": false,
-            "topBorder": false,
-            "senseId": ""
+            "topBorder": true,
+            "senseId": "",
+            "num": ""
         },
         {
-            "x": 80,
-            "z": 36,
-            "id": 308,
+            "x": 84,
+            "z": 28,
+            "id": 237,
             "pos": [
-                "left",
-                "left"
+                "head"
             ],
-            "wall": [],
             "leftBorder": false,
-            "topBorder": false,
-            "senseId": ""
+            "topBorder": true,
+            "senseId": "",
+            "num": ""
         },
         {
-            "x": 80,
-            "z": 40,
-            "id": 344,
+            "x": 88,
+            "z": 28,
+            "id": 238,
             "pos": [
-                "left",
-                "left"
+                "head"
             ],
-            "wall": [],
             "leftBorder": false,
-            "topBorder": false,
-            "senseId": ""
+            "topBorder": true,
+            "senseId": "",
+            "num": ""
         },
         {
-            "x": 80,
-            "z": 44,
-            "id": 380,
+            "x": 96,
+            "z": 28,
+            "id": 240,
             "pos": [
-                "left",
-                "left"
+                "head"
             ],
-            "wall": [],
             "leftBorder": false,
-            "topBorder": false,
-            "senseId": "sense"
-        },
-        {
-            "x": 80,
-            "z": 48,
-            "id": 416,
-            "pos": [
-                "left",
-                "left"
-            ],
-            "wall": [],
-            "leftBorder": false,
-            "topBorder": false,
-            "senseId": ""
-        },
-        {
-            "x": 80,
-            "z": 32,
-            "id": 272,
-            "pos": [
-                "left",
-                "left"
-            ],
-            "wall": [],
-            "leftBorder": false,
-            "topBorder": false,
-            "senseId": "sense"
+            "topBorder": true,
+            "senseId": "",
+            "num": ""
         },
         {
             "x": 92,
             "z": 28,
             "id": 239,
             "pos": [
-                "left",
-                "left"
-            ],
-            "wall": [],
-            "leftBorder": false,
-            "topBorder": false,
-            "senseId": ""
-        },
-        {
-            "x": 92,
-            "z": 36,
-            "id": 311,
-            "pos": [
-                "left",
-                "left"
-            ],
-            "wall": [],
-            "leftBorder": false,
-            "topBorder": false,
-            "senseId": ""
-        },
-        {
-            "x": 92,
-            "z": 40,
-            "id": 347,
-            "pos": [
-                "left",
-                "left"
-            ],
-            "wall": [],
-            "leftBorder": false,
-            "topBorder": false,
-            "senseId": ""
-        },
-        {
-            "x": 92,
-            "z": 44,
-            "id": 383,
-            "pos": [
-                "left",
-                "left"
-            ],
-            "wall": [],
-            "leftBorder": false,
-            "topBorder": false,
-            "senseId": "sense"
-        },
-        {
-            "x": 92,
-            "z": 48,
-            "id": 419,
-            "pos": [
-                "left",
-                "left"
-            ],
-            "wall": [],
-            "leftBorder": false,
-            "topBorder": false,
-            "senseId": ""
-        },
-        {
-            "x": 92,
-            "z": 32,
-            "id": 275,
-            "pos": [
-                "left",
-                "left"
-            ],
-            "wall": [],
-            "leftBorder": false,
-            "topBorder": false,
-            "senseId": "sense"
-        }
-    ],
-    "wallData": [
-        {
-            "x": 48,
-            "z": 8,
-            "id": 48,
-            "pos": [
                 "head"
-            ],
-            "wall": [
-                "horizontalWall"
             ],
             "leftBorder": false,
             "topBorder": true,
-            "senseId": ""
-        },
-        {
-            "x": 52,
-            "z": 8,
-            "id": 49,
-            "pos": [
-                "head"
-            ],
-            "wall": [
-                "horizontalWall"
-            ],
-            "leftBorder": false,
-            "topBorder": true,
-            "senseId": ""
-        },
-        {
-            "x": 56,
-            "z": 8,
-            "id": 50,
-            "pos": [
-                "head"
-            ],
-            "wall": [
-                "horizontalWall"
-            ],
-            "leftBorder": false,
-            "topBorder": true,
-            "senseId": ""
-        },
-        {
-            "x": 60,
-            "z": 8,
-            "id": 51,
-            "pos": [
-                "head"
-            ],
-            "wall": [
-                "horizontalWall"
-            ],
-            "leftBorder": false,
-            "topBorder": true,
-            "senseId": ""
-        },
-        {
-            "x": 64,
-            "z": 8,
-            "id": 52,
-            "pos": [
-                "head"
-            ],
-            "wall": [
-                "horizontalWall"
-            ],
-            "leftBorder": false,
-            "topBorder": true,
-            "senseId": "back"
-        },
-        {
-            "x": 72,
-            "z": 8,
-            "id": 54,
-            "pos": [
-                "head"
-            ],
-            "wall": [
-                "horizontalWall"
-            ],
-            "leftBorder": false,
-            "topBorder": true,
-            "senseId": ""
-        },
-        {
-            "x": 68,
-            "z": 8,
-            "id": 53,
-            "pos": [
-                "head"
-            ],
-            "wall": [
-                "horizontalWall"
-            ],
-            "leftBorder": false,
-            "topBorder": true,
-            "senseId": ""
-        },
-        {
-            "x": 76,
-            "z": 8,
-            "id": 55,
-            "pos": [
-                "head"
-            ],
-            "wall": [
-                "horizontalWall"
-            ],
-            "leftBorder": false,
-            "topBorder": true,
-            "senseId": ""
-        },
-        {
-            "x": 80,
-            "z": 8,
-            "id": 56,
-            "pos": [
-                "head"
-            ],
-            "wall": [
-                "horizontalWall"
-            ],
-            "leftBorder": false,
-            "topBorder": true,
-            "senseId": ""
-        },
-        {
-            "x": 84,
-            "z": 8,
-            "id": 57,
-            "pos": [
-                "head"
-            ],
-            "wall": [
-                "horizontalWall"
-            ],
-            "leftBorder": false,
-            "topBorder": true,
-            "senseId": ""
-        },
-        {
-            "x": 88,
-            "z": 8,
-            "id": 58,
-            "pos": [
-                "head"
-            ],
-            "wall": [
-                "horizontalWall"
-            ],
-            "leftBorder": false,
-            "topBorder": true,
-            "senseId": "leftBack"
-        },
-        {
-            "x": 92,
-            "z": 8,
-            "id": 59,
-            "pos": [
-                "head"
-            ],
-            "wall": [
-                "verticalWall"
-            ],
-            "leftBorder": true,
-            "topBorder": false,
-            "senseId": ""
-        },
-        {
-            "x": 92,
-            "z": 12,
-            "id": 95,
-            "pos": [
-                "head"
-            ],
-            "wall": [
-                "verticalWall"
-            ],
-            "leftBorder": true,
-            "topBorder": false,
-            "senseId": ""
-        },
-        {
-            "x": 92,
-            "z": 16,
-            "id": 131,
-            "pos": [
-                "head"
-            ],
-            "wall": [
-                "verticalWall"
-            ],
-            "leftBorder": true,
-            "topBorder": false,
-            "senseId": ""
-        },
-        {
-            "x": 92,
-            "z": 20,
-            "id": 167,
-            "pos": [
-                "head"
-            ],
-            "wall": [
-                "verticalWall"
-            ],
-            "leftBorder": true,
-            "topBorder": false,
-            "senseId": ""
-        },
-        {
-            "x": 92,
-            "z": 24,
-            "id": 203,
-            "pos": [
-                "head"
-            ],
-            "wall": [
-                "horizontalWall"
-            ],
-            "leftBorder": false,
-            "topBorder": true,
-            "senseId": ""
-        },
-        {
-            "x": 96,
-            "z": 24,
-            "id": 204,
-            "pos": [
-                "head"
-            ],
-            "wall": [
-                "horizontalWall"
-            ],
-            "leftBorder": false,
-            "topBorder": true,
-            "senseId": ""
+            "senseId": "",
+            "num": ""
         },
         {
             "x": 100,
-            "z": 24,
-            "id": 205,
-            "pos": [
-                "head"
-            ],
-            "wall": [
-                "horizontalWall"
-            ],
-            "leftBorder": false,
-            "topBorder": true,
-            "senseId": ""
-        },
-        {
-            "x": 104,
-            "z": 24,
-            "id": 206,
-            "pos": [
-                "head"
-            ],
-            "wall": [
-                "horizontalWall"
-            ],
-            "leftBorder": false,
-            "topBorder": true,
-            "senseId": ""
-        },
-        {
-            "x": 108,
-            "z": 24,
-            "id": 207,
-            "pos": [
-                "head"
-            ],
-            "wall": [
-                "verticalWall"
-            ],
-            "leftBorder": true,
-            "topBorder": false,
-            "senseId": ""
-        },
-        {
-            "x": 108,
             "z": 28,
-            "id": 243,
+            "id": 241,
             "pos": [
                 "head"
             ],
-            "wall": [
-                "verticalWall"
-            ],
             "leftBorder": true,
             "topBorder": false,
-            "senseId": ""
+            "senseId": "",
+            "num": ""
         },
         {
-            "x": 108,
+            "x": 100,
             "z": 32,
-            "id": 279,
+            "id": 277,
             "pos": [
                 "head"
             ],
-            "wall": [
-                "verticalWall"
-            ],
             "leftBorder": true,
             "topBorder": false,
-            "senseId": ""
+            "senseId": "",
+            "num": ""
         },
         {
-            "x": 108,
+            "x": 100,
             "z": 36,
-            "id": 315,
+            "id": 313,
             "pos": [
                 "head"
             ],
-            "wall": [
-                "verticalWall"
-            ],
             "leftBorder": true,
             "topBorder": false,
-            "senseId": ""
+            "senseId": "",
+            "num": ""
         },
         {
-            "x": 108,
+            "x": 100,
             "z": 40,
-            "id": 351,
+            "id": 349,
             "pos": [
                 "head"
             ],
-            "wall": [
-                "verticalWall"
-            ],
             "leftBorder": true,
             "topBorder": false,
-            "senseId": ""
+            "senseId": "",
+            "num": ""
         },
         {
-            "x": 108,
+            "x": 100,
             "z": 44,
-            "id": 387,
+            "id": 385,
             "pos": [
                 "head"
             ],
-            "wall": [
-                "verticalWall"
-            ],
             "leftBorder": true,
             "topBorder": false,
-            "senseId": ""
+            "senseId": "",
+            "num": ""
         },
         {
-            "x": 108,
+            "x": 100,
             "z": 48,
-            "id": 423,
+            "id": 421,
             "pos": [
                 "head"
             ],
-            "wall": [
-                "verticalWall"
-            ],
             "leftBorder": true,
             "topBorder": false,
-            "senseId": ""
+            "senseId": "",
+            "num": ""
         },
         {
-            "x": 108,
+            "x": 100,
             "z": 52,
-            "id": 459,
+            "id": 457,
             "pos": [
                 "head"
-            ],
-            "wall": [
-                "verticalWall"
             ],
             "leftBorder": true,
             "topBorder": false,
-            "senseId": ""
-        },
-        {
-            "x": 104,
-            "z": 56,
-            "id": 494,
-            "pos": [
-                "head"
-            ],
-            "wall": [
-                "horizontalWall"
-            ],
-            "leftBorder": false,
-            "topBorder": true,
-            "senseId": ""
+            "senseId": "",
+            "num": ""
         },
         {
             "x": 100,
@@ -718,446 +627,435 @@ export default {
             "pos": [
                 "head"
             ],
-            "wall": [
-                "horizontalWall"
-            ],
-            "leftBorder": false,
-            "topBorder": true,
-            "senseId": ""
+            "leftBorder": true,
+            "topBorder": false,
+            "senseId": "",
+            "num": ""
         },
         {
             "x": 96,
-            "z": 56,
-            "id": 492,
+            "z": 60,
+            "id": 528,
             "pos": [
                 "head"
             ],
-            "wall": [
-                "horizontalWall"
-            ],
             "leftBorder": false,
             "topBorder": true,
-            "senseId": ""
+            "senseId": "",
+            "num": ""
         },
         {
             "x": 92,
-            "z": 56,
-            "id": 491,
+            "z": 60,
+            "id": 527,
             "pos": [
                 "head"
             ],
-            "wall": [
-                "horizontalWall"
-            ],
             "leftBorder": false,
             "topBorder": true,
-            "senseId": ""
+            "senseId": "",
+            "num": ""
         },
         {
             "x": 88,
-            "z": 56,
-            "id": 490,
+            "z": 60,
+            "id": 526,
             "pos": [
                 "head"
             ],
-            "wall": [
-                "horizontalWall"
-            ],
             "leftBorder": false,
             "topBorder": true,
-            "senseId": ""
+            "senseId": "",
+            "num": ""
         },
         {
             "x": 84,
-            "z": 56,
-            "id": 489,
+            "z": 60,
+            "id": 525,
             "pos": [
                 "head"
             ],
-            "wall": [
-                "horizontalWall"
-            ],
             "leftBorder": false,
             "topBorder": true,
-            "senseId": ""
+            "senseId": "",
+            "num": ""
         },
         {
             "x": 80,
-            "z": 56,
-            "id": 488,
+            "z": 60,
+            "id": 524,
             "pos": [
                 "head"
             ],
-            "wall": [
-                "horizontalWall"
-            ],
-            "leftBorder": false,
+            "leftBorder": true,
             "topBorder": true,
-            "senseId": ""
+            "senseId": "",
+            "num": ""
         },
         {
             "x": 76,
-            "z": 56,
-            "id": 487,
+            "z": 64,
+            "id": 559,
             "pos": [
                 "head"
             ],
-            "wall": [
-                "horizontalWall"
-            ],
             "leftBorder": false,
             "topBorder": true,
-            "senseId": ""
+            "senseId": "",
+            "num": ""
         },
         {
             "x": 72,
-            "z": 56,
-            "id": 486,
+            "z": 64,
+            "id": 558,
             "pos": [
                 "head"
             ],
-            "wall": [
-                "horizontalWall"
-            ],
             "leftBorder": false,
             "topBorder": true,
-            "senseId": ""
+            "senseId": "",
+            "num": ""
         },
         {
             "x": 68,
-            "z": 52,
-            "id": 449,
+            "z": 64,
+            "id": 557,
             "pos": [
                 "head"
             ],
-            "wall": [
-                "verticalWall"
-            ],
-            "leftBorder": true,
-            "topBorder": false,
-            "senseId": ""
+            "leftBorder": false,
+            "topBorder": true,
+            "senseId": "",
+            "num": ""
         },
         {
             "x": 64,
-            "z": 56,
-            "id": 484,
+            "z": 64,
+            "id": 556,
             "pos": [
                 "head"
             ],
-            "wall": [
-                "horizontalWall"
-            ],
             "leftBorder": false,
             "topBorder": true,
-            "senseId": ""
+            "senseId": "",
+            "num": ""
         },
         {
             "x": 60,
-            "z": 56,
-            "id": 483,
+            "z": 64,
+            "id": 555,
             "pos": [
                 "head"
             ],
-            "wall": [
-                "horizontalWall"
-            ],
             "leftBorder": false,
             "topBorder": true,
-            "senseId": ""
+            "senseId": "",
+            "num": ""
         },
         {
             "x": 56,
-            "z": 56,
-            "id": 482,
+            "z": 64,
+            "id": 554,
             "pos": [
                 "head"
             ],
-            "wall": [
-                "horizontalWall"
-            ],
             "leftBorder": false,
             "topBorder": true,
-            "senseId": ""
+            "senseId": "",
+            "num": ""
         },
         {
             "x": 52,
-            "z": 56,
-            "id": 481,
+            "z": 60,
+            "id": 517,
             "pos": [
                 "head"
             ],
-            "wall": [
-                "horizontalWall"
-            ],
-            "leftBorder": false,
-            "topBorder": true,
-            "senseId": ""
+            "leftBorder": true,
+            "topBorder": false,
+            "senseId": "",
+            "num": ""
         },
         {
             "x": 48,
-            "z": 56,
-            "id": 480,
+            "z": 64,
+            "id": 552,
             "pos": [
                 "head"
             ],
-            "wall": [
-                "horizontalWall"
-            ],
             "leftBorder": false,
             "topBorder": true,
-            "senseId": ""
+            "senseId": "",
+            "num": ""
         },
         {
             "x": 44,
-            "z": 56,
-            "id": 479,
+            "z": 64,
+            "id": 551,
             "pos": [
                 "head"
             ],
-            "wall": [
-                "horizontalWall"
-            ],
             "leftBorder": false,
             "topBorder": true,
-            "senseId": ""
+            "senseId": "",
+            "num": ""
         },
         {
             "x": 40,
-            "z": 56,
-            "id": 478,
+            "z": 64,
+            "id": 550,
             "pos": [
                 "head"
             ],
-            "wall": [
-                "horizontalWall"
+            "leftBorder": false,
+            "topBorder": true,
+            "senseId": "",
+            "num": ""
+        },
+        {
+            "x": 36,
+            "z": 64,
+            "id": 549,
+            "pos": [
+                "head"
             ],
             "leftBorder": false,
             "topBorder": true,
-            "senseId": ""
+            "senseId": "",
+            "num": ""
         },
         {
-            "x": 40,
+            "x": 36,
+            "z": 60,
+            "id": 513,
+            "pos": [
+                "head"
+            ],
+            "leftBorder": true,
+            "topBorder": false,
+            "senseId": "rightHead",
+            "num": "",
+            "dataId": "29e3fbfc923d11eb908d0242ac110004",
+            "dataName": "610-西南侧-热成像"
+        },
+        {
+            "x": 36,
+            "z": 56,
+            "id": 477,
+            "pos": [
+                "head"
+            ],
+            "leftBorder": true,
+            "topBorder": false,
+            "senseId": "",
+            "num": ""
+        },
+        {
+            "x": 36,
             "z": 52,
-            "id": 442,
+            "id": 441,
             "pos": [
                 "head"
             ],
-            "wall": [
-                "verticalWall"
-            ],
             "leftBorder": true,
             "topBorder": false,
-            "senseId": ""
+            "senseId": "",
+            "num": ""
         },
         {
-            "x": 40,
+            "x": 36,
             "z": 48,
-            "id": 406,
+            "id": 405,
             "pos": [
                 "head"
             ],
-            "wall": [
-                "verticalWall"
-            ],
             "leftBorder": true,
             "topBorder": false,
-            "senseId": ""
+            "senseId": "",
+            "num": ""
         },
         {
-            "x": 40,
+            "x": 36,
             "z": 44,
-            "id": 370,
+            "id": 369,
             "pos": [
                 "head"
             ],
-            "wall": [
-                "verticalWall"
-            ],
             "leftBorder": true,
             "topBorder": false,
-            "senseId": ""
+            "senseId": "",
+            "num": ""
         },
         {
-            "x": 40,
+            "x": 36,
             "z": 40,
-            "id": 334,
+            "id": 333,
             "pos": [
                 "head"
             ],
-            "wall": [
-                "verticalWall"
-            ],
             "leftBorder": true,
             "topBorder": false,
-            "senseId": ""
+            "senseId": "",
+            "num": ""
         },
         {
-            "x": 40,
+            "x": 36,
             "z": 36,
-            "id": 298,
+            "id": 297,
             "pos": [
                 "head"
             ],
-            "wall": [
-                "verticalWall"
-            ],
             "leftBorder": true,
             "topBorder": false,
-            "senseId": "right"
+            "senseId": "",
+            "num": ""
         },
         {
-            "x": 40,
+            "x": 36,
             "z": 32,
-            "id": 262,
+            "id": 261,
             "pos": [
                 "head"
             ],
-            "wall": [
-                "verticalWall"
+            "leftBorder": true,
+            "topBorder": false,
+            "senseId": "",
+            "num": ""
+        },
+        {
+            "x": 36,
+            "z": 28,
+            "id": 225,
+            "pos": [
+                "head"
             ],
             "leftBorder": true,
             "topBorder": false,
-            "senseId": ""
+            "senseId": "",
+            "num": ""
+        },
+        {
+            "x": 36,
+            "z": 24,
+            "id": 189,
+            "pos": [
+                "head"
+            ],
+            "leftBorder": true,
+            "topBorder": false,
+            "senseId": "",
+            "num": ""
+        },
+        {
+            "x": 36,
+            "z": 20,
+            "id": 153,
+            "pos": [
+                "head"
+            ],
+            "leftBorder": true,
+            "topBorder": false,
+            "senseId": "",
+            "num": ""
+        },
+        {
+            "x": 36,
+            "z": 16,
+            "id": 117,
+            "pos": [
+                "head"
+            ],
+            "leftBorder": true,
+            "topBorder": true,
+            "senseId": "rightBack",
+            "num": "",
+            "dataId": "29e3fbfc923d11eb908d0242ac110004",
+            "dataName": "610-西南侧-热成像"
         },
         {
             "x": 40,
-            "z": 28,
-            "id": 226,
-            "pos": [
-                "head"
-            ],
-            "wall": [
-                "verticalWall",
-                "horizontalWall"
-            ],
-            "leftBorder": true,
-            "topBorder": true,
-            "senseId": ""
-        },
-        {
-            "x": 44,
-            "z": 24,
-            "id": 191,
-            "pos": [
-                "head"
-            ],
-            "wall": [
-                "verticalWall"
-            ],
-            "leftBorder": true,
-            "topBorder": false,
-            "senseId": ""
-        },
-        {
-            "x": 44,
-            "z": 20,
-            "id": 155,
-            "pos": [
-                "head"
-            ],
-            "wall": [
-                "verticalWall"
-            ],
-            "leftBorder": true,
-            "topBorder": false,
-            "senseId": ""
-        },
-        {
-            "x": 44,
             "z": 16,
-            "id": 119,
+            "id": 118,
             "pos": [
                 "head"
             ],
-            "wall": [
-                "verticalWall"
-            ],
-            "leftBorder": true,
-            "topBorder": false,
-            "senseId": ""
-        },
-        {
-            "x": 44,
-            "z": 12,
-            "id": 83,
-            "pos": [
-                "head"
-            ],
-            "wall": [
-                "verticalWall"
-            ],
-            "leftBorder": true,
-            "topBorder": false,
-            "senseId": ""
-        },
-        {
-            "x": 44,
-            "z": 8,
-            "id": 47,
-            "pos": [
-                "head"
-            ],
-            "wall": [
-                "verticalWall",
-                "horizontalWall"
-            ],
-            "leftBorder": true,
+            "leftBorder": false,
             "topBorder": true,
-            "senseId": "rightBack"
+            "senseId": "",
+            "num": ""
         }
     ],
     "senseData": [
         {
             "type": "camera",
             "data": {
-                "x": 104,
-                "z": 36,
-                "id": 314,
+                "x": 96,
+                "z": 56,
+                "id": 492,
                 "pos": [
                     "head"
                 ],
-                "wall": [],
                 "leftBorder": false,
                 "topBorder": false,
-                "senseId": "left"
+                "senseId": "leftHead",
+                "num": "",
+                "dataId": "29e3fbfc923d11eb908d0242ac110004",
+                "dataName": "610-西南侧-热成像"
             }
         },
         {
             "type": "camera",
             "data": {
-                "x": 40,
-                "z": 36,
-                "id": 298,
+                "x": 36,
+                "z": 60,
+                "id": 513,
                 "pos": [
                     "head"
-                ],
-                "wall": [
-                    "verticalWall"
                 ],
                 "leftBorder": true,
                 "topBorder": false,
-                "senseId": "right"
+                "senseId": "rightHead",
+                "num": "",
+                "dataId": "29e3fbfc923d11eb908d0242ac110004",
+                "dataName": "610-西南侧-热成像"
             }
         },
         {
             "type": "camera",
             "data": {
-                "x": 64,
-                "z": 8,
-                "id": 52,
+                "x": 36,
+                "z": 16,
+                "id": 117,
                 "pos": [
                     "head"
                 ],
-                "wall": [
-                    "horizontalWall"
-                ],
-                "leftBorder": false,
+                "leftBorder": true,
                 "topBorder": true,
-                "senseId": "back"
+                "senseId": "rightBack",
+                "num": "",
+                "dataId": "29e3fbfc923d11eb908d0242ac110004",
+                "dataName": "610-西南侧-热成像"
             }
         },
         {
-            "type": "camera",
+            "type": "sense",
+            "data": {
+                "x": 56,
+                "z": 36,
+                "id": 302,
+                "pos": [
+                    "head"
+                ],
+                "leftBorder": false,
+                "topBorder": false,
+                "senseId": "sense",
+                "num": "B3",
+                "dataId": "b62ce1e491ca11eb908d0242ac110004",
+                "dataName": "E15机柜"
+            }
+        },
+        {
+            "type": "sense",
             "data": {
                 "x": 64,
                 "z": 36,
@@ -1165,246 +1063,29 @@ export default {
                 "pos": [
                     "head"
                 ],
-                "wall": [],
                 "leftBorder": false,
                 "topBorder": false,
-                "senseId": "left"
+                "senseId": "sense",
+                "num": "B5",
+                "dataId": "b62ce1e491ca11eb908d0242ac110004",
+                "dataName": "E15机柜"
             }
         },
         {
-            "type": "camera",
+            "type": "sense",
             "data": {
-                "x": 68,
-                "z": 36,
-                "id": 305,
+                "x": 76,
+                "z": 48,
+                "id": 415,
                 "pos": [
                     "head"
                 ],
-                "wall": [],
                 "leftBorder": false,
                 "topBorder": false,
-                "senseId": "right"
-            }
-        },
-        {
-            "type": "camera",
-            "data": {
-                "x": 88,
-                "z": 52,
-                "id": 454,
-                "pos": [
-                    "head"
-                ],
-                "wall": [],
-                "leftBorder": false,
-                "topBorder": false,
-                "senseId": "leftHead"
-            }
-        },
-        {
-            "type": "camera",
-            "data": {
-                "x": 52,
-                "z": 52,
-                "id": 445,
-                "pos": [
-                    "head"
-                ],
-                "wall": [],
-                "leftBorder": false,
-                "topBorder": false,
-                "senseId": "rightHead"
-            }
-        },
-        {
-            "type": "camera",
-            "data": {
-                "x": 44,
-                "z": 8,
-                "id": 47,
-                "pos": [
-                    "head"
-                ],
-                "wall": [
-                    "verticalWall",
-                    "horizontalWall"
-                ],
-                "leftBorder": true,
-                "topBorder": true,
-                "senseId": "rightBack"
-            }
-        },
-        {
-            "type": "camera",
-            "data": {
-                "x": 88,
-                "z": 8,
-                "id": 58,
-                "pos": [
-                    "head"
-                ],
-                "wall": [
-                    "horizontalWall"
-                ],
-                "leftBorder": false,
-                "topBorder": true,
-                "senseId": "leftBack"
-            }
-        },
-        {
-            "type": "sense",
-            "data": {
-                "x": 56,
-                "z": 16,
-                "id": 122,
-                "pos": [
-                    "head"
-                ],
-                "wall": [],
-                "leftBorder": false,
-                "topBorder": false,
-                "senseId": "sense"
-            }
-        },
-        {
-            "type": "sense",
-            "data": {
-                "x": 68,
-                "z": 16,
-                "id": 125,
-                "pos": [
-                    "head"
-                ],
-                "wall": [],
-                "leftBorder": false,
-                "topBorder": false,
-                "senseId": "sense"
-            }
-        },
-        {
-            "type": "sense",
-            "data": {
-                "x": 60,
-                "z": 16,
-                "id": 123,
-                "pos": [
-                    "head"
-                ],
-                "wall": [],
-                "leftBorder": false,
-                "topBorder": false,
-                "senseId": "sense"
-            }
-        },
-        {
-            "type": "sense",
-            "data": {
-                "x": 64,
-                "z": 16,
-                "id": 124,
-                "pos": [
-                    "head"
-                ],
-                "wall": [],
-                "leftBorder": false,
-                "topBorder": false,
-                "senseId": "sense"
-            }
-        },
-        {
-            "type": "sense",
-            "data": {
-                "x": 48,
-                "z": 36,
-                "id": 300,
-                "pos": [
-                    "right",
-                    "right"
-                ],
-                "wall": [],
-                "leftBorder": false,
-                "topBorder": false,
-                "senseId": "sense"
-            }
-        },
-        {
-            "type": "sense",
-            "data": {
-                "x": 48,
-                "z": 44,
-                "id": 372,
-                "pos": [
-                    "right",
-                    "right"
-                ],
-                "wall": [],
-                "leftBorder": false,
-                "topBorder": false,
-                "senseId": "sense"
-            }
-        },
-        {
-            "type": "sense",
-            "data": {
-                "x": 80,
-                "z": 32,
-                "id": 272,
-                "pos": [
-                    "left",
-                    "left"
-                ],
-                "wall": [],
-                "leftBorder": false,
-                "topBorder": false,
-                "senseId": "sense"
-            }
-        },
-        {
-            "type": "sense",
-            "data": {
-                "x": 80,
-                "z": 44,
-                "id": 380,
-                "pos": [
-                    "left",
-                    "left"
-                ],
-                "wall": [],
-                "leftBorder": false,
-                "topBorder": false,
-                "senseId": "sense"
-            }
-        },
-        {
-            "type": "sense",
-            "data": {
-                "x": 92,
-                "z": 32,
-                "id": 275,
-                "pos": [
-                    "left",
-                    "left"
-                ],
-                "wall": [],
-                "leftBorder": false,
-                "topBorder": false,
-                "senseId": "sense"
-            }
-        },
-        {
-            "type": "sense",
-            "data": {
-                "x": 92,
-                "z": 44,
-                "id": 383,
-                "pos": [
-                    "left",
-                    "left"
-                ],
-                "wall": [],
-                "leftBorder": false,
-                "topBorder": false,
-                "senseId": "sense"
+                "senseId": "sense",
+                "num": "C8",
+                "dataId": "b62ce1e491ca11eb908d0242ac110004",
+                "dataName": "E15机柜"
             }
         }
     ]

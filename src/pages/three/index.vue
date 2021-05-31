@@ -84,7 +84,6 @@
 
         <div class="model-popup" v-show="false">
         </div>
-
         <div class="status-ui" v-show="showStatusUi">
             <table class="ui celled vertical-striped table compact w-100p">
                 <tr>
@@ -207,6 +206,7 @@ export default {
             renderer.setSize(width, height);
             camera.aspect = width / height;
             camera.updateProjectionMatrix();
+            this.render()
         })
 
         setTimeout(() => {
@@ -284,7 +284,7 @@ export default {
                 mouse.y = -(event.clientY / renderer.domElement.clientHeight) * 2 + 1;
 
                 rayCaster.setFromCamera(mouse, camera);
-                let intersects = rayCaster.intersectObjects(this.objects, true);
+                let intersects = rayCaster.intersectObjects(group.children, true);
                 if (intersects.length) {
                     if (intersects[0].object.children[0]?.isScene) {
                         let obj = intersects[0].object.children[0];
@@ -345,26 +345,29 @@ export default {
             if (!item) {
                 return;
             }
-            this.removeMesh();
-            if (item.cabinetData && item.cabinetData.length) {
-                this.cubeList = item.cabinetData;
-                this.createCabinet();
-            }
-            if (item.wallData && item.wallData.length) {
-                this.wallList = item.wallData;
-                this.createPlane('wall');
-                this.createPlane('ground');
-            }
-            if (item.senseData && item.senseData.length) {
-                this.senseList = item.senseData;
+            this.removeMesh().then(()=>{
+                if (item.cabinetData && item.cabinetData.length) {
+                    this.cubeList = item.cabinetData;
+                    this.createCabinet();
+                }
+                if (item.wallData && item.wallData.length) {
+                    this.wallList = item.wallData;
+                    this.createPlane('wall');
+                    this.createPlane('ground');
+                }
+                if (item.senseData && item.senseData.length) {
+                    this.senseList = item.senseData;
 
-                this.createSense();
-            }
-            setTimeout(() => {
-                this.render();
-                this.loading = false
-                this.showStatusUi = true;
-            }, 1000)
+                    this.createSense();
+                }
+                setTimeout(() => {
+                    scene.add(group);
+                    this.render();
+                    this.loading = false
+                    this.showStatusUi = true;
+                }, 1000)
+            });
+
         },
         // 初始化弹窗渲染器
         initCssRender() {
@@ -441,9 +444,9 @@ export default {
                     material.opacity = 0;
                     let other = new THREE.Mesh(geometry, material);
                     if (item.pos.includes('left') || item.pos.includes('right')) {
-                        other.position.set(item.x, 9, item.z);
+                        other.position.set(item.x, 9, item.z - 2);
                     } else {
-                        other.position.set(item.x + 4, 9, item.z);
+                        other.position.set(item.x + 4, 9, item.z - 2);
                     }
 
                     other.add(model)
@@ -537,7 +540,7 @@ export default {
         // 创建墙体
         createWall(item, type) {
             let width = 4, height = 10, rotate = false, x = item.x, z = item.z;
-            if (type === 'verticalWall') {
+            if (type === 'v') {
                 rotate = true;
                 x -= 2;
             } else {
@@ -563,11 +566,12 @@ export default {
         createPlane(type) {
             if (type === 'wall') {
                 this.wallList.forEach((item) => {
-                    if (item.wall.length > 1) {
-                        this.createWall(item, item.wall[0]);
-                        this.createWall(item, item.wall[1]);
-                    } else {
-                        this.createWall(item, item.wall[0]);
+                    if (item.leftBorder) {
+                        this.createWall(item, 'v');
+
+                    }
+                    if (item.topBorder) {
+                        this.createWall(item, 'h');
                     }
                 })
 
@@ -697,7 +701,9 @@ export default {
                     let material = [
                         new THREE.MeshLambertMaterial({color: '#222'}),// 右
                         new THREE.MeshLambertMaterial({color: '#222'}),// 左
-                        new THREE.MeshLambertMaterial({color: '#333'}),// 上
+                        new THREE.MeshLambertMaterial(
+                            { map: new THREE.CanvasTexture(this.getTextCanvas(item)) }
+                        ),// 上
                         new THREE.MeshLambertMaterial({color: '#000'}),// 下
                         new THREE.MeshLambertMaterial(
                             item.pos.includes('head') ||
@@ -725,31 +731,52 @@ export default {
                     } else if (item.pos.includes('right')) {
                         cube.rotateY(Math.PI / 2);
                     }
-                    this.objects.push(cube)
-                    group.add(cube);
+                    // this.objects.push(cube)
+                    scene.add(cube);
                 })
             }
-
-
-            // this.initDragControls()
+        },
+        getTextCanvas(item){
+            let width=200, height=150;
+            let canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            let ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#333'; // 背景颜色
+            ctx.fillRect(0, 0, width, height);
+            ctx.font = 50+'px " bold';
+            ctx.fillStyle = '#fff'; // 字体颜色
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(item.num ??= '', width/2,height/2);
+            return canvas;
         },
         // 移除所有Mesh
         removeMesh() {
-            this.objects.forEach(item => {
-                //删除掉所有的模型组内的mesh
-                group.traverse((child) => {
-                    if (child instanceof THREE.Mesh) {
-                        child.geometry.dispose(); //删除几何体
-                        // child.material.dispose(); //删除材质
-                    }
-                })
+            return new Promise(resolve => {
+                // this.objects.forEach(item => {
+                //     //删除掉所有的模型组内的mesh
+                //     group.traverse((child) => {
+                //         console.log(child)
+                //         if (child instanceof THREE.Mesh) {
+                //             child.geometry.dispose(); //删除几何体
+                //             // child.material.dispose(); //删除材质
+                //         }
+                //         if (child instanceof THREE.Object3D) {
+                //             child.remove();
+                //         }
+                //     })
+                //
+                //     group.remove(item);
+                // })
+                scene.remove(group)
+                this.objects = [];
+                this.cabinetNum = 0;
+                this.cameraNum = 0;
+                this.sensorNum = 0;
 
-                group.remove(item);
+                resolve()
             })
-            this.cabinetNum = 0;
-            this.cameraNum = 0;
-            this.sensorNum = 0;
-
         },
         unique(arr, key) {
             const res = new Map();
@@ -824,7 +851,7 @@ export default {
                     AnimationAction.timeScale = 10;
                     AnimationAction.play();
 
-                    clock = new THREE.Clock();//声明一个时钟对象
+                    // clock = new THREE.Clock();//声明一个时钟对象
                 }, undefined,
                 function (error) {
                     console.error(error)
@@ -935,7 +962,9 @@ export default {
             // 是否开启右键拖拽
             this.controls.enablePan = true
             //监听鼠标事件，触发渲染函数，更新canvas画布渲染效果
-            this.controls.addEventListener('change', this.render);
+            this.controls.addEventListener('change', ()=>{
+                this.render()
+            });
         },
         hiedLineSegment() {
             for (let i = 0; i < scene.children.length; i++) {
@@ -955,6 +984,7 @@ export default {
             // requestAnimationFrame(this.render);
             this.cssRender.render(scene, camera)
             renderer.render(scene, camera);
+
             // 更新帧动画的时间
             // mixer.update(clock.getDelta());
         }

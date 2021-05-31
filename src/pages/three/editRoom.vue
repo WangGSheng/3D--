@@ -29,17 +29,21 @@
                     :id="'room-' + item.id"
                     @click.stop="select(item);showContextmenu = false" @contextmenu="selectSense(item)">
                     <template v-if="act.includes(item.id)">
-                        <div class="item-position">
-                            <div class="pos-up" :class="{active:item.pos.includes('back')}"
-                                 @click.stop="changePos(item,'back')"><i class="icon caret up"></i></div>
-                            <div class="pos-left" :class="{active:item.pos.includes('left')}"
-                                 @click.stop="changePos(item,'left')"><i class="icon caret left"></i></div>
-                            <div class="pos-center" v-if="item.senseId === 'sense'"></div>
-                            <div class="pos-right" :class="{active:item.pos.includes('right')}"
-                                 @click.stop="changePos(item,'right')"><i class="icon caret right"></i></div>
-                            <div class="pos-down" :class="{active:item.pos.includes('head')}"
-                                 @click.stop="changePos(item,'head')"><i class="icon caret down"></i></div>
-                        </div>
+                            <div class="item-position" :title="item.num">
+                                <div @click.stop="open(item)" class="pos-tip">
+                                    <div class="pos-tip-num">{{item.num}}</div>
+                                </div>
+                                <div class="pos-up" :class="{active:item.pos.includes('back')}"
+                                     @click.stop="changePos(item,'back')"><i class="icon caret up"></i></div>
+                                <div class="pos-left" :class="{active:item.pos.includes('left')}"
+                                     @click.stop="changePos(item,'left')"><i class="icon caret left"></i></div>
+                                <div class="pos-center" v-if="item.senseId === 'sense'"></div>
+                                <div class="pos-right" :class="{active:item.pos.includes('right')}"
+                                     @click.stop="changePos(item,'right')"><i class="icon caret right"></i></div>
+                                <div class="pos-down" :class="{active:item.pos.includes('head')}"
+                                     @click.stop="changePos(item,'head')"><i class="icon caret down"></i></div>
+                            </div>
+
                     </template>
                     <div class="sense-pos" v-if="item.senseId">
                         <template v-for="(camera) in cameraPos">
@@ -47,6 +51,11 @@
                                  :key="camera.id"></div>
                         </template>
                     </div>
+                    <template v-if="item.name">
+                        <div class="item-name">
+                            {{item.name}}
+                        </div>
+                    </template>
                 </div>
             </template>
         </div>
@@ -121,7 +130,7 @@ export default {
         initDom() {
             let x = 0;
             let z = 0
-            for (let i = 0; i < 36 * this.heightNum; i++) {
+            for (let i = 0; i < this.widthNum * this.heightNum; i++) {
                 if (i > 0) x += 4;
                 if (i % this.widthNum === 0) {
                     z += 4;
@@ -132,10 +141,11 @@ export default {
                     z: z,
                     id: i,
                     pos: ['head'],
-                    wall: [],
                     leftBorder: false,
                     topBorder: false,
-                    senseId: ''
+                    senseId: '',
+                    num:'',
+                    name:'',
                 });
             }
         },
@@ -148,6 +158,7 @@ export default {
                     this.roomList.forEach(room => {
                         if (item.id === room.id) {
                             room.pos = item.pos;
+                            room.num = item.num;
                         }
                     })
                 })
@@ -160,13 +171,8 @@ export default {
                 this.actWall.push(item.id)
                 this.roomList.forEach(room => {
                     if (room.id === item.id) {
-                        if (item.wall.includes('verticalWall')) {
-                            room.leftBorder = true;
-                        }
-                        if (item.wall.includes('horizontalWall')) {
-                            room.topBorder = true;
-                        }
-
+                        room.leftBorder = item.leftBorder;
+                        room.topBorder = item.topBorder;
                     }
                 })
             })
@@ -181,6 +187,20 @@ export default {
                     }
                 })
             })
+        },
+        open(item) {
+            this.$prompt('', '机柜编号', {
+                inputValue: item.num,
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+            }).then(({ value }) => {
+                item.num = value;
+            }).catch(() => {
+                // this.$message({
+                //     type: 'info',
+                //     message: '取消输入'
+                // });
+            });
         },
         /*网格选中事件*/
         select(item) {
@@ -200,24 +220,18 @@ export default {
                 if (this.actWall.length && this.actWall.includes(item.id)) {
                     if (this.wallType === 'vertical') {
                         item.leftBorder = !item.leftBorder;
-                        this.changeWall(item.id, 'vertical', item.leftBorder ? 'add' : 'delete');
-                        if (!item.topBorder) {
-                            this.deleteData(item.id);
-                        }
+
                     } else if (this.wallType === 'horizontal') {
                         item.topBorder = !item.topBorder;
-                        this.changeWall(item.id, 'horizontal', item.topBorder ? 'add' : 'delete');
-                        if (!item.leftBorder) {
-                            this.deleteData(item.id);
-                        }
+                    }
+                    if (!item.topBorder && !item.leftBorder) {
+                        this.deleteData(item.id);
                     }
                 } else {
                     if (this.wallType === 'horizontal') {
                         item.topBorder = true;
-                        item.wall.push('horizontalWall');
                     } else {
                         item.leftBorder = true;
-                        item.wall.push('verticalWall');
                     }
                     this.wallData.push(item)
                     this.actWall.push(item.id);
@@ -230,37 +244,6 @@ export default {
             if (this.editType !== 'room') {
                 this.wallType === 'horizontal' ?
                     this.wallType = 'vertical' : this.wallType = 'horizontal';
-            }
-        },
-        /*添加或删除墙体数据*/
-        changeWall(id, type, methods) {
-            let remove = (data, source) => {
-                data.forEach((item, index) => {
-                    if (item === source) {
-                        data.splice(index, 1);
-                    }
-                })
-            }
-            if (methods === 'add') {
-                this.wallData.forEach(item => {
-                    if (id === item.id) {
-                        if (type === 'vertical') {
-                            item.wall.push('verticalWall')
-                        } else {
-                            item.wall.push('horizontalWall');
-                        }
-                    }
-                });
-            } else {
-                this.wallData.forEach(item => {
-                    if (id === item.id) {
-                        if (type === 'vertical') {
-                            remove(item.wall, 'verticalWall');
-                        } else {
-                            remove(item.wall, 'horizontalWall');
-                        }
-                    }
-                });
             }
         },
         /*数据过滤*/
@@ -276,7 +259,6 @@ export default {
         changePos(item, pos) {
             this.selected.forEach(data => {
                 if (data.id === item.id) {
-                    // data.pos = pos;
                     if (data.pos.indexOf(pos) > -1) {
                         data.pos.splice(data.pos.indexOf(pos), 1)
                         item.pos.splice(item.pos.indexOf(pos), 1)
@@ -311,21 +293,23 @@ export default {
                     padding: '50px 0 0 0'
                 },
                 callback: (data) => {
-                    if (data) {
-                        if (data.type === 'delete') {
+                    if (data ?.data) {
+                        if (data.data.type === 'delete') {
                             vm.senseData = vm.senseData.filter((source) => {
                                 return item.id !== source.data.id;
                             });
                             item.senseId = '';
                         } else {
-                            item.senseId = data.senseId;
-                            item.dataId = data.dataId;
-                            item.dataName = data.dataName;
+                            item.senseId = data.data.senseId;
+                            item.dataId = data.data.dataId;
+                            item.dataName = data.data.dataName;
                             vm.senseData.push({
-                                type: data.type,
+                                type: data.data.type,
                                 data: item
                             })
                         }
+                    }else if (data ?.name) {
+                        item.name = data.name;
                     }
                     vm.showMark = false;
                 }
@@ -356,10 +340,14 @@ export default {
     .grid-item {
         border: 1px solid rgba(0, 0, 0, .2);
         cursor: pointer;
-
+        overflow: hidden;
         &.active {
             background-color: #d3ea7f;
         }
+    }
+
+    .item-name {
+
     }
 
     .left-border {
@@ -379,9 +367,30 @@ export default {
     position: relative;
     font-size: 12px;
     color: rgba(0, 0, 0, .5);
-
+    overflow: hidden;
     .active {
         color: #409eff;
+    }
+
+    .pos-tip {
+        background-color: #409eff;
+        position: absolute;
+        left: -12px;
+        top: -12px;
+        width: 25px;
+        height: 25px;
+        transform: rotate(-45deg);
+        color: white;
+
+        .pos-tip-num {
+            transform: scale(.7);
+            position: absolute;
+            bottom: -9.5px;
+            left: 0px;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+        }
     }
 
     .pos-up {
