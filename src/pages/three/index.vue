@@ -224,6 +224,7 @@ export default {
         initScene() {
             scene = new THREE.Scene();
             group = new THREE.Group();
+            scene.position.set(-50, 0, 0)
             scene.add(group);
             // 加载辅助坐标系 实际应用的时候需要注释此代码
             const axisHelper = new THREE.AxisHelper(250)
@@ -233,8 +234,8 @@ export default {
         // 初始化摄像机
         initCamera() {
             camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, this.near, this.far);
-            camera.position.set(140, 70, 190);//位置
-            camera.lookAt(scene.position);//对准的焦点
+            camera.position.set(57, 90, 180);//位置
+            camera.lookAt(camera.position);//对准的焦点
         },
         // 初始化光源
         initLight() {
@@ -360,8 +361,8 @@ export default {
 
                     this.createSense();
                 }
+                scene.add(group);
                 setTimeout(() => {
-                    scene.add(group);
                     this.render();
                     this.loading = false
                     this.showStatusUi = true;
