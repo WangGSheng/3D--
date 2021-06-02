@@ -758,7 +758,12 @@ export default {
             }
         },
         getMaterial(item) {
-            let color1,color2,bgcolor,textcolor,texture;
+            console.log(item.num)
+            let color1, // 左右
+                color2, // 上下
+                bgcolor, // 贴图背景
+                textcolor, // 字体颜色
+                texture; // 贴图材质
             if (item.type === 'cabinet') {
                 color1 = '#222';
                 color2 = '#111';
@@ -766,10 +771,10 @@ export default {
                 textcolor = '#fff';
                 texture = new THREE.TextureLoader().load('static/images/fuwuqi.png');
             }else if (item.type === 'kt') {
-                color1 = '#222';
-                color2 = '#111';
-                bgcolor = '#333';
-                textcolor = '#fff';
+                color1 = '#eee';
+                color2 = '#ddd';
+                bgcolor = '#fff';
+                textcolor = '#000';
                 texture = new THREE.TextureLoader().load('static/images/空调.png');
             }
             //导入材质

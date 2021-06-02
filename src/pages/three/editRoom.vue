@@ -184,6 +184,7 @@ export default {
                         if (item.id === room.id) {
                             room.pos = item.pos;
                             room.num = item.num;
+                            room.type = item.type;
                         }
                     })
                 })
