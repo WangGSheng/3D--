@@ -104,6 +104,7 @@
 </template>
 
 <script>
+/*eslint-disable*/
 // 场景
 let scene = null;
 // Mesh 集合
@@ -129,7 +130,6 @@ let mixer = null;
 // 鼠标控件 旋转缩放
 import OrbitControls from 'three-orbitcontrols'
 import {CSS2DRenderer, CSS2DObject} from 'three/examples/jsm/renderers/CSS2DRenderer'
-/*eslint-disable*/
 import room3D from './机房2.js'
 import Vue from 'vue'
 import mapPopup from '@/pages/videoPlayer/_videoPopup.vue'
@@ -151,6 +151,7 @@ export default {
             selectedMesh: [],
             cubeList: [],
             wallList: [],
+            groundDataList: [],
             senseList: [],
             sensorList: [],
             linePoints: [],
@@ -220,6 +221,31 @@ export default {
         this.videoComponent = Vue.extend(mapPopup)
     },
     methods: {
+        // 机房编辑
+        drawRoom() {
+            let vm = this;
+            this.showStatusUi = false;
+            this.closeVideo()
+            this.$bui.drawer({
+                comp: () => import('./editRoom.vue'),
+                params: {
+                    selected: vm.cubeList,
+                    wallList: vm.wallList,
+                    senseList: vm.senseList,
+                    groundData: vm.groundDataList,
+                },
+                callback: (item) => {
+                    if (item) {
+                        vm.loading = true;
+                        vm.showStatusUi = false;
+                        vm.initData(item);
+                    } else {
+                        vm.showStatusUi = true;
+                    }
+
+                }
+            })
+        },
         // 创建场景
         initScene() {
             scene = new THREE.Scene();
@@ -239,13 +265,14 @@ export default {
         },
         // 初始化光源
         initLight() {
-            light = new THREE.AmbientLight('#fff') // 环境光源颜色;
-            // light.position.set(0, 0, 100);
+            light = new THREE.AmbientLight('#a7a3a3' ) // 环境光源颜色;
             scene.add(light);
 
-            let spotLight = new THREE.SpotLight(0xffffff);  // 聚光
+            let spotLight = new THREE.SpotLight('#848383');  // 聚光
 
-            spotLight.position.set(5, 15, 10);
+            spotLight.position.set(80, 70, 70);
+            spotLight.shadow.mapSize.width=2048;	//阴影贴图宽度设置为2048像素
+            spotLight.shadow.mapSize.height=2048;	//阴影贴图高度设置为2048像素
 
             spotLight.castShadow = true;
 
@@ -261,7 +288,10 @@ export default {
             renderer.setClearColor('#000', 1);// 设置渲染颜色（背景底色）
             renderer.setSize(window.innerWidth, window.innerHeight);// 渲染面大小（在二维平面上的窗口大小）
             renderer.setPixelRatio(window.devicePixelRatio); //设备像素比 可以清晰物体
-            this.$refs.threeDom.appendChild(renderer.domElement);
+            renderer.shadowMap.enabled = true;
+            this.$nextTick(()=>{
+                this.$refs.threeDom.appendChild(renderer.domElement);
+            })
         },
         // initTransformControl() {
         //     // 添加平移控件
@@ -347,6 +377,15 @@ export default {
                 return;
             }
             this.removeMesh().then(()=>{
+                scene.add(group);
+
+                if (item.groundData && item.groundData.length) {
+                    this.groundDataList = item.groundData;
+                }
+                if (item.senseData && item.senseData.length) {
+                    this.senseList = item.senseData;
+                    this.createSense();
+                }
                 if (item.cabinetData && item.cabinetData.length) {
                     this.cubeList = item.cabinetData;
                     this.createCabinet();
@@ -356,19 +395,17 @@ export default {
                     this.createPlane('wall');
                     this.createPlane('ground');
                 }
-                if (item.senseData && item.senseData.length) {
-                    this.senseList = item.senseData;
 
-                    this.createSense();
-                }
-                scene.add(group);
+
+
                 setTimeout(() => {
-                    this.render();
                     this.loading = false
                     this.showStatusUi = true;
+                    for (let i = 0; i < 2; i++) {
+                        this.render();
+                    }
                 }, 1000)
             });
-
         },
         // 初始化弹窗渲染器
         initCssRender() {
@@ -389,31 +426,7 @@ export default {
             let statusUi = this.$el.querySelector('.status-ui');
             document.body.appendChild(statusUi);
         },
-        // 机房编辑
-        drawRoom() {
-            let vm = this;
-            this.showStatusUi = false;
-            this.closeVideo()
-            this.$bui.drawer({
-                comp: () => import('./editRoom.vue'), // 注意: 需要懒加载的vue文件必须使用下划线前缀
-                params: { // 参数将传给加载的_test.vue页面, 在_test.vue你可以通过this.$parent.params来调用此参数
-                    title: '我是标题',
-                    selected: vm.cubeList,
-                    wallList: vm.wallList,
-                    senseList: vm.senseList,
-                },
-                callback: (item) => {
-                    if (item) {
-                        vm.loading = true;
-                        vm.showStatusUi = false;
-                        vm.initData(item);
-                    } else {
-                        vm.showStatusUi = true;
-                    }
 
-                }
-            })
-        },
         // 添加温湿度传感器模型
         addScene(item, loader) {
             let vm = this;
@@ -569,7 +582,6 @@ export default {
                 this.wallList.forEach((item) => {
                     if (item.leftBorder) {
                         this.createWall(item, 'v');
-
                     }
                     if (item.topBorder) {
                         this.createWall(item, 'h');
@@ -597,61 +609,63 @@ export default {
                     maxX: maxX,
                     minX: minX - 4,
                 }
-                let lineX = minX, lineY = 16, lineZ = minZ, change = false;
-                let num = maxZ - minZ;
-                for (let i = minX; i < maxX - minX; i += 4) {
 
-                    if (change) {
-                        num += 4;
-                        lineZ -= num;
-                    } else {
-                        num -= 4;
-                        lineZ += num;
-                    }
-
-                    if (lineZ > maxZ) {
-                        lineZ = maxZ;
-                        change = true;
-                    }
-                    if (lineZ < minZ) {
-                        lineZ = minZ;
-                        change = false
-                    }
-                    lineX += 4;
-                    this.linePoints.push({
-                        x: lineX,
-                        y: lineY,
-                        z: lineZ
-                    })
-                }
-
-                lineX = maxX, lineZ = maxZ, change = true;
-                num = maxZ - minZ;
-                for (let i = maxX - minX; i > minX; i -= 4) {
-
-                    if (change) {
-                        num += 4;
-                        lineZ -= num;
-                    } else {
-                        num -= 4;
-                        lineZ += num;
-                    }
-
-                    if (lineZ > maxZ) {
-                        lineZ = maxZ;
-                        change = true;
-                    }
-                    if (lineZ < minZ) {
-                        lineZ = minZ;
-                        change = false
-                    }
-                    lineX -= 4;
-                    this.linePoints.push({
-                        x: lineX,
-                        y: lineY,
-                        z: lineZ
-                    })
-                }
+                /*获取轨道线路*/
+                // let lineX = minX, lineY = 16, lineZ = minZ, change = false;
+                // let num = maxZ - minZ;
+                // for (let i = minX; i < maxX - minX; i += 4) {
+                //
+                //     if (change) {
+                //         num += 4;
+                //         lineZ -= num;
+                //     } else {
+                //         num -= 4;
+                //         lineZ += num;
+                //     }
+                //
+                //     if (lineZ > maxZ) {
+                //         lineZ = maxZ;
+                //         change = true;
+                //     }
+                //     if (lineZ < minZ) {
+                //         lineZ = minZ;
+                //         change = false
+                //     }
+                //     lineX += 4;
+                //     this.linePoints.push({
+                //         x: lineX,
+                //         y: lineY,
+                //         z: lineZ
+                //     })
+                // }
+                //
+                // lineX = maxX, lineZ = maxZ, change = true;
+                // num = maxZ - minZ;
+                // for (let i = maxX - minX; i > minX; i -= 4) {
+                //
+                //     if (change) {
+                //         num += 4;
+                //         lineZ -= num;
+                //     } else {
+                //         num -= 4;
+                //         lineZ += num;
+                //     }
+                //
+                //     if (lineZ > maxZ) {
+                //         lineZ = maxZ;
+                //         change = true;
+                //     }
+                //     if (lineZ < minZ) {
+                //         lineZ = minZ;
+                //         change = false
+                //     }
+                //     lineX -= 4;
+                //     this.linePoints.push({
+                //         x: lineX,
+                //         y: lineY,
+                //         z: lineZ
+                //     })
+                // }
 
                 this.createGround(res)
             }
@@ -672,10 +686,37 @@ export default {
                 }
                 let width = 4, height = 4;
                 let geometry = new THREE.PlaneGeometry(width, height);
-                let material = new THREE.MeshBasicMaterial({color: '#b8b6b6', side: THREE.DoubleSide});
+
+                let material = null;
+
+                if (this.groundDataList.length) {
+                    for (let j = 0; j < this.groundDataList.length; j++) {
+                        if (x === this.groundDataList[j].x && z === this.groundDataList[j].z) {
+                            console.log(this.groundDataList[j].name)
+                            material =  new THREE.MeshLambertMaterial(
+                                {
+                                    map: new THREE.CanvasTexture(this.getTextCanvas(this.groundDataList[j].name,null,'#000')),
+                                    side: THREE.DoubleSide,
+                                    wireframe:false,
+                                }
+                            );
+                            break;
+                        }
+                    }
+                }
+
+                if (!material) {
+                    let texture = new THREE.TextureLoader().load('static/images/水泥.png');
+                    material = new THREE.MeshLambertMaterial({
+                        map: texture,
+                        side: THREE.DoubleSide,
+                        wireframe:false
+                    });
+                }
+
                 let plane = new THREE.Mesh(geometry, material);
                 plane.position.set(x, 0, z)
-                plane.rotateX(Math.PI / 2); // 沿 X 轴旋转 90°
+                plane.rotateX(- Math.PI / 2); // 沿 X 轴旋转 90°
                 let edgesMtl = new THREE.LineBasicMaterial({color: '#777'})
                 let cubeEdges = new THREE.EdgesGeometry(geometry, 1);
                 let cubeLine = new THREE.LineSegments(cubeEdges, edgesMtl);
@@ -683,40 +724,18 @@ export default {
                 plane.receiveShadow = true; // 接受阴影
                 plane.add(cubeLine);
                 scene.add(plane);
-                // this.objects.push(plane)
             }
         },
         // 创建机柜
         createCabinet() {
-            //导入材质
-            let texture = new THREE.TextureLoader().load('static/images/fuwuqi.png')
-            texture.matrixAutoUpdate = false;
-
             if (this.cubeList && this.cubeList.length) {
                 //添加长方体
                 let geometry = new THREE.BoxGeometry(4, 8, 3);
                 let edgesMtl = new THREE.LineBasicMaterial({color: '#999', alpha: 0.1})
                 this.cubeList.forEach(item => {
                     this.cabinetNum++;
-                    //直接使用材质数组来构建物体，数组里的材质分别对应物体的右、左、上、下、前、后
-                    let material = [
-                        new THREE.MeshLambertMaterial({color: '#222'}),// 右
-                        new THREE.MeshLambertMaterial({color: '#222'}),// 左
-                        new THREE.MeshLambertMaterial(
-                            { map: new THREE.CanvasTexture(this.getTextCanvas(item)) }
-                        ),// 上
-                        new THREE.MeshLambertMaterial({color: '#000'}),// 下
-                        new THREE.MeshLambertMaterial(
-                            item.pos.includes('head') ||
-                            item.pos.includes('left') ||
-                            item.pos.includes('right')
-                                ? {map: texture} : {color: '#111'}
-                        ),                                                       // 前
-                        new THREE.MeshLambertMaterial(
-                            item.pos.includes('back') || (item.pos.includes('left') && item.pos.includes('right'))
-                                ? {map: texture} : {color: '#111'}
-                        ),                                                       // 后
-                    ]
+
+                    let material = this.getMaterial(item);
                     let cube = new THREE.Mesh(geometry, material);
                     cube.position.set(item.x, 4, item.z);
 
@@ -726,7 +745,8 @@ export default {
                     // cubeLine.name = 'cubeLine';
                     cubeLine.material.visible = true;
                     cube.add(cubeLine);
-                    cube.isCustomer = true
+                    cube.castShadow = true;
+                    cube.receiveShadow = true;
                     if (item.pos.includes('left')) {
                         cube.rotateY(Math.PI / -2);
                     } else if (item.pos.includes('right')) {
@@ -737,19 +757,59 @@ export default {
                 })
             }
         },
-        getTextCanvas(item){
+        getMaterial(item) {
+            let color1,color2,bgcolor,textcolor,texture;
+            if (item.type === 'cabinet') {
+                color1 = '#222';
+                color2 = '#111';
+                bgcolor = '#333';
+                textcolor = '#fff';
+                texture = new THREE.TextureLoader().load('static/images/fuwuqi.png');
+            }else if (item.type === 'kt') {
+                color1 = '#222';
+                color2 = '#111';
+                bgcolor = '#333';
+                textcolor = '#fff';
+                texture = new THREE.TextureLoader().load('static/images/空调.png');
+            }
+            //导入材质
+            texture.matrixAutoUpdate = false;
+            //直接使用材质数组来构建物体，数组里的材质分别对应物体的右、左、上、下、前、后
+            let material = [
+                new THREE.MeshLambertMaterial({color: color1}),// 右
+                new THREE.MeshLambertMaterial({color: color1}),// 左
+                new THREE.MeshLambertMaterial(
+                    { map: new THREE.CanvasTexture(this.getTextCanvas(item.num,bgcolor,textcolor)) }
+                ),// 上
+                new THREE.MeshLambertMaterial({color: '#000'}),// 下
+                new THREE.MeshLambertMaterial(
+                    item.pos.includes('head') ||
+                    item.pos.includes('left') ||
+                    item.pos.includes('right')
+                        ? {map: texture} : {color: color2}
+                ),                                                       // 前
+                new THREE.MeshLambertMaterial(
+                    item.pos.includes('back') || (item.pos.includes('left') && item.pos.includes('right'))
+                        ? {map: texture} : {color: color2}
+                ),                                                       // 后
+            ];
+            return material;
+        },
+        // 获取文本贴图
+        getTextCanvas(text,bgColor,textColor){
             let width=200, height=150;
             let canvas = document.createElement('canvas');
             canvas.width = width;
             canvas.height = height;
-            let ctx = canvas.getContext('2d');
-            ctx.fillStyle = '#333'; // 背景颜色
+            let ctx = canvas.getContext('2d',{ antialias: true,
+                depth: true });
+            ctx.fillStyle = bgColor ? bgColor : 'rgba(255,255,255,.7)'; // 背景颜色
             ctx.fillRect(0, 0, width, height);
             ctx.font = 50+'px " bold';
-            ctx.fillStyle = '#fff'; // 字体颜色
+            ctx.fillStyle = textColor; // 字体颜色
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillText(item.num ??= '', width/2,height/2);
+            ctx.fillText(text ??= '', width/2,height/2,150);
             return canvas;
         },
         // 移除所有Mesh

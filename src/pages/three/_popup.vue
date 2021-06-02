@@ -91,10 +91,12 @@ export default {
         }
     },
     mounted() {
+
         if (this.$parent.params.currentSense) {
             this.selected = JSON.parse(JSON.stringify(this.$parent.params.currentSense));
             this.currentDeviceId = this.selected.dataId;
             this.currentSelect = this.selected.senseId;
+            this.name = this.$parent.params.currentSense.name;
         }
 
         if (this.$parent.params.canAddCamera) {
@@ -136,6 +138,8 @@ export default {
         selectedType(v) {
             this.options = [];
 
+            let source = this.$parent.params.selectedData;
+
             for (let i = 0; i < this.dataList.length; i++) {
                 let children = this.dataList[i].children;
                 for (let j = 0; j < children.length; j++) {
@@ -144,6 +148,14 @@ export default {
                         break;
                     }
                 }
+            }
+
+            if (!this.currentDeviceId) {
+                this.options.forEach(item => {
+                    item.children = item.children.filter(child => {
+                        return !source.includes(child.id)
+                    })
+                });
             }
         },
         selectChange(id) {

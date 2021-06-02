@@ -1,6 +1,7 @@
 export default {
     "cabinetData": [
         {
+            "type":"cabinet",
             "x": 48,
             "z": 24,
             "id": 192,
@@ -13,6 +14,7 @@ export default {
             "num": "A1"
         },
         {
+            "type":"cabinet",
             "x": 52,
             "z": 24,
             "id": 193,
@@ -25,6 +27,7 @@ export default {
             "num": "A2"
         },
         {
+            "type":"cabinet",
             "x": 56,
             "z": 24,
             "id": 194,
@@ -37,6 +40,7 @@ export default {
             "num": "A3"
         },
         {
+            "type":"cabinet",
             "x": 60,
             "z": 24,
             "id": 195,
@@ -49,6 +53,7 @@ export default {
             "num": "A4"
         },
         {
+            "type":"cabinet",
             "x": 64,
             "z": 24,
             "id": 196,
@@ -61,6 +66,7 @@ export default {
             "num": "A5"
         },
         {
+            "type":"cabinet",
             "x": 48,
             "z": 36,
             "id": 300,
@@ -73,6 +79,7 @@ export default {
             "num": "B1"
         },
         {
+            "type":"cabinet",
             "x": 52,
             "z": 36,
             "id": 301,
@@ -85,6 +92,7 @@ export default {
             "num": "B2"
         },
         {
+            "type":"cabinet",
             "x": 56,
             "z": 36,
             "id": 302,
@@ -99,6 +107,7 @@ export default {
             "dataName": "E15机柜"
         },
         {
+            "type":"cabinet",
             "x": 60,
             "z": 36,
             "id": 303,
@@ -111,6 +120,7 @@ export default {
             "num": "B4"
         },
         {
+            "type":"cabinet",
             "x": 64,
             "z": 36,
             "id": 304,
@@ -125,6 +135,7 @@ export default {
             "dataName": "E15机柜"
         },
         {
+            "type":"cabinet",
             "x": 68,
             "z": 36,
             "id": 305,
@@ -137,6 +148,7 @@ export default {
             "num": "B6"
         },
         {
+            "type":"cabinet",
             "x": 72,
             "z": 36,
             "id": 306,
@@ -149,6 +161,7 @@ export default {
             "num": "B7"
         },
         {
+            "type":"cabinet",
             "x": 80,
             "z": 36,
             "id": 308,
@@ -161,6 +174,7 @@ export default {
             "num": "B8"
         },
         {
+            "type":"cabinet",
             "x": 84,
             "z": 36,
             "id": 309,
@@ -173,6 +187,7 @@ export default {
             "num": "B9"
         },
         {
+            "type":"cabinet",
             "x": 88,
             "z": 36,
             "id": 310,
@@ -185,6 +200,7 @@ export default {
             "num": "B10"
         },
         {
+            "type":"cabinet",
             "x": 48,
             "z": 48,
             "id": 408,
@@ -197,6 +213,7 @@ export default {
             "num": "C2"
         },
         {
+            "type":"cabinet",
             "x": 52,
             "z": 48,
             "id": 409,
@@ -209,6 +226,7 @@ export default {
             "num": "C3"
         },
         {
+            "type":"cabinet",
             "x": 56,
             "z": 48,
             "id": 410,
@@ -221,6 +239,7 @@ export default {
             "num": "C4"
         },
         {
+            "type":"cabinet",
             "x": 60,
             "z": 48,
             "id": 411,
@@ -233,6 +252,7 @@ export default {
             "num": "C5"
         },
         {
+            "type":"cabinet",
             "x": 44,
             "z": 48,
             "id": 407,
@@ -245,6 +265,7 @@ export default {
             "num": "C1"
         },
         {
+            "type":"cabinet",
             "x": 68,
             "z": 48,
             "id": 413,
@@ -257,6 +278,7 @@ export default {
             "num": "C6"
         },
         {
+            "type":"cabinet",
             "x": 72,
             "z": 48,
             "id": 414,
@@ -269,6 +291,7 @@ export default {
             "num": "C7"
         },
         {
+            "type":"cabinet",
             "x": 76,
             "z": 48,
             "id": 415,
@@ -283,6 +306,7 @@ export default {
             "dataName": "E15机柜"
         },
         {
+            "type":"cabinet",
             "x": 80,
             "z": 48,
             "id": 416,
@@ -295,6 +319,7 @@ export default {
             "num": "C9"
         },
         {
+            "type":"cabinet",
             "x": 84,
             "z": 48,
             "id": 417,
@@ -307,6 +332,7 @@ export default {
             "num": "C10"
         },
         {
+            "type":"cabinet",
             "x": 88,
             "z": 48,
             "id": 418,
@@ -319,6 +345,7 @@ export default {
             "num": "C11"
         },
         {
+            "type":"cabinet",
             "x": 92,
             "z": 48,
             "id": 419,
@@ -1088,5 +1115,19 @@ export default {
                 "dataName": "E15机柜"
             }
         }
-    ]
+    ],
+    "groundData":[{
+        "x": 52,
+        "z": 64,
+        "id": 553,
+        "pos": [
+            "head"
+        ],
+        "leftBorder": false,
+        "topBorder": false,
+        "isGround": false,
+        "senseId": "",
+        "num": "",
+        "name": "测试"
+    }]
 }
