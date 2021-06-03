@@ -20,7 +20,7 @@
         &.is-kt {
             background-color: #5ffff4;
         }
-        &.is-otf {
+        &.is-odf {
             background-color: #eed99b;
         }
     }
@@ -38,6 +38,12 @@
 
     .top-border {
         border-top: 3px solid rgba(200, 200, 10, 1);
+    }
+    .left-door {
+        border-left: 3px solid rgb(18, 80, 212);
+    }
+    .top-door {
+        border-top: 3px solid rgb(18, 80, 212);
     }
 
 }

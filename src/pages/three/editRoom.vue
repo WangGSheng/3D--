@@ -9,10 +9,11 @@
             <el-radio-group v-model="editType">
                 <el-radio-button label="room">编辑机柜</el-radio-button>
                 <el-radio-button label="kt">编辑空调</el-radio-button>
-                <el-radio-button label="otf">编辑OTF架</el-radio-button>
+                <el-radio-button label="odf">编辑ODF架</el-radio-button>
                 <el-radio-button label="wall">编辑围墙</el-radio-button>
+                <el-radio-button label="door">编辑门</el-radio-button>
             </el-radio-group>
-            <el-radio-group v-model="wallType" class="m-l-20" :disabled="editType !== 'wall'">
+            <el-radio-group v-model="wallType" class="m-l-20" :disabled="editType !== 'wall' && editType !== 'door'">
                 <el-radio label="horizontal">—</el-radio>
                 <el-radio label="vertical">|</el-radio>
             </el-radio-group>
@@ -24,10 +25,10 @@
              :style="`grid-template-columns:repeat(${widthNum}, 40px);grid-template-rows: repeat(${heightNum}, 40px)`">
             <template v-for="item in roomList">
                 <div
-                    :class="{'grid-item':true,'left-border':item.leftBorder,'top-border':item.topBorder,
+                    :class="{'grid-item':true,'left-border':item.leftBorder,'top-border':item.topBorder,'left-door':item.leftDoor,'top-door':item.topDoor,
                     'is-cabinet':item.type === 'cabinet' && act.includes(item.id),
                     'is-kt':item.type === 'kt' && act.includes(item.id),
-                    'is-otf':item.type === 'otf' && act.includes(item.id)}"
+                    'is-odf':item.type === 'odf' && act.includes(item.id)}"
                     :key="item.id"
                     :id="'room-' + item.id"
                     @click.stop="select(item)" @contextmenu="selectSense(item)">
@@ -166,7 +167,8 @@ export default {
                     pos: ['head'],
                     leftBorder: false,
                     topBorder: false,
-                    isGround: false,
+                    topDoor: false,
+                    leftDoor: false,
                     senseId: '',
                     dataId: '',
                     num: '',
@@ -199,6 +201,8 @@ export default {
                     if (room.id === item.id) {
                         room.leftBorder = item.leftBorder;
                         room.topBorder = item.topBorder;
+                        room.topDoor = item.topDoor;
+                        room.leftDoor = item.leftDoor;
                         room.name = item.name;
                     }
                 })
@@ -231,7 +235,7 @@ export default {
             let text;
             if (item.type === 'kt') {
                 text = '空调名称';
-            }else if (item.type === 'otf') {
+            }else if (item.type === 'odf') {
                 text = 'OTF架名称';
             }else{
                 text = '机柜编号';
@@ -255,33 +259,63 @@ export default {
             if (this.editType === 'kt') {
                 item.type = 'kt';
                 this.changeSelect(item)
-            }else if (this.editType === 'otf') {
-                item.type = 'otf'
+            }else if (this.editType === 'odf') {
+                item.type = 'odf'
                 this.changeSelect(item)
             }else if (this.editType === 'room') {
                 item.type = 'cabinet'
                 this.changeSelect(item)
             } else {
-                if (this.actWall.length && this.actWall.includes(item.id)) {
+                this.changeDoorOrWall(item)
+            }
+        },
+        changeDoorOrWall(item) {
+            if (this.actWall.length && this.actWall.includes(item.id)) {
+                if (this.editType === 'wall') {
                     if (this.wallType === 'vertical') {
                         item.leftBorder = !item.leftBorder;
-
+                        item.leftDoor = false;
                     } else {
                         item.topBorder = !item.topBorder;
+                        item.topDoor = false;
                     }
-                    if (!item.topBorder && !item.leftBorder) {
-                        this.deleteData(item.id);
-                    }
-                } else {
-                    if (this.wallType === 'horizontal') {
-                        item.topBorder = true;
+
+                }else {
+                    if (this.wallType === 'vertical') {
+                        item.leftDoor = !item.leftDoor;
+                        item.leftBorder = false;
                     } else {
-                        item.leftBorder = true;
+                        item.topDoor = !item.topDoor;
+                        item.topBorder = false;
                     }
-                    this.wallData.push(item)
-                    this.actWall.push(item.id);
                 }
 
+                if (!item.topBorder && !item.leftBorder
+                    && !item.topDoor && !item.leftDoor) {
+                    this.deleteData(item.id);
+                }
+            } else {
+                if (this.wallType === 'horizontal') {
+                    if (this.editType === 'wall') {
+                        item.topBorder = true;
+                        item.topDoor = false;
+                    }else{
+                        item.topDoor = true;
+                        item.topBorder = false;
+                    }
+
+                } else {
+                    if (this.editType === 'wall') {
+                        item.leftBorder = true;
+                        item.leftDoor = false;
+                    }else{
+                        item.leftDoor = true;
+                        item.leftBorder = false;
+                    }
+                }
+
+                this.wallData.push(item)
+                this.actWall.push(item.id);
             }
         },
         changeSelect(item) {
