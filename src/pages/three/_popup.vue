@@ -125,7 +125,7 @@ export default {
                 method: 'post',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJseHgiLCJpYXQiOjE2MjIxNzM4NzcsImV4cCI6MTYyMjc3ODY3N30.hdXqRwaO89xFvoZdVomappniIlK4Xk6lR-ZLwaEDiaKDb8MWcp_h-agiQfEyUQF6v58dmh7ccc0u5ExZ6b2qkg'
+                    Authorization: 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTYyMjc5MDQ5NCwiZXhwIjoxNjIzMzk1Mjk0fQ.KUS_oAHvWV6dkUF6-36W_gng1Rw1C8DsrWUhrcFLhV0oXIaWEN5acK6tTQsCNyXS-aRmljSg5nSQHKdoY4EIgw'
                 }
             }).then(response => {
                 this.dataList = response.data.data;
