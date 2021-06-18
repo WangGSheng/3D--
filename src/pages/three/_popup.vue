@@ -210,7 +210,6 @@ export default {
     margin-bottom: 5px;
 
     .center-item {
-        /*background-image: url("./center.png");*/
         background-color: #eaa447;
     }
 

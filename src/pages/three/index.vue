@@ -54,16 +54,35 @@
 /*弹窗*/
 .model-popup {
     height: 230px;
+    width: 400px;
     margin-top: -130px;
     color: #B9EDF8;
     background-color: transparent;
     transition: all 0.2s linear;
+    position: relative;
+
+    .close-bth {
+        position: absolute;
+        right: 8px;
+        top: 0px;
+        cursor: pointer;
+        background-color: #0ff;
+        color: white;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        z-index: 10;
+
+        &:hover {
+            color: #f6b4b4;
+        }
+    }
 }
 
 /*统计面板*/
 .status-ui {
     position: absolute;
-    left: 0;
+    rigth: 0;
     top: 0;
     width: 150px;
     height: 300px;
@@ -83,6 +102,7 @@
         </div>
 
         <div class="model-popup" v-show="false">
+            <div class="close-bth"><i class="icon close"></i></div>
         </div>
         <div class="status-ui" v-show="showStatusUi">
             <table class="ui celled vertical-striped table compact w-100p">
@@ -115,6 +135,8 @@ let camera = null;
 let renderer = null;
 // 灯光
 let light = null;
+// 性能插件
+let stats = null;
 // 实例平移
 // let transformControls = null;
 // 鼠标拾取射线
@@ -130,7 +152,7 @@ let mixer = null;
 // 鼠标控件 旋转缩放
 import OrbitControls from 'three-orbitcontrols'
 import {CSS2DRenderer, CSS2DObject} from 'three/examples/jsm/renderers/CSS2DRenderer'
-import room3D from './机房.js'
+import room3D from './610B.js'
 import Vue from 'vue'
 import mapPopup from '@/pages/videoPlayer/_videoPopup.vue'
 
@@ -174,6 +196,8 @@ export default {
         this.initRenderer();
         // 创建光源
         this.initLight();
+        //初始化性能插件
+        this.initStats();
 
         this.initLoader();
         // 本地数据
@@ -199,7 +223,7 @@ export default {
         this.initRayCaster();
 
         // 轨迹动画
-        // this.animat();
+        // this.animate();
         //加入事件监听器,窗口自适应
         window.addEventListener('resize', function () {
             let width = window.innerWidth;
@@ -249,33 +273,35 @@ export default {
         // 创建场景
         initScene() {
             scene = new THREE.Scene();
+            scene.fog = new THREE.Fog("#0f1e3e", 20, 700);
             group = new THREE.Group();
-            scene.position.set(-50, 0, 0)
+            scene.position.set(0, 0, 0)
             scene.add(group);
             // 加载辅助坐标系 实际应用的时候需要注释此代码
             const axisHelper = new THREE.AxisHelper(250)
             axisHelper.position.set(0, 0, 0);//位置
-            scene.add(axisHelper)
+            // scene.add(axisHelper)
         },
         // 初始化摄像机
         initCamera() {
             camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, this.near, this.far);
-            camera.position.set(57, 90, 180);//位置
-            camera.lookAt(camera.position);//对准的焦点
+            camera.position.set(97, 90, 180);//位置
+            camera.lookAt(scene.position);//对准的焦点
         },
         // 初始化光源
         initLight() {
-            light = new THREE.AmbientLight('#a7a3a3' ) // 环境光源颜色;
+            light = new THREE.AmbientLight('#a7a3a3') // 环境光源颜色;
             scene.add(light);
 
-            let spotLight = new THREE.SpotLight('#848383');  // 聚光
+            let spotLight = new THREE.SpotLight(
+                '#848383',2.0,200,30,1,0
+            );  // 聚光
 
-            spotLight.position.set(80, 70, 70);
-            spotLight.shadow.mapSize.width=2048;	//阴影贴图宽度设置为2048像素
-            spotLight.shadow.mapSize.height=2048;	//阴影贴图高度设置为2048像素
+            spotLight.position.set(0, 100, 0);
+            spotLight.shadow.mapSize.width = 2048;	//阴影贴图宽度设置为2048像素
+            spotLight.shadow.mapSize.height = 2048;	//阴影贴图高度设置为2048像素
 
             spotLight.castShadow = true;
-
             scene.add(spotLight);
         },
         // 初始化渲染器
@@ -285,13 +311,17 @@ export default {
                 antialias: true,
                 alpha: true
             });
-            renderer.setClearColor('#000', 1);// 设置渲染颜色（背景底色）
+            renderer.setClearColor('#0f1e3e', 1);// 设置渲染颜色（背景底色）
             renderer.setSize(window.innerWidth, window.innerHeight);// 渲染面大小（在二维平面上的窗口大小）
             renderer.setPixelRatio(window.devicePixelRatio); //设备像素比 可以清晰物体
             renderer.shadowMap.enabled = true;
-            this.$nextTick(()=>{
+            this.$nextTick(() => {
                 this.$refs.threeDom.appendChild(renderer.domElement);
             })
+        },
+        initStats() {
+            stats = new Stats();
+            this.$refs.threeDom.appendChild(stats.dom);
         },
         // initTransformControl() {
         //     // 添加平移控件
@@ -322,13 +352,12 @@ export default {
                         // 给选中的模型添加弹窗或移除弹窗
                         let dom = obj.children[1].element;
                         this.openOrClose(dom)
-
-                        if (!dom.children.length) {
+                        if (dom.children.length === 1) {
                             const comp = new this.videoComponent({
                                 propsData: {
                                     param: {
                                         id: obj.userData.dataId,
-                                        name:obj.name
+                                        name: obj.name
                                     }
                                 }
                             }).$mount();
@@ -336,15 +365,16 @@ export default {
                             if (this.beforeSelected && this.beforeSelected.id !== intersects[0].object.id) {
                                 this.closeVideo()
                             }
-
+                            dom.children[0].onclick = this.closeVideo;
                             dom.append(comp.$el)
                             this.videoVm = comp;
                             this.beforeSelected = intersects[0].object;
+
                         } else {
                             this.videoVm.$destroy();
                             this.videoVm = null;
                             this.beforeSelected = null;
-                            dom.firstElementChild.remove();
+                            dom.lastElementChild.remove();
                         }
 
                     }
@@ -357,8 +387,8 @@ export default {
                 this.videoVm.$destroy();
                 this.videoVm = null;
                 this.beforeSelected = null;
-                this.openOrClose(oldDom)
-                oldDom.firstElementChild.remove();
+                this.openOrClose(oldDom);
+                oldDom.lastElementChild.remove();
             }
         },
         openOrClose(dom) {
@@ -376,7 +406,7 @@ export default {
             if (!item) {
                 return;
             }
-            this.removeMesh().then(()=>{
+            this.removeMesh().then(() => {
                 scene.add(group);
 
                 if (item.groundData && item.groundData.length) {
@@ -397,7 +427,6 @@ export default {
                 }
 
 
-
                 setTimeout(() => {
                     this.loading = false
                     this.showStatusUi = true;
@@ -413,29 +442,31 @@ export default {
             this.cssRender.setSize(window.innerWidth, window.innerHeight);
             this.cssRender.domElement.style.position = 'absolute';
             this.cssRender.domElement.style.top = 0;
-            document.body.appendChild(this.cssRender.domElement);
+            // document.body.appendChild(this.cssRender.domElement);
+            this.$refs.threeDom.appendChild(this.cssRender.domElement);
         },
         initMyDom() {
             // 编辑按钮
             let control = document.querySelector('.control').cloneNode(true)
             control.style.display = 'block'
             control.addEventListener('click', this.drawRoom)
-            document.body.appendChild(control);
+            this.$el.parentElement.appendChild(control);
 
             // 统计面板
             let statusUi = this.$el.querySelector('.status-ui');
-            document.body.appendChild(statusUi);
+            statusUi.style.right = 0;
+            this.$refs.threeDom.appendChild(statusUi);
         },
 
         // 添加温湿度传感器模型
         addScene(item, loader) {
             let vm = this;
             loader.load('static/three/model/温湿度/scene.gltf', function (gltf) {
-                    let model = gltf.scene,x = item.x,y = 9,z = item.z;
+                    let model = gltf.scene, x = item.x, y = 9, z = item.z;
                     model.rotateZ(Math.PI);
                     if (item.pos.includes('head')) {
                         model.rotateY(Math.PI / -2)
-                        x += 4;
+                        // x += 4;
                         z -= 2;
                     } else if (item.pos.includes('back')) {
                         model.rotateY(Math.PI / 2)
@@ -443,7 +474,7 @@ export default {
                         x += 4;
                     } else if (item.pos.includes('left')) {
                         x += 2;
-                    }else {
+                    } else {
                         model.rotateY(Math.PI)
                         x -= 2;
                     }
@@ -455,6 +486,7 @@ export default {
                     model.name = '传感器-' + item.id
                     // 给模型定制弹窗
                     const popupDiv = document.getElementsByClassName('model-popup')[0].cloneNode(true);
+
                     // popupDiv.textContent = '传感器-' + item.id;
                     popupDiv.style.overflow = 'hidden';
                     popupDiv.style.width = '0px';
@@ -551,16 +583,16 @@ export default {
         createSense() {
             this.senseList.forEach(item => {
                 if (item.type === 'camera') {
-                    this.cameraNum ++;
+                    this.cameraNum++;
                     this.addCamera(item.data, this.GLTFLoader)
                 } else {
-                    this.sensorNum ++;
+                    this.sensorNum++;
                     this.addScene(item.data, this.GLTFLoader)
                 }
             })
         },
         // 创建墙体
-        createWall(item, type,texture) {
+        createWall(item, type, texture) {
             let material;
             let width = 4, height = 10, rotate = false, x = item.x, z = item.z;
             if (type === 'v' || type === 'vDoor') {
@@ -571,27 +603,30 @@ export default {
             }
 
             if (type === 'vDoor' || type === 'hDoor') {
-                material =  new THREE.MeshLambertMaterial(
+                material = new THREE.MeshLambertMaterial(
                     {
                         map: texture,
                         // color: '#fff',
                         side: THREE.DoubleSide,
-                        wireframe:false,
-                        transparent:true,
-                        opacity:1
+                        wireframe: false,
+                        transparent: true,
+                        opacity: 1
                     }
                 );
-            }else{
-                material = new THREE.MeshBasicMaterial({
-                    color: '#5e81ec',
-                    side: THREE.DoubleSide,
-                    opacity: 0.7,
-                    transparent: true
-                });
+            } else {
+                let color = "#425fac"
+                material = [
+                    new THREE.MeshLambertMaterial({color: color,  opacity: 0,transparent: true}),
+                    new THREE.MeshLambertMaterial({color: color,  opacity: 0,transparent: true}),
+                    new THREE.MeshLambertMaterial({color: color,  opacity: 0.4,transparent: true}),
+                    new THREE.MeshLambertMaterial({color: color,  opacity: 0.4,transparent: true}),
+                    new THREE.MeshLambertMaterial({color: color,  opacity: 0.4,transparent: true}),
+                    new THREE.MeshLambertMaterial({color: color,  opacity: 0.4,transparent: true}),
+                ]
             }
 
 
-            let geometry = new THREE.PlaneGeometry(width, height);
+            let geometry = new THREE.BoxGeometry(width, height,0.3);
 
             let plane = new THREE.Mesh(geometry, material);
             plane.position.set(x, 5, z)
@@ -611,10 +646,10 @@ export default {
                         this.createWall(item, 'h');
                     }
                     if (item.leftDoor) {
-                        this.createWall(item, 'vDoor',texture);
+                        this.createWall(item, 'vDoor', texture);
                     }
                     if (item.topDoor) {
-                        this.createWall(item, 'hDoor',texture);
+                        this.createWall(item, 'hDoor', texture);
                     }
                 })
 
@@ -697,8 +732,60 @@ export default {
                 //     })
                 // }
 
-                this.createGround(res)
+                this.asa(res)
+                if (this.groundDataList.length) this.createGround(res)
+
             }
+        },
+        asa() {
+
+            const textureLoader = new THREE.TextureLoader();
+            let floorMat = new THREE.MeshStandardMaterial({
+                roughness: 0.8,
+                color: 0xffffff,
+                metalness: 0.2,
+                bumpScale: 0.0005,
+            });
+            textureLoader.load("static/images/地板.jpg", function (map) {
+
+                map.wrapS = THREE.RepeatWrapping;
+                map.wrapT = THREE.RepeatWrapping;
+                map.anisotropy = 4;
+                map.repeat.set(30, 30);
+                map.encoding = THREE.sRGBEncoding;
+                floorMat.map = map;
+                floorMat.needsUpdate = true;
+
+            });
+            // textureLoader.load( "static/images/hardwood2_bump.jpg", function ( map ) {
+            //
+            //     map.wrapS = THREE.RepeatWrapping;
+            //     map.wrapT = THREE.RepeatWrapping;
+            //     map.anisotropy = 4;
+            //     map.repeat.set( 10, 24 );
+            //     floorMat.bumpMap = map;
+            //     floorMat.needsUpdate = true;
+            //
+            // } );
+            // textureLoader.load( "static/images/hardwood2_roughness.jpg", function ( map ) {
+            //
+            //     map.wrapS = THREE.RepeatWrapping;
+            //     map.wrapT = THREE.RepeatWrapping;
+            //     map.anisotropy = 4;
+            //     map.repeat.set( 10, 24 );
+            //     floorMat.roughnessMap = map;
+            //     floorMat.needsUpdate = true;
+            //
+            // } );
+            let width = window.innerWidth, height = window.innerHeight;
+            let geometry = new THREE.PlaneGeometry(width, height);
+            let plane = new THREE.Mesh(geometry, floorMat);
+            plane.position.set(60, 0, 60)
+            // plane.rotateY(- Math.PI / 2); // 沿 Y 轴旋转 90°
+            plane.rotateX(-Math.PI / 2); // 沿 X 轴旋转 90°
+            plane.receiveShadow = true; // 接受阴影
+            scene.add(plane);
+            this.objects.push(plane)
         },
         // 创建地板
         createGround(data) {
@@ -714,47 +801,37 @@ export default {
                 } else if (i > 0) {
                     x += 4;
                 }
-                let width = 4, height = 4;
-                let geometry = new THREE.PlaneGeometry(width, height);
 
-                let material = null;
-
-                if (this.groundDataList.length) {
-                    for (let j = 0; j < this.groundDataList.length; j++) {
-                        if (x === this.groundDataList[j].x && z === this.groundDataList[j].z) {
-                            material =  new THREE.MeshLambertMaterial(
-                                {
-                                    map: new THREE.CanvasTexture(this.getTextCanvas(this.groundDataList[j].name,'#eee','#000')),
-                                    side: THREE.DoubleSide,
-                                    wireframe:false,
-                                }
-                            );
-                            break;
-                        }
+                for (let j = 0; j < this.groundDataList.length; j++) {
+                    if (x === this.groundDataList[j].x && z === this.groundDataList[j].z) {
+                        let width = 4, height = 4;
+                        let geometry = new THREE.PlaneGeometry(width, height);
+                        let textMaterial = new THREE.MeshLambertMaterial(
+                            {
+                                map: new THREE.CanvasTexture(this.getTextCanvas(this.groundDataList[j].name, "#ddd", '#fff')),
+                                side: THREE.DoubleSide,
+                                wireframe: false,
+                            }
+                        );
+                        let plane = new THREE.Mesh(geometry, textMaterial ? textMaterial : material);
+                        plane.position.set(x, 0.1, z + 4)
+                        // plane.rotateY(- Math.PI / 2); // 沿 Y 轴旋转 90°
+                        plane.rotateX(-Math.PI / 2); // 沿 X 轴旋转 90°
+                        plane.receiveShadow = true; // 接受阴影
+                        scene.add(plane);
+                        this.objects.push(plane)
+                        break;
                     }
                 }
 
-                if (!material) {
-                    // let texture = new THREE.TextureLoader().load('static/images/马赛克.png');
-                    material = new THREE.MeshLambertMaterial({
-                        color: "#eee",
-                        side: THREE.DoubleSide,
-                        wireframe:false,
-                    });
-                }
+                //
+                // let edgesMtl = new THREE.LineBasicMaterial({color: '#777'})
+                // let cubeEdges = new THREE.EdgesGeometry(geometry, 1);
+                // let cubeLine = new THREE.LineSegments(cubeEdges, edgesMtl);
+                //
+                //
+                // plane.add(cubeLine);
 
-                let plane = new THREE.Mesh(geometry, material);
-                plane.position.set(x, 0, z)
-                // plane.rotateY(- Math.PI / 2); // 沿 Y 轴旋转 90°
-                plane.rotateX(- Math.PI / 2); // 沿 X 轴旋转 90°
-                let edgesMtl = new THREE.LineBasicMaterial({color: '#777'})
-                let cubeEdges = new THREE.EdgesGeometry(geometry, 1);
-                let cubeLine = new THREE.LineSegments(cubeEdges, edgesMtl);
-
-                plane.receiveShadow = true; // 接受阴影
-                plane.add(cubeLine);
-                scene.add(plane);
-                this.objects.push(plane)
             }
         },
         // 创建机柜
@@ -803,13 +880,13 @@ export default {
                 bgcolor = '#333';
                 textcolor = '#fff';
                 texture = new THREE.TextureLoader().load('static/images/fuwuqi.png');
-            }else if (item.type === 'kt') {
+            } else if (item.type === 'kt') {
                 color1 = '#eee';
                 color2 = '#ddd';
                 bgcolor = '#fff';
                 textcolor = '#000';
                 texture = new THREE.TextureLoader().load('static/images/空调.png');
-            }else{
+            } else {
                 color1 = '#ddd';
                 color2 = '#999';
                 bgcolor = '#ddd';
@@ -823,7 +900,7 @@ export default {
                 new THREE.MeshLambertMaterial({color: color1}),// 右
                 new THREE.MeshLambertMaterial({color: color1}),// 左
                 new THREE.MeshLambertMaterial(
-                    { map: new THREE.CanvasTexture(this.getTextCanvas(item.num,bgcolor,textcolor)) }
+                    {map: new THREE.CanvasTexture(this.getTextCanvas(item.num, bgcolor, textcolor))}
                 ),// 上
                 new THREE.MeshLambertMaterial({color: '#000'}),// 下
                 new THREE.MeshLambertMaterial(
@@ -840,37 +917,59 @@ export default {
             return material;
         },
         // 获取文本贴图
-        getTextCanvas(text,bgColor,textColor){
-            let width=200, height=150;
+        getTextCanvas(text, bgColor, textColor) {
+            let width = 200, height = 150;
             let canvas = document.createElement('canvas');
             canvas.width = width;
             canvas.height = height;
-            let ctx = canvas.getContext('2d',{ antialias: true,
-                depth: true });
-            ctx.fillStyle = bgColor ? bgColor : 'rgba(255,255,255,.7)'; // 背景颜色
+            let ctx = canvas.getContext('2d', {
+                antialias: true,
+                depth: true
+            });
+            ctx.fillStyle = bgColor ? bgColor : 'rgba(255,255,255,0)'; // 背景颜色
             ctx.fillRect(0, 0, width, height);
-            ctx.font = 50+'px " bold';
+            ctx.font = 50 + 'px " bold';
             ctx.fillStyle = textColor; // 字体颜色
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillText(text ??= '', width/2,height/2,150);
+            ctx.fillText(text ??= '', width / 2, height / 2, 150);
             return canvas;
         },
         // 移除所有Mesh
         removeMesh() {
             return new Promise(resolve => {
                 this.objects.forEach(item => {
+                    scene.remove(item);
                     //删除掉所有的模型组内的mesh
                     item.traverse((child) => {
                         if (child instanceof THREE.Mesh) {
                             child.geometry.dispose(); //删除几何体
-                            // child.material.dispose(); //删除材质
+                            if (child.material.length) {
+                                child.material.forEach(i => {
+                                    i.dispose()
+                                });
+                            } else {
+                                child.material.dispose();
+                            }
+
                         }
                     })
 
-                    scene.remove(item);
+
                 })
                 scene.remove(group)
+                group.traverse((child) => {
+                    if (child instanceof THREE.Mesh) {
+                        child.geometry.dispose(); //删除几何体
+                        if (child.material.length) {
+                            child.material.forEach(i => {
+                                i.dispose()
+                            });
+                        } else {
+                            child.material.dispose();
+                        }
+                    }
+                })
                 this.objects = [];
                 this.cabinetNum = 0;
                 this.cameraNum = 0;
@@ -885,7 +984,7 @@ export default {
         },
 
         /*沿线动画*/
-        animat() {
+        animate() {
             let other;
             let vm = this;
             this.GLTFLoader.load('static/three/model/scene.gltf', function (obj) {
@@ -1056,6 +1155,10 @@ export default {
         // 创建鼠标控件
         getOrbitControls() {
             this.controls = new OrbitControls(camera, this.cssRender.domElement)
+            // 使动画循环使用时阻尼或自转 意思是否有惯性
+            // this.controls.enableDamping = true;
+            //动态阻尼系数 就是鼠标拖拽旋转灵敏度
+            // this.controls.dampingFactor = 0.25;
             // 设置相机距离原点的最近距离
             this.controls.minDistance = this.near;
             // 设置相机距离原点的最远距离
@@ -1065,30 +1168,18 @@ export default {
             // 缩放范围
             this.controls.minZoom = 0.5;
             this.controls.maxZoom = 1;
-            //监听鼠标事件，触发渲染函数，更新canvas画布渲染效果
-            this.controls.addEventListener('change', ()=>{
+            // //监听鼠标事件，触发渲染函数，更新canvas画布渲染效果
+            this.controls.addEventListener('change', () => {
                 this.render()
             });
-        },
-        hiedLineSegment() {
-            for (let i = 0; i < scene.children.length; i++) {
-                if (scene.children[i].isMesh && scene.children[i].children.length) {
-                    let childArr = scene.children[i].children;
-                    for (let j = 0; j < childArr.length; j++) {
-                        if (childArr[j].type === 'LineSegments') {
-                            childArr[j].material.visible = false;
-                            break;
-                        }
-                    }
-                }
-            }
         },
         // 渲染
         render() {
             // requestAnimationFrame(this.render);
             this.cssRender.render(scene, camera)
             renderer.render(scene, camera);
-
+            //更新性能插件
+            // stats.update();
             // 更新帧动画的时间
             // mixer.update(clock.getDelta());
         }
