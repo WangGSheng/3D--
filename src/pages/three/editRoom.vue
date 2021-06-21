@@ -151,7 +151,7 @@ export default {
     methods: {
         /*初始化网格数据，固定宽高*/
         initDom() {
-            let start = 0;
+            let start = -17 * 4;
             let x = start;
             let z = 0;
             for (let i = 0; i < this.widthNum * this.heightNum; i++) {

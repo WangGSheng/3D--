@@ -55,26 +55,36 @@
 .model-popup {
     height: 230px;
     width: 400px;
-    margin-top: -130px;
+    top: -165px;
+    left: 285px;
     color: #B9EDF8;
     background-color: transparent;
-    transition: all 0.2s linear;
-    position: relative;
+    transition: height 0.2s linear;
+    position: absolute;
+
+    &:hover .close-bth {
+        display: block !important;
+    }
 
     .close-bth {
         position: absolute;
-        right: 8px;
-        top: 0px;
+        //display: none !important;
+        right: 20px;
+        top: -20px;
         cursor: pointer;
-        background-color: #0ff;
-        color: white;
-        border-radius: 50%;
-        width: 20px;
-        height: 20px;
+        //background-color: rgba(#d78a34,.8);
+        color: #f6b4b4;
+        //border-radius: 50%;
+        width: 30px;
+        height: 30px;
         z-index: 10;
+        //font-size:25px;
+        padding: 5px;
+        text-align: center;
+
 
         &:hover {
-            color: #f6b4b4;
+            color: #fff;
         }
     }
 }
@@ -82,7 +92,7 @@
 /*统计面板*/
 .status-ui {
     position: absolute;
-    rigth: 0;
+    right: 0;
     top: 0;
     width: 150px;
     height: 300px;
@@ -102,7 +112,7 @@
         </div>
 
         <div class="model-popup" v-show="false">
-            <div class="close-bth"><i class="icon close"></i></div>
+            <div class="close-bth"><i class="iconfont ali-iconsimui-close"></i></div>
         </div>
         <div class="status-ui" v-show="showStatusUi">
             <table class="ui celled vertical-striped table compact w-100p">
@@ -137,6 +147,8 @@ let renderer = null;
 let light = null;
 // 性能插件
 let stats = null;
+// 高光强度
+let shininessNum = 15;
 // 实例平移
 // let transformControls = null;
 // 鼠标拾取射线
@@ -197,11 +209,11 @@ export default {
         // 创建光源
         this.initLight();
         //初始化性能插件
-        this.initStats();
-
+        // this.initStats();
+        // 初始化外部模型加载器
         this.initLoader();
-        // 本地数据
-        this.initData(room3D);
+        // 本地数据 room3D
+        this.initData();
         // 创建地板
         // this.createGround();
         // 创建立方体
@@ -294,7 +306,7 @@ export default {
             scene.add(light);
 
             let spotLight = new THREE.SpotLight(
-                '#848383',2.0,200,30,1,0
+                '#848383', 2.0, 200, 30, 1, 0
             );  // 聚光
 
             spotLight.position.set(0, 100, 0);
@@ -395,6 +407,7 @@ export default {
             dom.style.fontSize = dom.style.fontSize === '0px' ? '16px' : '0px';
             dom.style.overflow = dom.style.overflow === 'hidden' ? 'unset' : 'hidden';
             dom.style.width = dom.style.width === '0px' ? '400px' : '0px';
+            dom.style.height = dom.style.height === '0px' ? '230px' : '0px';
             dom.style.padding = dom.style.padding === '0px' ? '5px' : '0px';
         },
         // 初始化外部模型加载器
@@ -423,8 +436,8 @@ export default {
                 if (item.wallData && item.wallData.length) {
                     this.wallList = item.wallData;
                     this.createPlane('wall');
-                    this.createPlane('ground');
                 }
+                this.createPlane('ground');
 
 
                 setTimeout(() => {
@@ -459,9 +472,8 @@ export default {
         },
 
         // 添加温湿度传感器模型
-        addScene(item, loader) {
-            let vm = this;
-            loader.load('static/three/model/温湿度/scene.gltf', function (gltf) {
+        addScene(item, geometryMerge) {
+            this.GLTFLoader.load('static/three/model/温湿度/scene.gltf', function (gltf) {
                     let model = gltf.scene, x = item.x, y = 9, z = item.z;
                     model.rotateZ(Math.PI);
                     if (item.pos.includes('head')) {
@@ -487,9 +499,9 @@ export default {
                     // 给模型定制弹窗
                     const popupDiv = document.getElementsByClassName('model-popup')[0].cloneNode(true);
 
-                    // popupDiv.textContent = '传感器-' + item.id;
                     popupDiv.style.overflow = 'hidden';
                     popupDiv.style.width = '0px';
+                    popupDiv.style.height = '0px';
                     popupDiv.style.padding = '0px';
                     popupDiv.style.fontSize = '0px';
                     let moonLabel = new CSS2DObject(popupDiv);
@@ -498,7 +510,7 @@ export default {
 
 
                     // 添加一个透明的Mesh 将模型添加进去
-                    let geometry = new THREE.BoxBufferGeometry(2, 2, 2);
+                    let geometry = new THREE.BoxBufferGeometry(4, 4, 4);
                     let material = new THREE.MeshBasicMaterial({color: 0xffffff});
                     material.transparent = true;
                     material.opacity = 0;
@@ -507,8 +519,8 @@ export default {
 
                     other.add(model)
 
-
-                    group.add(other)
+                    geometryMerge.merge(other.geometry,other.matrix)
+                    // group.add(other)
 
                 }, undefined,
                 function (error) {
@@ -516,9 +528,8 @@ export default {
                 });
         },
         // 添加摄像头模型
-        addCamera(item, loader) {
-            let vm = this;
-            loader.load('static/three/model/scene.gltf', function (obj) {
+        addCamera(item,geometryMerge) {
+            this.GLTFLoader.load('static/three/model/scene.gltf', function (obj) {
                     let mesh = obj.scene;
                     switch (item.senseId) {
                         case 'rightBack':
@@ -554,14 +565,13 @@ export default {
                     mesh.name = item.dataName;
                     mesh.userData.dataId = item.dataId;
                     const popupDiv = document.getElementsByClassName('model-popup')[0].cloneNode(true);
-                    // popupDiv.textContent = '摄像头方向-' + item.senseId;
                     popupDiv.style.overflow = 'hidden';
                     popupDiv.style.width = '0px';
+                    popupDiv.style.height = '0px';
                     popupDiv.style.padding = '0px';
                     popupDiv.style.fontSize = '0px';
                     let moonLabel = new CSS2DObject(popupDiv);
                     moonLabel.position.set(0, 1, 0);
-                    // moonLabel.visible = false;
                     mesh.add(moonLabel)
 
                     // 添加一个透明的Mesh 将模型添加进去，用以点击
@@ -573,7 +583,8 @@ export default {
                     other.position.set(item.x, 12, item.z)
                     other.add(mesh)
 
-                    group.add(other)
+                    geometryMerge.merge(other.geometry,other.matrix)
+                    // group.add(other)
                 }, undefined,
                 function (error) {
                     console.error(error)
@@ -581,15 +592,17 @@ export default {
         },
         // 创建各模型
         createSense() {
+            let geometry = new THREE.Geometry();
             this.senseList.forEach(item => {
                 if (item.type === 'camera') {
                     this.cameraNum++;
-                    this.addCamera(item.data, this.GLTFLoader)
+                    this.addCamera(item.data,geometry)
                 } else {
                     this.sensorNum++;
-                    this.addScene(item.data, this.GLTFLoader)
+                    this.addScene(item.data,geometry)
                 }
             })
+            group.add(geometry)
         },
         // 创建墙体
         createWall(item, type, texture) {
@@ -603,30 +616,44 @@ export default {
             }
 
             if (type === 'vDoor' || type === 'hDoor') {
-                material = new THREE.MeshLambertMaterial(
+                material = new THREE.MeshPhongMaterial(
                     {
                         map: texture,
-                        // color: '#fff',
                         side: THREE.DoubleSide,
                         wireframe: false,
                         transparent: true,
-                        opacity: 1
+                        opacity: 1,
+                        specular: 0x4488ee,
+                        shininess: shininessNum
                     }
                 );
             } else {
-                let color = "#425fac"
+                let color = "#425fac";
+                //直接使用材质数组来构建物体，数组里的材质分别对应物体的右、左、上、下、前、后
                 material = [
-                    new THREE.MeshLambertMaterial({color: color,  opacity: 0,transparent: true}),
-                    new THREE.MeshLambertMaterial({color: color,  opacity: 0,transparent: true}),
-                    new THREE.MeshLambertMaterial({color: color,  opacity: 0.4,transparent: true}),
-                    new THREE.MeshLambertMaterial({color: color,  opacity: 0.4,transparent: true}),
-                    new THREE.MeshLambertMaterial({color: color,  opacity: 0.4,transparent: true}),
-                    new THREE.MeshLambertMaterial({color: color,  opacity: 0.4,transparent: true}),
+                    new THREE.MeshLambertMaterial({color: color, opacity: 0, transparent: true}),
+                    new THREE.MeshLambertMaterial({color: color, opacity: 0, transparent: true}),
+                    new THREE.MeshPhongMaterial({color: color, opacity: 0.4, transparent: true}),
+                    new THREE.MeshLambertMaterial({color: color, opacity: 0.4, transparent: true}),
+                    new THREE.MeshPhongMaterial({
+                        color: color,
+                        specular: 0x4488ee,
+                        shininess: shininessNum,
+                        opacity: 0.4,
+                        transparent: true
+                    }),
+                    new THREE.MeshPhongMaterial({
+                        color: color,
+                        specular: 0x4488ee,
+                        shininess: shininessNum,
+                        opacity: 0.4,
+                        transparent: true
+                    }),
                 ]
             }
 
 
-            let geometry = new THREE.BoxGeometry(width, height,0.3);
+            let geometry = new THREE.BoxGeometry(width, height, 0.3);
 
             let plane = new THREE.Mesh(geometry, material);
             plane.position.set(x, 5, z)
@@ -732,12 +759,13 @@ export default {
                 //     })
                 // }
 
-                this.asa(res)
-                if (this.groundDataList.length) this.createGround(res)
+                this.createGround(res)
+                if (this.groundDataList.length) this.groundText(res)
 
             }
         },
-        asa() {
+        // 创建地板
+        createGround() {
 
             const textureLoader = new THREE.TextureLoader();
             let floorMat = new THREE.MeshStandardMaterial({
@@ -755,7 +783,7 @@ export default {
                 map.encoding = THREE.sRGBEncoding;
                 floorMat.map = map;
                 floorMat.needsUpdate = true;
-
+                floorMat.side = THREE.DoubleSide;
             });
             // textureLoader.load( "static/images/hardwood2_bump.jpg", function ( map ) {
             //
@@ -787,8 +815,8 @@ export default {
             scene.add(plane);
             this.objects.push(plane)
         },
-        // 创建地板
-        createGround(data) {
+        // 创建地板标记
+        groundText(data) {
             /*
             * 计算地板的面积
             * */
@@ -838,7 +866,7 @@ export default {
         createCabinet() {
             if (this.cubeList && this.cubeList.length) {
                 //添加长方体
-                let geometry = new THREE.BoxGeometry(3.7, 8, 3);
+                let geometry = new THREE.BoxBufferGeometry(3.7, 8, 3);
                 // let edgesMtl = new THREE.LineBasicMaterial({color: '#999', alpha: 0.1})
                 this.cubeList.forEach(item => {
                     this.cabinetNum++;
@@ -846,14 +874,6 @@ export default {
                     let material = this.getMaterial(item);
                     let cube = new THREE.Mesh(geometry, material);
                     cube.position.set(item.x, 4, item.z);
-                    // // 给模型添加描边
-                    // let cubeEdges = new THREE.EdgesGeometry(geometry, 1);
-                    // let cubeLine = new THREE.LineSegments(cubeEdges, edgesMtl);
-                    // // cubeLine.name = 'cubeLine';
-                    // cubeLine.material.visible = true;
-                    // if (item.type === 'cabinet') {
-                    //     cube.add(cubeLine);
-                    // }
 
 
                     cube.castShadow = true;
@@ -897,21 +917,37 @@ export default {
             texture.matrixAutoUpdate = false;
             //直接使用材质数组来构建物体，数组里的材质分别对应物体的右、左、上、下、前、后
             let material = [
-                new THREE.MeshLambertMaterial({color: color1}),// 右
-                new THREE.MeshLambertMaterial({color: color1}),// 左
-                new THREE.MeshLambertMaterial(
+                new THREE.MeshPhongMaterial({
+                    color: color1,
+                    specular: 0x4488ee,
+                    shininess: shininessNum
+                }),// 右
+                new THREE.MeshPhongMaterial({
+                    color: color1,
+                    specular: 0x4488ee,
+                    shininess: shininessNum
+                }),// 左
+                new THREE.MeshPhongMaterial(
                     {map: new THREE.CanvasTexture(this.getTextCanvas(item.num, bgcolor, textcolor))}
                 ),// 上
-                new THREE.MeshLambertMaterial({color: '#000'}),// 下
-                new THREE.MeshLambertMaterial(
+                new THREE.MeshPhongMaterial({color: '#000'}),// 下
+                new THREE.MeshPhongMaterial(
                     item.pos.includes('head') ||
                     item.pos.includes('left') ||
                     item.pos.includes('right')
-                        ? {map: texture} : {color: color2}
+                        ? {map: texture} : {
+                            color: color2,
+                            specular: 0x4488ee,
+                            shininess: shininessNum
+                        }
                 ),                                                       // 前
-                new THREE.MeshLambertMaterial(
+                new THREE.MeshPhongMaterial(
                     item.pos.includes('back') || (item.pos.includes('left') && item.pos.includes('right'))
-                        ? {map: texture} : {color: color2}
+                        ? {map: texture} : {
+                            color: color2,
+                            specular: 0xeeeeee,
+                            shininess: shininessNum
+                        }
                 ),                                                       // 后
             ];
             return material;

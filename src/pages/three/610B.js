@@ -2,8 +2,8 @@ export default {
     "cabinetData":
         [{
             "type": "cabinet",
-            "x": 60,
-            "z": 12,
+            "x": -40 + 60,
+            "z": -8+  12,
             "id": 87,
             "pos": ["left"],
             "leftBorder": false,
@@ -16,8 +16,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 60,
-            "z": 16,
+            "x": -40 + 60,
+            "z": -8+  16,
             "id": 123,
             "pos": ["left"],
             "leftBorder": false,
@@ -30,8 +30,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 60,
-            "z": 20,
+            "x": -40 + 60,
+            "z": -8+  20,
             "id": 159,
             "pos": ["left"],
             "leftBorder": false,
@@ -44,8 +44,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 60,
-            "z": 32,
+            "x": -40 + 60,
+            "z": -8+  32,
             "id": 267,
             "pos": ["left"],
             "leftBorder": false,
@@ -58,8 +58,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 60,
-            "z": 36,
+            "x": -40 + 60,
+            "z": -8+  36,
             "id": 303,
             "pos": ["left"],
             "leftBorder": false,
@@ -72,8 +72,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 76,
-            "z": 12,
+            "x": -40 + 76,
+            "z": -8+  12,
             "id": 91,
             "pos": ["left"],
             "leftBorder": false,
@@ -86,8 +86,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 80,
-            "z": 48,
+            "x": -40 + 80,
+            "z": -8+  48,
             "id": 416,
             "pos": ["head"],
             "leftBorder": false,
@@ -100,8 +100,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 84,
-            "z": 48,
+            "x": -40 + 84,
+            "z": -8+  48,
             "id": 417,
             "pos": ["head"],
             "leftBorder": false,
@@ -114,8 +114,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 92,
-            "z": 48,
+            "x": -40 + 92,
+            "z": -8+  48,
             "id": 419,
             "pos": ["head"],
             "leftBorder": false,
@@ -129,8 +129,8 @@ export default {
             "dataName": "A05机柜"
         }, {
             "type": "cabinet",
-            "x": 96,
-            "z": 48,
+            "x": -40 + 96,
+            "z": -8+  48,
             "id": 420,
             "pos": ["head"],
             "leftBorder": false,
@@ -144,8 +144,8 @@ export default {
             "dataName": "A04机柜"
         }, {
             "type": "cabinet",
-            "x": 100,
-            "z": 48,
+            "x": -40 + 100,
+            "z": -8+  48,
             "id": 421,
             "pos": ["head"],
             "leftBorder": false,
@@ -159,8 +159,8 @@ export default {
             "dataName": "A03机柜"
         }, {
             "type": "cabinet",
-            "x": 104,
-            "z": 48,
+            "x": -40 + 104,
+            "z": -8+  48,
             "id": 422,
             "pos": ["head"],
             "leftBorder": false,
@@ -173,8 +173,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 104,
-            "z": 60,
+            "x": -40 + 104,
+            "z": -8+  60,
             "id": 530,
             "pos": ["head"],
             "leftBorder": false,
@@ -187,8 +187,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 100,
-            "z": 60,
+            "x": -40 + 100,
+            "z": -8+  60,
             "id": 529,
             "pos": ["head"],
             "leftBorder": false,
@@ -201,8 +201,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 96,
-            "z": 60,
+            "x": -40 + 96,
+            "z": -8+  60,
             "id": 528,
             "pos": ["head"],
             "leftBorder": false,
@@ -216,8 +216,8 @@ export default {
             "dataName": "B04机柜"
         }, {
             "type": "cabinet",
-            "x": 92,
-            "z": 60,
+            "x": -40 + 92,
+            "z": -8+  60,
             "id": 527,
             "pos": ["head"],
             "leftBorder": false,
@@ -231,8 +231,8 @@ export default {
             "dataName": "B05机柜"
         }, {
             "type": "cabinet",
-            "x": 84,
-            "z": 60,
+            "x": -40 + 84,
+            "z": -8+  60,
             "id": 525,
             "pos": ["head"],
             "leftBorder": false,
@@ -245,8 +245,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 80,
-            "z": 60,
+            "x": -40 + 80,
+            "z": -8+  60,
             "id": 524,
             "pos": ["head"],
             "leftBorder": false,
@@ -259,8 +259,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 76,
-            "z": 60,
+            "x": -40 + 76,
+            "z": -8+  60,
             "id": 523,
             "pos": ["head"],
             "leftBorder": false,
@@ -273,8 +273,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 72,
-            "z": 60,
+            "x": -40 + 72,
+            "z": -8+  60,
             "id": 522,
             "pos": ["head"],
             "leftBorder": false,
@@ -287,8 +287,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 68,
-            "z": 60,
+            "x": -40 + 68,
+            "z": -8+  60,
             "id": 521,
             "pos": ["head"],
             "leftBorder": false,
@@ -301,8 +301,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 104,
-            "z": 80,
+            "x": -40 + 104,
+            "z": -8+  80,
             "id": 710,
             "pos": ["head"],
             "leftBorder": false,
@@ -316,8 +316,8 @@ export default {
             "dataName": "C02机柜"
         }, {
             "type": "cabinet",
-            "x": 100,
-            "z": 80,
+            "x": -40 + 100,
+            "z": -8+  80,
             "id": 709,
             "pos": ["head"],
             "leftBorder": false,
@@ -331,8 +331,8 @@ export default {
             "dataName": "C03机柜"
         }, {
             "type": "cabinet",
-            "x": 96,
-            "z": 80,
+            "x": -40 + 96,
+            "z": -8+  80,
             "id": 708,
             "pos": ["head"],
             "leftBorder": false,
@@ -346,8 +346,8 @@ export default {
             "dataName": "C04机柜"
         }, {
             "type": "cabinet",
-            "x": 92,
-            "z": 80,
+            "x": -40 + 92,
+            "z": -8+  80,
             "id": 707,
             "pos": ["head"],
             "leftBorder": false,
@@ -361,8 +361,8 @@ export default {
             "dataName": "C05机柜"
         }, {
             "type": "cabinet",
-            "x": 84,
-            "z": 80,
+            "x": -40 + 84,
+            "z": -8+  80,
             "id": 705,
             "pos": ["head"],
             "leftBorder": false,
@@ -376,8 +376,8 @@ export default {
             "dataName": "C07机柜"
         }, {
             "type": "cabinet",
-            "x": 80,
-            "z": 80,
+            "x": -40 + 80,
+            "z": -8+  80,
             "id": 704,
             "pos": ["head"],
             "leftBorder": false,
@@ -391,8 +391,8 @@ export default {
             "dataName": "C08机柜"
         }, {
             "type": "cabinet",
-            "x": 76,
-            "z": 80,
+            "x": -40 + 76,
+            "z": -8+  80,
             "id": 703,
             "pos": ["head"],
             "leftBorder": false,
@@ -405,8 +405,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 72,
-            "z": 80,
+            "x": -40 + 72,
+            "z": -8+  80,
             "id": 702,
             "pos": ["head"],
             "leftBorder": false,
@@ -419,8 +419,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 68,
-            "z": 80,
+            "x": -40 + 68,
+            "z": -8+  80,
             "id": 701,
             "pos": ["head"],
             "leftBorder": false,
@@ -433,8 +433,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 60,
-            "z": 80,
+            "x": -40 + 60,
+            "z": -8+  80,
             "id": 699,
             "pos": ["head"],
             "leftBorder": false,
@@ -448,8 +448,8 @@ export default {
             "dataName": "C13机柜"
         }, {
             "type": "cabinet",
-            "x": 56,
-            "z": 80,
+            "x": -40 + 56,
+            "z": -8+  80,
             "id": 698,
             "pos": ["head"],
             "leftBorder": false,
@@ -462,8 +462,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 52,
-            "z": 80,
+            "x": -40 + 52,
+            "z": -8+  80,
             "id": 697,
             "pos": ["head"],
             "leftBorder": false,
@@ -476,8 +476,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 104,
-            "z": 96,
+            "x": -40 + 104,
+            "z": -8+  96,
             "id": 854,
             "pos": ["head"],
             "leftBorder": false,
@@ -490,8 +490,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 100,
-            "z": 96,
+            "x": -40 + 100,
+            "z": -8+  96,
             "id": 853,
             "pos": ["head"],
             "leftBorder": false,
@@ -504,8 +504,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 96,
-            "z": 96,
+            "x": -40 + 96,
+            "z": -8+  96,
             "id": 852,
             "pos": ["head"],
             "leftBorder": false,
@@ -518,8 +518,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 92,
-            "z": 96,
+            "x": -40 + 92,
+            "z": -8+  96,
             "id": 851,
             "pos": ["head"],
             "leftBorder": false,
@@ -532,8 +532,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 88,
-            "z": 96,
+            "x": -40 + 88,
+            "z": -8+  96,
             "id": 850,
             "pos": ["head"],
             "leftBorder": false,
@@ -546,8 +546,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 84,
-            "z": 96,
+            "x": -40 + 84,
+            "z": -8+  96,
             "id": 849,
             "pos": ["head"],
             "leftBorder": false,
@@ -560,8 +560,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 80,
-            "z": 96,
+            "x": -40 + 80,
+            "z": -8+  96,
             "id": 848,
             "pos": ["head"],
             "leftBorder": false,
@@ -574,8 +574,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 76,
-            "z": 96,
+            "x": -40 + 76,
+            "z": -8+  96,
             "id": 847,
             "pos": ["head"],
             "leftBorder": false,
@@ -588,8 +588,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 64,
-            "z": 96,
+            "x": -40 + 64,
+            "z": -8+  96,
             "id": 844,
             "pos": ["head"],
             "leftBorder": false,
@@ -602,8 +602,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 56,
-            "z": 96,
+            "x": -40 + 56,
+            "z": -8+  96,
             "id": 842,
             "pos": ["head"],
             "leftBorder": false,
@@ -616,8 +616,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 52,
-            "z": 96,
+            "x": -40 + 52,
+            "z": -8+  96,
             "id": 841,
             "pos": ["head"],
             "leftBorder": false,
@@ -630,8 +630,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 104,
-            "z": 112,
+            "x": -40 + 104,
+            "z": -8+  112,
             "id": 998,
             "pos": ["head"],
             "leftBorder": false,
@@ -644,8 +644,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 100,
-            "z": 112,
+            "x": -40 + 100,
+            "z": -8+  112,
             "id": 997,
             "pos": ["head"],
             "leftBorder": false,
@@ -658,8 +658,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 96,
-            "z": 112,
+            "x": -40 + 96,
+            "z": -8+  112,
             "id": 996,
             "pos": ["head"],
             "leftBorder": false,
@@ -672,8 +672,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 92,
-            "z": 112,
+            "x": -40 + 92,
+            "z": -8+  112,
             "id": 995,
             "pos": ["head"],
             "leftBorder": false,
@@ -686,8 +686,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 80,
-            "z": 112,
+            "x": -40 + 80,
+            "z": -8+  112,
             "id": 992,
             "pos": ["head"],
             "leftBorder": false,
@@ -700,8 +700,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 76,
-            "z": 112,
+            "x": -40 + 76,
+            "z": -8+  112,
             "id": 991,
             "pos": ["head"],
             "leftBorder": false,
@@ -714,8 +714,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 72,
-            "z": 112,
+            "x": -40 + 72,
+            "z": -8+  112,
             "id": 990,
             "pos": ["head"],
             "leftBorder": false,
@@ -728,8 +728,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 68,
-            "z": 112,
+            "x": -40 + 68,
+            "z": -8+  112,
             "id": 989,
             "pos": ["head"],
             "leftBorder": false,
@@ -742,8 +742,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 64,
-            "z": 112,
+            "x": -40 + 64,
+            "z": -8+  112,
             "id": 988,
             "pos": ["head"],
             "leftBorder": false,
@@ -756,8 +756,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 60,
-            "z": 112,
+            "x": -40 + 60,
+            "z": -8+  112,
             "id": 987,
             "pos": ["head"],
             "leftBorder": false,
@@ -770,8 +770,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 56,
-            "z": 112,
+            "x": -40 + 56,
+            "z": -8+  112,
             "id": 986,
             "pos": ["head"],
             "leftBorder": false,
@@ -784,8 +784,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 52,
-            "z": 112,
+            "x": -40 + 52,
+            "z": -8+  112,
             "id": 985,
             "pos": ["head"],
             "leftBorder": false,
@@ -798,8 +798,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 48,
-            "z": 112,
+            "x": -40 + 48,
+            "z": -8+  112,
             "id": 984,
             "pos": ["head"],
             "leftBorder": false,
@@ -812,8 +812,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 44,
-            "z": 112,
+            "x": -40 + 44,
+            "z": -8+  112,
             "id": 983,
             "pos": ["head"],
             "leftBorder": false,
@@ -826,8 +826,8 @@ export default {
             "name": ""
         }, {
             "type": "kt",
-            "x": 24,
-            "z": 36,
+            "x": -40 + 24,
+            "z": -8+  36,
             "id": 294,
             "pos": ["right"],
             "leftBorder": true,
@@ -840,8 +840,8 @@ export default {
             "name": ""
         }, {
             "type": "kt",
-            "x": 32,
-            "z": 104,
+            "x": -40 + 32,
+            "z": -8+  104,
             "id": 908,
             "pos": ["right"],
             "leftBorder": true,
@@ -854,8 +854,8 @@ export default {
             "name": ""
         }, {
             "type": "kt",
-            "x": 116,
-            "z": 68,
+            "x": -40 + 116,
+            "z": -8+  68,
             "id": 605,
             "pos": ["left"],
             "leftBorder": false,
@@ -868,8 +868,8 @@ export default {
             "name": ""
         }, {
             "type": "odf",
-            "x": 84,
-            "z": 36,
+            "x": -40 + 84,
+            "z": -8+  36,
             "id": 309,
             "pos": ["head"],
             "leftBorder": false,
@@ -882,8 +882,8 @@ export default {
             "name": ""
         }, {
             "type": "odf",
-            "x": 88,
-            "z": 36,
+            "x": -40 + 88,
+            "z": -8+  36,
             "id": 310,
             "pos": ["head"],
             "leftBorder": false,
@@ -896,8 +896,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 88,
-            "z": 48,
+            "x": -40 + 88,
+            "z": -8+  48,
             "id": 418,
             "pos": ["head"],
             "leftBorder": false,
@@ -910,8 +910,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 88,
-            "z": 60,
+            "x": -40 + 88,
+            "z": -8+  60,
             "id": 526,
             "pos": ["head"],
             "leftBorder": false,
@@ -924,8 +924,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 64,
-            "z": 80,
+            "x": -40 + 64,
+            "z": -8+  80,
             "id": 700,
             "pos": ["head"],
             "leftBorder": false,
@@ -938,8 +938,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 88,
-            "z": 80,
+            "x": -40 + 88,
+            "z": -8+  80,
             "id": 706,
             "pos": ["head"],
             "leftBorder": false,
@@ -952,8 +952,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 72,
-            "z": 96,
+            "x": -40 + 72,
+            "z": -8+  96,
             "id": 846,
             "pos": ["head"],
             "leftBorder": false,
@@ -966,8 +966,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 60,
-            "z": 96,
+            "x": -40 + 60,
+            "z": -8+  96,
             "id": 843,
             "pos": ["head"],
             "leftBorder": false,
@@ -980,8 +980,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 48,
-            "z": 96,
+            "x": -40 + 48,
+            "z": -8+  96,
             "id": 840,
             "pos": ["head"],
             "leftBorder": false,
@@ -994,8 +994,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 84,
-            "z": 112,
+            "x": -40 + 84,
+            "z": -8+  112,
             "id": 993,
             "pos": ["head"],
             "leftBorder": false,
@@ -1009,8 +1009,8 @@ export default {
             "dataName": "E07机柜"
         }, {
             "type": "cabinet",
-            "x": 60,
-            "z": 24,
+            "x": -40 + 60,
+            "z": -8+  24,
             "id": 195,
             "pos": ["left"],
             "leftBorder": false,
@@ -1023,8 +1023,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 60,
-            "z": 28,
+            "x": -40 + 60,
+            "z": -8+  28,
             "id": 231,
             "pos": ["left"],
             "leftBorder": false,
@@ -1037,8 +1037,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 76,
-            "z": 16,
+            "x": -40 + 76,
+            "z": -8+  16,
             "id": 127,
             "pos": ["left"],
             "leftBorder": false,
@@ -1051,8 +1051,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 88,
-            "z": 112,
+            "x": -40 + 88,
+            "z": -8+  112,
             "id": 994,
             "pos": ["head"],
             "leftBorder": false,
@@ -1067,8 +1067,8 @@ export default {
         }], "wallData":
         [{
             "type": "cabinet",
-            "x": 56,
-            "z": 8,
+            "x": -40 + 56,
+            "z": -8+  8,
             "id": 50,
             "pos": ["head"],
             "leftBorder": false,
@@ -1081,8 +1081,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 60,
-            "z": 8,
+            "x": -40 + 60,
+            "z": -8+  8,
             "id": 51,
             "pos": ["head"],
             "leftBorder": false,
@@ -1095,8 +1095,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 64,
-            "z": 8,
+            "x": -40 + 64,
+            "z": -8+  8,
             "id": 52,
             "pos": ["head"],
             "leftBorder": false,
@@ -1109,8 +1109,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 68,
-            "z": 8,
+            "x": -40 + 68,
+            "z": -8+  8,
             "id": 53,
             "pos": ["head"],
             "leftBorder": false,
@@ -1124,8 +1124,8 @@ export default {
             "dataName": "610-东门-普通"
         }, {
             "type": "cabinet",
-            "x": 72,
-            "z": 8,
+            "x": -40 + 72,
+            "z": -8+  8,
             "id": 54,
             "pos": ["head"],
             "leftBorder": false,
@@ -1138,8 +1138,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 76,
-            "z": 8,
+            "x": -40 + 76,
+            "z": -8+  8,
             "id": 55,
             "pos": ["head"],
             "leftBorder": false,
@@ -1152,8 +1152,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 84,
-            "z": 8,
+            "x": -40 + 84,
+            "z": -8+  8,
             "id": 57,
             "pos": ["head"],
             "leftBorder": true,
@@ -1166,8 +1166,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 84,
-            "z": 12,
+            "x": -40 + 84,
+            "z": -8+  12,
             "id": 93,
             "pos": ["head"],
             "leftBorder": true,
@@ -1180,8 +1180,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 84,
-            "z": 16,
+            "x": -40 + 84,
+            "z": -8+  16,
             "id": 129,
             "pos": ["head"],
             "leftBorder": false,
@@ -1194,8 +1194,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 88,
-            "z": 16,
+            "x": -40 + 88,
+            "z": -8+  16,
             "id": 130,
             "pos": ["head"],
             "leftBorder": false,
@@ -1208,8 +1208,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 92,
-            "z": 16,
+            "x": -40 + 92,
+            "z": -8+  16,
             "id": 131,
             "pos": ["head"],
             "leftBorder": false,
@@ -1222,8 +1222,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 96,
-            "z": 16,
+            "x": -40 + 96,
+            "z": -8+  16,
             "id": 132,
             "pos": ["head"],
             "leftBorder": false,
@@ -1236,8 +1236,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 100,
-            "z": 16,
+            "x": -40 + 100,
+            "z": -8+  16,
             "id": 133,
             "pos": ["head"],
             "leftBorder": false,
@@ -1250,8 +1250,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 104,
-            "z": 16,
+            "x": -40 + 104,
+            "z": -8+  16,
             "id": 134,
             "pos": ["head"],
             "leftBorder": false,
@@ -1264,8 +1264,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 108,
-            "z": 16,
+            "x": -40 + 108,
+            "z": -8+  16,
             "id": 135,
             "pos": ["head"],
             "leftBorder": false,
@@ -1278,8 +1278,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 112,
-            "z": 16,
+            "x": -40 + 112,
+            "z": -8+  16,
             "id": 136,
             "pos": ["head"],
             "leftBorder": false,
@@ -1292,8 +1292,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 116,
-            "z": 16,
+            "x": -40 + 116,
+            "z": -8+  16,
             "id": 137,
             "pos": ["head"],
             "leftBorder": false,
@@ -1307,8 +1307,8 @@ export default {
             "dataName": "610-东南角门A过道-普通"
         }, {
             "type": "cabinet",
-            "x": 120,
-            "z": 16,
+            "x": -40 + 120,
+            "z": -8+  16,
             "id": 138,
             "pos": ["head"],
             "leftBorder": true,
@@ -1321,8 +1321,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 120,
-            "z": 20,
+            "x": -40 + 120,
+            "z": -8+  20,
             "id": 174,
             "pos": ["head"],
             "leftBorder": true,
@@ -1335,8 +1335,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 120,
-            "z": 24,
+            "x": -40 + 120,
+            "z": -8+  24,
             "id": 210,
             "pos": ["head"],
             "leftBorder": true,
@@ -1349,8 +1349,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 120,
-            "z": 28,
+            "x": -40 + 120,
+            "z": -8+  28,
             "id": 246,
             "pos": ["head"],
             "leftBorder": true,
@@ -1363,8 +1363,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 120,
-            "z": 32,
+            "x": -40 + 120,
+            "z": -8+  32,
             "id": 282,
             "pos": ["head"],
             "leftBorder": true,
@@ -1377,8 +1377,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 120,
-            "z": 36,
+            "x": -40 + 120,
+            "z": -8+  36,
             "id": 318,
             "pos": ["head"],
             "leftBorder": true,
@@ -1391,8 +1391,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 120,
-            "z": 40,
+            "x": -40 + 120,
+            "z": -8+  40,
             "id": 354,
             "pos": ["head"],
             "leftBorder": true,
@@ -1405,8 +1405,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 120,
-            "z": 44,
+            "x": -40 + 120,
+            "z": -8+  44,
             "id": 390,
             "pos": ["head"],
             "leftBorder": true,
@@ -1419,8 +1419,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 120,
-            "z": 48,
+            "x": -40 + 120,
+            "z": -8+  48,
             "id": 426,
             "pos": ["head"],
             "leftBorder": true,
@@ -1433,8 +1433,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 120,
-            "z": 52,
+            "x": -40 + 120,
+            "z": -8+  52,
             "id": 462,
             "pos": ["head"],
             "leftBorder": true,
@@ -1447,8 +1447,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 120,
-            "z": 56,
+            "x": -40 + 120,
+            "z": -8+  56,
             "id": 498,
             "pos": ["head"],
             "leftBorder": true,
@@ -1461,8 +1461,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 120,
-            "z": 60,
+            "x": -40 + 120,
+            "z": -8+  60,
             "id": 534,
             "pos": ["head"],
             "leftBorder": true,
@@ -1475,8 +1475,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 120,
-            "z": 64,
+            "x": -40 + 120,
+            "z": -8+  64,
             "id": 570,
             "pos": ["head"],
             "leftBorder": true,
@@ -1489,8 +1489,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 120,
-            "z": 68,
+            "x": -40 + 120,
+            "z": -8+  68,
             "id": 606,
             "pos": ["head"],
             "leftBorder": true,
@@ -1503,8 +1503,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 120,
-            "z": 72,
+            "x": -40 + 120,
+            "z": -8+  72,
             "id": 642,
             "pos": ["head"],
             "leftBorder": true,
@@ -1517,8 +1517,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 120,
-            "z": 76,
+            "x": -40 + 120,
+            "z": -8+  76,
             "id": 678,
             "pos": ["head"],
             "leftBorder": true,
@@ -1531,8 +1531,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 120,
-            "z": 80,
+            "x": -40 + 120,
+            "z": -8+  80,
             "id": 714,
             "pos": ["head"],
             "leftBorder": true,
@@ -1545,8 +1545,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 120,
-            "z": 84,
+            "x": -40 + 120,
+            "z": -8+  84,
             "id": 750,
             "pos": ["head"],
             "leftBorder": true,
@@ -1559,8 +1559,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 120,
-            "z": 88,
+            "x": -40 + 120,
+            "z": -8+  88,
             "id": 786,
             "pos": ["head"],
             "leftBorder": true,
@@ -1573,8 +1573,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 120,
-            "z": 96,
+            "x": -40 + 120,
+            "z": -8+  96,
             "id": 858,
             "pos": ["head"],
             "leftBorder": true,
@@ -1587,8 +1587,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 120,
-            "z": 92,
+            "x": -40 + 120,
+            "z": -8+  92,
             "id": 822,
             "pos": ["head"],
             "leftBorder": true,
@@ -1601,8 +1601,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 120,
-            "z": 100,
+            "x": -40 + 120,
+            "z": -8+  100,
             "id": 894,
             "pos": ["head"],
             "leftBorder": true,
@@ -1615,8 +1615,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 120,
-            "z": 104,
+            "x": -40 + 120,
+            "z": -8+  104,
             "id": 930,
             "pos": ["head"],
             "leftBorder": true,
@@ -1629,8 +1629,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 120,
-            "z": 108,
+            "x": -40 + 120,
+            "z": -8+  108,
             "id": 966,
             "pos": ["head"],
             "leftBorder": true,
@@ -1643,8 +1643,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 120,
-            "z": 112,
+            "x": -40 + 120,
+            "z": -8+  112,
             "id": 1002,
             "pos": ["head"],
             "leftBorder": true,
@@ -1657,8 +1657,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 120,
-            "z": 116,
+            "x": -40 + 120,
+            "z": -8+  116,
             "id": 1038,
             "pos": ["head"],
             "leftBorder": true,
@@ -1671,8 +1671,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 120,
-            "z": 120,
+            "x": -40 + 120,
+            "z": -8+  120,
             "id": 1074,
             "pos": ["head"],
             "leftBorder": true,
@@ -1685,8 +1685,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 120,
-            "z": 124,
+            "x": -40 + 120,
+            "z": -8+  124,
             "id": 1110,
             "pos": ["head"],
             "leftBorder": true,
@@ -1699,8 +1699,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 120,
-            "z": 128,
+            "x": -40 + 120,
+            "z": -8+  128,
             "id": 1146,
             "pos": ["head"],
             "leftBorder": true,
@@ -1713,8 +1713,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 120,
-            "z": 132,
+            "x": -40 + 120,
+            "z": -8+  132,
             "id": 1182,
             "pos": ["head"],
             "leftBorder": true,
@@ -1727,8 +1727,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 120,
-            "z": 136,
+            "x": -40 + 120,
+            "z": -8+  136,
             "id": 1218,
             "pos": ["head"],
             "leftBorder": true,
@@ -1741,8 +1741,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 116,
-            "z": 140,
+            "x": -40 + 116,
+            "z": -8+  140,
             "id": 1253,
             "pos": ["head"],
             "leftBorder": false,
@@ -1756,8 +1756,8 @@ export default {
             "dataName": "610-西门-人脸出入口"
         }, {
             "type": "cabinet",
-            "x": 112,
-            "z": 140,
+            "x": -40 + 112,
+            "z": -8+  140,
             "id": 1252,
             "pos": ["head"],
             "leftBorder": false,
@@ -1770,8 +1770,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 108,
-            "z": 140,
+            "x": -40 + 108,
+            "z": -8+  140,
             "id": 1251,
             "pos": ["head"],
             "leftBorder": false,
@@ -1785,8 +1785,8 @@ export default {
             "dataName": "610-西门-人脸出入口"
         }, {
             "type": "cabinet",
-            "x": 120,
-            "z": 140,
+            "x": -40 + 120,
+            "z": -8+  140,
             "id": 1254,
             "pos": ["head"],
             "leftBorder": true,
@@ -1799,8 +1799,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 120,
-            "z": 144,
+            "x": -40 + 120,
+            "z": -8+  144,
             "id": 1290,
             "pos": ["head"],
             "leftBorder": true,
@@ -1813,8 +1813,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 120,
-            "z": 148,
+            "x": -40 + 120,
+            "z": -8+  148,
             "id": 1326,
             "pos": ["head"],
             "leftBorder": true,
@@ -1827,8 +1827,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 120,
-            "z": 152,
+            "x": -40 + 120,
+            "z": -8+  152,
             "id": 1362,
             "pos": ["head"],
             "leftBorder": true,
@@ -1841,8 +1841,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 120,
-            "z": 156,
+            "x": -40 + 120,
+            "z": -8+  156,
             "id": 1398,
             "pos": ["head"],
             "leftBorder": true,
@@ -1855,8 +1855,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 120,
-            "z": 160,
+            "x": -40 + 120,
+            "z": -8+  160,
             "id": 1434,
             "pos": ["head"],
             "leftBorder": true,
@@ -1869,8 +1869,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 116,
-            "z": 164,
+            "x": -40 + 116,
+            "z": -8+  164,
             "id": 1469,
             "pos": ["head"],
             "leftBorder": false,
@@ -1883,8 +1883,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 112,
-            "z": 164,
+            "x": -40 + 112,
+            "z": -8+  164,
             "id": 1468,
             "pos": ["head"],
             "leftBorder": false,
@@ -1897,8 +1897,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 108,
-            "z": 164,
+            "x": -40 + 108,
+            "z": -8+  164,
             "id": 1467,
             "pos": ["head"],
             "leftBorder": false,
@@ -1911,8 +1911,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 100,
-            "z": 164,
+            "x": -40 + 100,
+            "z": -8+  164,
             "id": 1465,
             "pos": ["head"],
             "leftBorder": false,
@@ -1925,8 +1925,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 96,
-            "z": 164,
+            "x": -40 + 96,
+            "z": -8+  164,
             "id": 1464,
             "pos": ["head"],
             "leftBorder": false,
@@ -1939,8 +1939,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 88,
-            "z": 164,
+            "x": -40 + 88,
+            "z": -8+  164,
             "id": 1462,
             "pos": ["head"],
             "leftBorder": false,
@@ -1953,8 +1953,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 92,
-            "z": 164,
+            "x": -40 + 92,
+            "z": -8+  164,
             "id": 1463,
             "pos": ["head"],
             "leftBorder": false,
@@ -1967,8 +1967,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 104,
-            "z": 140,
+            "x": -40 + 104,
+            "z": -8+  140,
             "id": 1250,
             "pos": ["head"],
             "leftBorder": false,
@@ -1981,8 +1981,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 100,
-            "z": 140,
+            "x": -40 + 100,
+            "z": -8+  140,
             "id": 1249,
             "pos": ["head"],
             "leftBorder": false,
@@ -1995,8 +1995,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 96,
-            "z": 140,
+            "x": -40 + 96,
+            "z": -8+  140,
             "id": 1248,
             "pos": ["head"],
             "leftBorder": false,
@@ -2009,8 +2009,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 92,
-            "z": 140,
+            "x": -40 + 92,
+            "z": -8+  140,
             "id": 1247,
             "pos": ["head"],
             "leftBorder": false,
@@ -2023,8 +2023,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 84,
-            "z": 140,
+            "x": -40 + 84,
+            "z": -8+  140,
             "id": 1245,
             "pos": ["head"],
             "leftBorder": false,
@@ -2037,8 +2037,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 88,
-            "z": 140,
+            "x": -40 + 88,
+            "z": -8+  140,
             "id": 1246,
             "pos": ["head"],
             "leftBorder": false,
@@ -2051,8 +2051,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 80,
-            "z": 140,
+            "x": -40 + 80,
+            "z": -8+  140,
             "id": 1244,
             "pos": ["head"],
             "leftBorder": false,
@@ -2065,8 +2065,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 76,
-            "z": 140,
+            "x": -40 + 76,
+            "z": -8+  140,
             "id": 1243,
             "pos": ["head"],
             "leftBorder": false,
@@ -2079,8 +2079,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 72,
-            "z": 140,
+            "x": -40 + 72,
+            "z": -8+  140,
             "id": 1242,
             "pos": ["head"],
             "leftBorder": false,
@@ -2093,8 +2093,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 68,
-            "z": 140,
+            "x": -40 + 68,
+            "z": -8+  140,
             "id": 1241,
             "pos": ["head"],
             "leftBorder": false,
@@ -2107,8 +2107,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 64,
-            "z": 140,
+            "x": -40 + 64,
+            "z": -8+  140,
             "id": 1240,
             "pos": ["head"],
             "leftBorder": false,
@@ -2121,8 +2121,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 60,
-            "z": 140,
+            "x": -40 + 60,
+            "z": -8+  140,
             "id": 1239,
             "pos": ["head"],
             "leftBorder": false,
@@ -2135,8 +2135,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 56,
-            "z": 140,
+            "x": -40 + 56,
+            "z": -8+  140,
             "id": 1238,
             "pos": ["head"],
             "leftBorder": false,
@@ -2149,8 +2149,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 52,
-            "z": 140,
+            "x": -40 + 52,
+            "z": -8+  140,
             "id": 1237,
             "pos": ["head"],
             "leftBorder": false,
@@ -2163,8 +2163,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 48,
-            "z": 140,
+            "x": -40 + 48,
+            "z": -8+  140,
             "id": 1236,
             "pos": ["head"],
             "leftBorder": false,
@@ -2177,8 +2177,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 44,
-            "z": 140,
+            "x": -40 + 44,
+            "z": -8+  140,
             "id": 1235,
             "pos": ["head"],
             "leftBorder": false,
@@ -2191,8 +2191,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 40,
-            "z": 140,
+            "x": -40 + 40,
+            "z": -8+  140,
             "id": 1234,
             "pos": ["head"],
             "leftBorder": false,
@@ -2205,8 +2205,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 36,
-            "z": 140,
+            "x": -40 + 36,
+            "z": -8+  140,
             "id": 1233,
             "pos": ["head"],
             "leftBorder": false,
@@ -2219,8 +2219,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 32,
-            "z": 140,
+            "x": -40 + 32,
+            "z": -8+  140,
             "id": 1232,
             "pos": ["head"],
             "leftBorder": true,
@@ -2233,8 +2233,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 32,
-            "z": 164,
+            "x": -40 + 32,
+            "z": -8+  164,
             "id": 1448,
             "pos": ["head"],
             "leftBorder": false,
@@ -2247,8 +2247,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 36,
-            "z": 164,
+            "x": -40 + 36,
+            "z": -8+  164,
             "id": 1449,
             "pos": ["head"],
             "leftBorder": false,
@@ -2261,8 +2261,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 40,
-            "z": 164,
+            "x": -40 + 40,
+            "z": -8+  164,
             "id": 1450,
             "pos": ["head"],
             "leftBorder": false,
@@ -2275,8 +2275,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 44,
-            "z": 164,
+            "x": -40 + 44,
+            "z": -8+  164,
             "id": 1451,
             "pos": ["head"],
             "leftBorder": false,
@@ -2289,8 +2289,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 48,
-            "z": 164,
+            "x": -40 + 48,
+            "z": -8+  164,
             "id": 1452,
             "pos": ["head"],
             "leftBorder": false,
@@ -2303,8 +2303,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 52,
-            "z": 164,
+            "x": -40 + 52,
+            "z": -8+  164,
             "id": 1453,
             "pos": ["head"],
             "leftBorder": false,
@@ -2317,8 +2317,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 56,
-            "z": 164,
+            "x": -40 + 56,
+            "z": -8+  164,
             "id": 1454,
             "pos": ["head"],
             "leftBorder": false,
@@ -2331,8 +2331,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 60,
-            "z": 164,
+            "x": -40 + 60,
+            "z": -8+  164,
             "id": 1455,
             "pos": ["head"],
             "leftBorder": false,
@@ -2345,8 +2345,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 64,
-            "z": 164,
+            "x": -40 + 64,
+            "z": -8+  164,
             "id": 1456,
             "pos": ["head"],
             "leftBorder": false,
@@ -2359,8 +2359,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 68,
-            "z": 164,
+            "x": -40 + 68,
+            "z": -8+  164,
             "id": 1457,
             "pos": ["head"],
             "leftBorder": false,
@@ -2373,8 +2373,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 72,
-            "z": 164,
+            "x": -40 + 72,
+            "z": -8+  164,
             "id": 1458,
             "pos": ["head"],
             "leftBorder": false,
@@ -2387,8 +2387,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 76,
-            "z": 164,
+            "x": -40 + 76,
+            "z": -8+  164,
             "id": 1459,
             "pos": ["head"],
             "leftBorder": false,
@@ -2401,8 +2401,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 80,
-            "z": 164,
+            "x": -40 + 80,
+            "z": -8+  164,
             "id": 1460,
             "pos": ["head"],
             "leftBorder": false,
@@ -2415,8 +2415,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 84,
-            "z": 164,
+            "x": -40 + 84,
+            "z": -8+  164,
             "id": 1461,
             "pos": ["head"],
             "leftBorder": false,
@@ -2429,8 +2429,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 32,
-            "z": 160,
+            "x": -40 + 32,
+            "z": -8+  160,
             "id": 1412,
             "pos": ["head"],
             "leftBorder": true,
@@ -2444,8 +2444,8 @@ export default {
             "dataName": "610-西北角-巡视摄像机"
         }, {
             "type": "cabinet",
-            "x": 32,
-            "z": 156,
+            "x": -40 + 32,
+            "z": -8+  156,
             "id": 1376,
             "pos": ["head"],
             "leftBorder": true,
@@ -2458,8 +2458,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 32,
-            "z": 152,
+            "x": -40 + 32,
+            "z": -8+  152,
             "id": 1340,
             "pos": ["head"],
             "leftBorder": true,
@@ -2472,8 +2472,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 32,
-            "z": 148,
+            "x": -40 + 32,
+            "z": -8+  148,
             "id": 1304,
             "pos": ["head"],
             "leftBorder": true,
@@ -2486,8 +2486,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 32,
-            "z": 144,
+            "x": -40 + 32,
+            "z": -8+  144,
             "id": 1268,
             "pos": ["head"],
             "leftBorder": true,
@@ -2500,8 +2500,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 32,
-            "z": 136,
+            "x": -40 + 32,
+            "z": -8+  136,
             "id": 1196,
             "pos": ["head"],
             "leftBorder": true,
@@ -2514,8 +2514,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 32,
-            "z": 132,
+            "x": -40 + 32,
+            "z": -8+  132,
             "id": 1160,
             "pos": ["head"],
             "leftBorder": true,
@@ -2528,8 +2528,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 32,
-            "z": 128,
+            "x": -40 + 32,
+            "z": -8+  128,
             "id": 1124,
             "pos": ["head"],
             "leftBorder": true,
@@ -2542,8 +2542,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 32,
-            "z": 124,
+            "x": -40 + 32,
+            "z": -8+  124,
             "id": 1088,
             "pos": ["head"],
             "leftBorder": true,
@@ -2556,8 +2556,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 32,
-            "z": 120,
+            "x": -40 + 32,
+            "z": -8+  120,
             "id": 1052,
             "pos": ["head"],
             "leftBorder": true,
@@ -2570,8 +2570,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 32,
-            "z": 116,
+            "x": -40 + 32,
+            "z": -8+  116,
             "id": 1016,
             "pos": ["head"],
             "leftBorder": true,
@@ -2584,8 +2584,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 32,
-            "z": 108,
+            "x": -40 + 32,
+            "z": -8+  108,
             "id": 944,
             "pos": ["head"],
             "leftBorder": true,
@@ -2598,8 +2598,8 @@ export default {
             "name": ""
         }, {
             "type": "kt",
-            "x": 32,
-            "z": 104,
+            "x": -40 + 32,
+            "z": -8+  104,
             "id": 908,
             "pos": ["right"],
             "leftBorder": true,
@@ -2612,8 +2612,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 32,
-            "z": 100,
+            "x": -40 + 32,
+            "z": -8+  100,
             "id": 872,
             "pos": ["head"],
             "leftBorder": true,
@@ -2626,8 +2626,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 32,
-            "z": 96,
+            "x": -40 + 32,
+            "z": -8+  96,
             "id": 836,
             "pos": ["head"],
             "leftBorder": true,
@@ -2640,8 +2640,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 32,
-            "z": 92,
+            "x": -40 + 32,
+            "z": -8+  92,
             "id": 800,
             "pos": ["head"],
             "leftBorder": true,
@@ -2654,8 +2654,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 32,
-            "z": 88,
+            "x": -40 + 32,
+            "z": -8+  88,
             "id": 764,
             "pos": ["head"],
             "leftBorder": true,
@@ -2669,8 +2669,8 @@ export default {
             "dataName": "610南-CD过道-普通1"
         }, {
             "type": "cabinet",
-            "x": 32,
-            "z": 84,
+            "x": -40 + 32,
+            "z": -8+  84,
             "id": 728,
             "pos": ["head"],
             "leftBorder": true,
@@ -2683,8 +2683,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 32,
-            "z": 80,
+            "x": -40 + 32,
+            "z": -8+  80,
             "id": 692,
             "pos": ["head"],
             "leftBorder": true,
@@ -2697,8 +2697,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 32,
-            "z": 76,
+            "x": -40 + 32,
+            "z": -8+  76,
             "id": 656,
             "pos": ["head"],
             "leftBorder": true,
@@ -2711,8 +2711,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 32,
-            "z": 72,
+            "x": -40 + 32,
+            "z": -8+  72,
             "id": 620,
             "pos": ["head"],
             "leftBorder": true,
@@ -2725,8 +2725,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 32,
-            "z": 68,
+            "x": -40 + 32,
+            "z": -8+  68,
             "id": 584,
             "pos": ["head"],
             "leftBorder": true,
@@ -2740,8 +2740,8 @@ export default {
             "dataName": "610-重要机柜"
         }, {
             "type": "cabinet",
-            "x": 32,
-            "z": 64,
+            "x": -40 + 32,
+            "z": -8+  64,
             "id": 548,
             "pos": ["head"],
             "leftBorder": true,
@@ -2754,8 +2754,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 32,
-            "z": 60,
+            "x": -40 + 32,
+            "z": -8+  60,
             "id": 512,
             "pos": ["head"],
             "leftBorder": true,
@@ -2768,8 +2768,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 32,
-            "z": 56,
+            "x": -40 + 32,
+            "z": -8+  56,
             "id": 476,
             "pos": ["head"],
             "leftBorder": true,
@@ -2782,8 +2782,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 32,
-            "z": 52,
+            "x": -40 + 32,
+            "z": -8+  52,
             "id": 440,
             "pos": ["head"],
             "leftBorder": true,
@@ -2796,8 +2796,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 32,
-            "z": 48,
+            "x": -40 + 32,
+            "z": -8+  48,
             "id": 404,
             "pos": ["head"],
             "leftBorder": true,
@@ -2810,8 +2810,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 28,
-            "z": 48,
+            "x": -40 + 28,
+            "z": -8+  48,
             "id": 403,
             "pos": ["head"],
             "leftBorder": false,
@@ -2824,8 +2824,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 24,
-            "z": 48,
+            "x": -40 + 24,
+            "z": -8+  48,
             "id": 402,
             "pos": ["head"],
             "leftBorder": false,
@@ -2838,8 +2838,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 24,
-            "z": 44,
+            "x": -40 + 24,
+            "z": -8+  44,
             "id": 366,
             "pos": ["head"],
             "leftBorder": true,
@@ -2852,8 +2852,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 24,
-            "z": 40,
+            "x": -40 + 24,
+            "z": -8+  40,
             "id": 330,
             "pos": ["head"],
             "leftBorder": true,
@@ -2866,8 +2866,8 @@ export default {
             "name": ""
         }, {
             "type": "kt",
-            "x": 24,
-            "z": 36,
+            "x": -40 + 24,
+            "z": -8+  36,
             "id": 294,
             "pos": ["right"],
             "leftBorder": true,
@@ -2880,8 +2880,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 24,
-            "z": 32,
+            "x": -40 + 24,
+            "z": -8+  32,
             "id": 258,
             "pos": ["head"],
             "leftBorder": true,
@@ -2894,8 +2894,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 24,
-            "z": 28,
+            "x": -40 + 24,
+            "z": -8+  28,
             "id": 222,
             "pos": ["head"],
             "leftBorder": true,
@@ -2908,8 +2908,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 24,
-            "z": 24,
+            "x": -40 + 24,
+            "z": -8+  24,
             "id": 186,
             "pos": ["head"],
             "leftBorder": true,
@@ -2922,8 +2922,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 28,
-            "z": 24,
+            "x": -40 + 28,
+            "z": -8+  24,
             "id": 187,
             "pos": ["head"],
             "leftBorder": false,
@@ -2936,8 +2936,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 32,
-            "z": 24,
+            "x": -40 + 32,
+            "z": -8+  24,
             "id": 188,
             "pos": ["head"],
             "leftBorder": false,
@@ -2950,8 +2950,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 36,
-            "z": 24,
+            "x": -40 + 36,
+            "z": -8+  24,
             "id": 189,
             "pos": ["head"],
             "leftBorder": false,
@@ -2964,8 +2964,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 40,
-            "z": 24,
+            "x": -40 + 40,
+            "z": -8+  24,
             "id": 190,
             "pos": ["head"],
             "leftBorder": false,
@@ -2978,8 +2978,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 44,
-            "z": 24,
+            "x": -40 + 44,
+            "z": -8+  24,
             "id": 191,
             "pos": ["head"],
             "leftBorder": false,
@@ -2992,8 +2992,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 48,
-            "z": 24,
+            "x": -40 + 48,
+            "z": -8+  24,
             "id": 192,
             "pos": ["head"],
             "leftBorder": false,
@@ -3007,8 +3007,8 @@ export default {
             "dataName": "610-东北角AB过道-普通"
         }, {
             "type": "cabinet",
-            "x": 80,
-            "z": 8,
+            "x": -40 + 80,
+            "z": -8+  8,
             "id": 56,
             "pos": ["head"],
             "leftBorder": false,
@@ -3021,8 +3021,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 104,
-            "z": 160,
+            "x": -40 + 104,
+            "z": -8+  160,
             "id": 1430,
             "pos": ["head"],
             "leftBorder": false,
@@ -3035,8 +3035,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 32,
-            "z": 112,
+            "x": -40 + 32,
+            "z": -8+  112,
             "id": 980,
             "pos": ["head"],
             "leftBorder": false,
@@ -3049,8 +3049,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 52,
-            "z": 20,
+            "x": -40 + 52,
+            "z": -8+  20,
             "id": 157,
             "pos": ["head"],
             "leftBorder": true,
@@ -3064,8 +3064,8 @@ export default {
             "dataName": "610-东北-热成像"
         }, {
             "type": "cabinet",
-            "x": 52,
-            "z": 16,
+            "x": -40 + 52,
+            "z": -8+  16,
             "id": 121,
             "pos": ["head"],
             "leftBorder": true,
@@ -3078,8 +3078,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 52,
-            "z": 12,
+            "x": -40 + 52,
+            "z": -8+  12,
             "id": 85,
             "pos": ["head"],
             "leftBorder": true,
@@ -3092,8 +3092,8 @@ export default {
             "name": ""
         }, {
             "type": "cabinet",
-            "x": 52,
-            "z": 8,
+            "x": -40 + 52,
+            "z": -8+  8,
             "id": 49,
             "pos": ["head"],
             "leftBorder": true,
@@ -3109,8 +3109,8 @@ export default {
             "type": "camera",
             "data": {
                 "type": "cabinet",
-                "x": 68,
-                "z": 8,
+                "x": -40 + 68,
+                "z": -8+  8,
                 "id": 53,
                 "pos": ["head"],
                 "leftBorder": false,
@@ -3127,8 +3127,8 @@ export default {
             "type": "camera",
             "data": {
                 "type": "cabinet",
-                "x": 76,
-                "z": 28,
+                "x": -40 + 76,
+                "z": -8+  28,
                 "id": 235,
                 "pos": ["head"],
                 "leftBorder": false,
@@ -3145,8 +3145,8 @@ export default {
             "type": "camera",
             "data": {
                 "type": "cabinet",
-                "x": 116,
-                "z": 16,
+                "x": -40 + 116,
+                "z": -8+  16,
                 "id": 137,
                 "pos": ["head"],
                 "leftBorder": false,
@@ -3163,8 +3163,8 @@ export default {
             "type": "camera",
             "data": {
                 "type": "cabinet",
-                "x": 52,
-                "z": 20,
+                "x": -40 + 52,
+                "z": -8+  20,
                 "id": 157,
                 "pos": ["head"],
                 "leftBorder": true,
@@ -3181,8 +3181,8 @@ export default {
             "type": "camera",
             "data": {
                 "type": "cabinet",
-                "x": 48,
-                "z": 24,
+                "x": -40 + 48,
+                "z": -8+  24,
                 "id": 192,
                 "pos": ["head"],
                 "leftBorder": false,
@@ -3199,8 +3199,8 @@ export default {
             "type": "camera",
             "data": {
                 "type": "cabinet",
-                "x": 68,
-                "z": 40,
+                "x": -40 + 68,
+                "z": -8+  40,
                 "id": 341,
                 "pos": ["head"],
                 "leftBorder": false,
@@ -3217,8 +3217,8 @@ export default {
             "type": "camera",
             "data": {
                 "type": "cabinet",
-                "x": 36,
-                "z": 68,
+                "x": -40 + 36,
+                "z": -8+  68,
                 "id": 585,
                 "pos": ["head"],
                 "leftBorder": false,
@@ -3235,8 +3235,8 @@ export default {
             "type": "camera",
             "data": {
                 "type": "cabinet",
-                "x": 116,
-                "z": 88,
+                "x": -40 + 116,
+                "z": -8+  88,
                 "id": 785,
                 "pos": ["head"],
                 "leftBorder": false,
@@ -3253,8 +3253,8 @@ export default {
             "type": "camera",
             "data": {
                 "type": "cabinet",
-                "x": 32,
-                "z": 88,
+                "x": -40 + 32,
+                "z": -8+  88,
                 "id": 764,
                 "pos": ["head"],
                 "leftBorder": true,
@@ -3271,8 +3271,8 @@ export default {
             "type": "camera",
             "data": {
                 "type": "cabinet",
-                "x": 44,
-                "z": 104,
+                "x": -40 + 44,
+                "z": -8+  104,
                 "id": 911,
                 "pos": ["head"],
                 "leftBorder": false,
@@ -3289,8 +3289,8 @@ export default {
             "type": "camera",
             "data": {
                 "type": "cabinet",
-                "x": 116,
-                "z": 136,
+                "x": -40 + 116,
+                "z": -8+  136,
                 "id": 1217,
                 "pos": ["head"],
                 "leftBorder": false,
@@ -3307,8 +3307,8 @@ export default {
             "type": "camera",
             "data": {
                 "type": "cabinet",
-                "x": 32,
-                "z": 160,
+                "x": -40 + 32,
+                "z": -8+  160,
                 "id": 1412,
                 "pos": ["head"],
                 "leftBorder": true,
@@ -3325,8 +3325,8 @@ export default {
             "type": "camera",
             "data": {
                 "type": "cabinet",
-                "x": 108,
-                "z": 140,
+                "x": -40 + 108,
+                "z": -8+  140,
                 "id": 1251,
                 "pos": ["head"],
                 "leftBorder": false,
@@ -3343,8 +3343,8 @@ export default {
             "type": "camera",
             "data": {
                 "type": "cabinet",
-                "x": 92,
-                "z": 68,
+                "x": -40 + 92,
+                "z": -8+  68,
                 "id": 599,
                 "pos": ["head"],
                 "leftBorder": false,
@@ -3361,8 +3361,8 @@ export default {
             "type": "sense",
             "data": {
                 "type": "cabinet",
-                "x": 100,
-                "z": 48,
+                "x": -40 + 100,
+                "z": -8+  48,
                 "id": 421,
                 "pos": ["head"],
                 "leftBorder": false,
@@ -3379,8 +3379,8 @@ export default {
             "type": "sense",
             "data": {
                 "type": "cabinet",
-                "x": 96,
-                "z": 48,
+                "x": -40 + 96,
+                "z": -8+  48,
                 "id": 420,
                 "pos": ["head"],
                 "leftBorder": false,
@@ -3397,8 +3397,8 @@ export default {
             "type": "sense",
             "data": {
                 "type": "cabinet",
-                "x": 92,
-                "z": 48,
+                "x": -40 + 92,
+                "z": -8+  48,
                 "id": 419,
                 "pos": ["head"],
                 "leftBorder": false,
@@ -3415,8 +3415,8 @@ export default {
             "type": "sense",
             "data": {
                 "type": "cabinet",
-                "x": 96,
-                "z": 60,
+                "x": -40 + 96,
+                "z": -8+  60,
                 "id": 528,
                 "pos": ["head"],
                 "leftBorder": false,
@@ -3433,8 +3433,8 @@ export default {
             "type": "sense",
             "data": {
                 "type": "cabinet",
-                "x": 92,
-                "z": 60,
+                "x": -40 + 92,
+                "z": -8+  60,
                 "id": 527,
                 "pos": ["head"],
                 "leftBorder": false,
@@ -3451,8 +3451,8 @@ export default {
             "type": "sense",
             "data": {
                 "type": "cabinet",
-                "x": 104,
-                "z": 80,
+                "x": -40 + 104,
+                "z": -8+  80,
                 "id": 710,
                 "pos": ["head"],
                 "leftBorder": false,
@@ -3469,8 +3469,8 @@ export default {
             "type": "sense",
             "data": {
                 "type": "cabinet",
-                "x": 100,
-                "z": 80,
+                "x": -40 + 100,
+                "z": -8+  80,
                 "id": 709,
                 "pos": ["head"],
                 "leftBorder": false,
@@ -3487,8 +3487,8 @@ export default {
             "type": "sense",
             "data": {
                 "type": "cabinet",
-                "x": 96,
-                "z": 80,
+                "x": -40 + 96,
+                "z": -8+  80,
                 "id": 708,
                 "pos": ["head"],
                 "leftBorder": false,
@@ -3505,8 +3505,8 @@ export default {
             "type": "sense",
             "data": {
                 "type": "cabinet",
-                "x": 92,
-                "z": 80,
+                "x": -40 + 92,
+                "z": -8+  80,
                 "id": 707,
                 "pos": ["head"],
                 "leftBorder": false,
@@ -3523,8 +3523,8 @@ export default {
             "type": "sense",
             "data": {
                 "type": "cabinet",
-                "x": 88,
-                "z": 80,
+                "x": -40 + 88,
+                "z": -8+  80,
                 "id": 706,
                 "pos": ["head"],
                 "leftBorder": false,
@@ -3541,8 +3541,8 @@ export default {
             "type": "sense",
             "data": {
                 "type": "cabinet",
-                "x": 84,
-                "z": 80,
+                "x": -40 + 84,
+                "z": -8+  80,
                 "id": 705,
                 "pos": ["head"],
                 "leftBorder": false,
@@ -3559,8 +3559,8 @@ export default {
             "type": "sense",
             "data": {
                 "type": "cabinet",
-                "x": 80,
-                "z": 80,
+                "x": -40 + 80,
+                "z": -8+  80,
                 "id": 704,
                 "pos": ["head"],
                 "leftBorder": false,
@@ -3577,8 +3577,8 @@ export default {
             "type": "sense",
             "data": {
                 "type": "cabinet",
-                "x": 60,
-                "z": 80,
+                "x": -40 + 60,
+                "z": -8+  80,
                 "id": 699,
                 "pos": ["head"],
                 "leftBorder": false,
@@ -3595,8 +3595,8 @@ export default {
             "type": "sense",
             "data": {
                 "type": "cabinet",
-                "x": 92,
-                "z": 96,
+                "x": -40 + 92,
+                "z": -8+  96,
                 "id": 851,
                 "pos": ["head"],
                 "leftBorder": false,
@@ -3613,8 +3613,8 @@ export default {
             "type": "sense",
             "data": {
                 "type": "cabinet",
-                "x": 88,
-                "z": 96,
+                "x": -40 + 88,
+                "z": -8+  96,
                 "id": 850,
                 "pos": ["head"],
                 "leftBorder": false,
@@ -3631,8 +3631,8 @@ export default {
             "type": "sense",
             "data": {
                 "type": "cabinet",
-                "x": 84,
-                "z": 96,
+                "x": -40 + 84,
+                "z": -8+  96,
                 "id": 849,
                 "pos": ["head"],
                 "leftBorder": false,
@@ -3649,8 +3649,8 @@ export default {
             "type": "sense",
             "data": {
                 "type": "cabinet",
-                "x": 80,
-                "z": 96,
+                "x": -40 + 80,
+                "z": -8+  96,
                 "id": 848,
                 "pos": ["head"],
                 "leftBorder": false,
@@ -3667,8 +3667,8 @@ export default {
             "type": "sense",
             "data": {
                 "type": "cabinet",
-                "x": 76,
-                "z": 96,
+                "x": -40 + 76,
+                "z": -8+  96,
                 "id": 847,
                 "pos": ["head"],
                 "leftBorder": false,
@@ -3685,8 +3685,8 @@ export default {
             "type": "sense",
             "data": {
                 "type": "cabinet",
-                "x": 48,
-                "z": 112,
+                "x": -40 + 48,
+                "z": -8+  112,
                 "id": 984,
                 "pos": ["head"],
                 "leftBorder": false,
@@ -3703,8 +3703,8 @@ export default {
             "type": "sense",
             "data": {
                 "type": "cabinet",
-                "x": 52,
-                "z": 112,
+                "x": -40 + 52,
+                "z": -8+  112,
                 "id": 985,
                 "pos": ["head"],
                 "leftBorder": false,
@@ -3721,8 +3721,8 @@ export default {
             "type": "sense",
             "data": {
                 "type": "cabinet",
-                "x": 64,
-                "z": 112,
+                "x": -40 + 64,
+                "z": -8+  112,
                 "id": 988,
                 "pos": ["head"],
                 "leftBorder": false,
@@ -3739,8 +3739,8 @@ export default {
             "type": "sense",
             "data": {
                 "type": "cabinet",
-                "x": 68,
-                "z": 112,
+                "x": -40 + 68,
+                "z": -8+  112,
                 "id": 989,
                 "pos": ["head"],
                 "leftBorder": false,
@@ -3757,8 +3757,8 @@ export default {
             "type": "sense",
             "data": {
                 "type": "cabinet",
-                "x": 72,
-                "z": 112,
+                "x": -40 + 72,
+                "z": -8+  112,
                 "id": 990,
                 "pos": ["head"],
                 "leftBorder": false,
@@ -3775,8 +3775,8 @@ export default {
             "type": "sense",
             "data": {
                 "type": "cabinet",
-                "x": 76,
-                "z": 112,
+                "x": -40 + 76,
+                "z": -8+  112,
                 "id": 991,
                 "pos": ["head"],
                 "leftBorder": false,
@@ -3793,8 +3793,8 @@ export default {
             "type": "sense",
             "data": {
                 "type": "cabinet",
-                "x": 80,
-                "z": 112,
+                "x": -40 + 80,
+                "z": -8+  112,
                 "id": 992,
                 "pos": ["head"],
                 "leftBorder": false,
@@ -3811,8 +3811,8 @@ export default {
             "type": "sense",
             "data": {
                 "type": "cabinet",
-                "x": 84,
-                "z": 112,
+                "x": -40 + 84,
+                "z": -8+  112,
                 "id": 993,
                 "pos": ["head"],
                 "leftBorder": false,
@@ -3829,8 +3829,8 @@ export default {
             "type": "sense",
             "data": {
                 "type": "cabinet",
-                "x": 88,
-                "z": 112,
+                "x": -40 + 88,
+                "z": -8+  112,
                 "id": 994,
                 "pos": ["head"],
                 "leftBorder": false,
@@ -3847,8 +3847,8 @@ export default {
             "type": "sense",
             "data": {
                 "type": "cabinet",
-                "x": 92,
-                "z": 112,
+                "x": -40 + 92,
+                "z": -8+  112,
                 "id": 995,
                 "pos": ["head"],
                 "leftBorder": false,

@@ -206,21 +206,35 @@ export default {
     padding: 5px;
 
     .title {
-        width: auto;
-        height: 60px;
-        background-color: #0ff;
+        width: calc(100% - 10px);
+        //height: 60px;
+        //background-color: rgba(#d78a34 , .7);
+        background-image: linear-gradient(to right, rgba(#d78a34,.7), rgba(#d78a34,.3));
         color: #fff;
         position: absolute;
-        top: -30px;
-        left: 12.1px;
-        padding: 8px;
-        border-radius: 5px;
+        top: -21px;
+        left: 5px;
+        padding: 2px 5px;
+        //border-radius: 5px;
+        font-size: 12px;
         transform:rotateY(20deg);
+        overflow: hidden;
+        border-left: 3px solid rgba(#fcbf84,.9);
+        //&:before {
+        //    content: '';
+        //    width: 50%;
+        //    height:100%;
+        //    position: absolute;
+        //    left: -40%;
+        //    background-color: #fcbf84;
+        //    top: -5px;
+        //    transform: rotate(-45deg);
+        //}
     }
     .box-content{
         transform:rotateY(20deg);
-        border: 2px solid rgba(#0ff, 1);
-        border-radius: 5px;
+        border: 2px solid rgba(#d78a34, .7);
+        //border-radius: 5px;
     }
     .my-loading {
         height: calc(100% - 13px);
@@ -229,18 +243,28 @@ export default {
     /deep/ .el-loading-mask,.my-loading{
         transform:rotateY(20deg);
     }
-    &::before {
-        content: "";
+    //&::before {
+    //    content: "";
+    //    position: absolute;
+    //    width: 0px;
+    //    height: 0px;
+    //    transform:rotateY(20deg);
+    //    left: calc(50% - 8px);
+    //    bottom: -10px;
+    //    border-top: 8px solid #0ff;
+    //    border-right: 8px solid transparent;
+    //    border-left: 8px solid transparent;
+    //    border-bottom: 8px solid transparent;
+    //}
+    &:before {
+        content: '';
+        background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJIAAABaCAMAAABkHv9lAAABZVBMVEUAAAACAgL///8AAAAAAAAAAAAAAAD///8AAAAAAAAAAAAAAAD///////8AAAAAAAAAAAD+/v7///////////////////////////8AAAD///+RkZH////////t7e319fX///////8AAAAAAAD///+Xl5f////c3NwAAACpqan////////////4+Pj+/v7////////////////AwMDQ0ND////////////v7+////////8AAAD9/f3////////////////////////////8/Pzh4eH8/Pz6+vr////Ozs7///+fn5+2trbj4+P////////////l5eX////////////f398AAACoqKjv7+/IyMjT09P////o6Oj///+8vLzw8PCnp6fp6ena2tqMjIxdXV3AwMBAQEBVVVXOzs7u7u41NTX////19fXq6ura2tr5+fnw8PDV1dXDw8PIyMjHx8e+vr7Ozs4TwFotAAAAa3RSTlMAAU0ECgcG/REMGA8B+xYcFET594Mzb0gZHtJua15RT0tBIiCPa2dVJWJhWhsK9amUcmRcWFZTUEM5KCeeiod5dnRiLCH+9Luzh3xpYFMqFAX8gYB+ZCsU/ODa2dDIs56ainZUR0E4Nh8eGLFp/d4AAANySURBVGje7dppU9pAGMDxJRYjkKgRI4fagoiAQj3AikKtivd9VO193wG8+/m7eTZx0eigHZKsM/nPiPjK3zzPZuWFiIGEoCxFAlE5KCBGCkY5rWgQsZAwxdU0xcKgiIiakO0FuWvZvjtBAkdn2O8Pd8Jbye7VpYExrEDD8EMa2ZsMM1K0YE4ysjfYW1gnhWFzyJz2lP/Jr5IiyJSGRNZIvaIyg+5U1JrFgYit441Fs2xdAqqIratyUFRG2fqDAqL7tHlVtNl4Ea90oXsllGpFpYavbY7nu9j6CAei+yekZSkSkeR040/2mCpiKvZEAzzfg5jKET1EUQ/PDyCmckR3Eo0hpupyRHcRzSGmYlCk8IOIqUYV0RHVaVYRexFTsSeacUR1e6GIQ4ipHNFDFK0q4jhiKvZELx1R3faUjmeIqXaZE3U+LJHL5UKWByKmSFg0caMFQTaIponIGKXUQVkhckHaG/XVwlGBiENMkZ4bRa7bsoBFRTAIOhT7SCCKIKZINSJD9qD6FX9A17Bh0kQMkVSRAdRkyDqSoImoBTg2kkB0bS7NNItJVATpGHdt1pOEEeWppHPA8EjPrX65YVRWilwjPBbBdMDioRGWm4KsIblgRk3A8fh8LXo+nw9Mt5CQmVvDM2pyYw1mtONacfgboC5JxoPU+I9NwnYmI2iivBt7MMWrh1FA8ngISCOZuLPMvBzl1AKTpSK/mPe0tHrbcKEQfgESFvlwIHKDx9SDtDXJ0ZbExf0/3rZQrA8Xi8UA1QokON30CqiBNJi0LXO1ovKrlfXUz2ShUEgmk326qJ0sDYua6YzMIm1HiWVoenh5ubh0vLOyFo/Hvx0cFECkrg1APgJqIpn63JOljS93KLjyzsmHbuhHgYwIe+AUeWBjdEAmkrZANPFWBfHH1fPT00/d3fH42lcyIXjOtAFdTsjkC3IeSLsgKlcvLk7PXmNQKpUKkQHpz70uugljCmlVJR1VTs7P/p68SaXW17NZLz1AwDF7ZbQMB73HQzqqLFSrCwsr2Ww2l/ve4rmyLpdpD70xmRym4iJ/VD6uVN59yeUSuUTiUL8SqcQykqDfk6P9xY+f9xO4jY2NX/p0TD3K9f83/cljrfwhsVjNoWVKEUIi5X/jx9xOEiRsbU5KAS4g5eX5jJEBFFu6ZSYOicbEr/8HZUTFNkbq7ZMAAAAASUVORK5CYII=');
+        background-size: 100% 100%;
         position: absolute;
-        width: 0px;
-        height: 0px;
-        transform:rotateY(20deg);
-        left: calc(50% - 8px);
-        bottom: -10px;
-        border-top: 8px solid #0ff;
-        border-right: 8px solid transparent;
-        border-left: 8px solid transparent;
-        border-bottom: 8px solid transparent;
+        left: -100px;
+        bottom: -60px;
+        width: 120px;
+        height: 80px;
     }
     .toolbar {
         position: absolute;

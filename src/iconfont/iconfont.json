@@ -6,6 +6,13 @@
   "description": "图标库",
   "glyphs": [
     {
+      "icon_id": "9612942",
+      "name": "simui-close",
+      "font_class": "simui-close",
+      "unicode": "e619",
+      "unicode_decimal": 58905
+    },
+    {
       "icon_id": "18371944",
       "name": "声音-关",
       "font_class": "shengyin-guan",
