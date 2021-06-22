@@ -141,8 +141,9 @@ export default {
                 this.initCabinetPos();
                 this.initSenseData();
                 this.initGroundData();
-                this.loading = false;
+
                 setTimeout(()=>{
+                    this.loading = false;
                     this.dialogVisible = true;
                 })
             }, 500)

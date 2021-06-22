@@ -51,7 +51,7 @@ export default {
                 method: 'get',
                 headers:{
                     'Content-Type':'application/json',
-                    Authorization:'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJseHgiLCJpYXQiOjE2MjIxNzM4NzcsImV4cCI6MTYyMjc3ODY3N30.hdXqRwaO89xFvoZdVomappniIlK4Xk6lR-ZLwaEDiaKDb8MWcp_h-agiQfEyUQF6v58dmh7ccc0u5ExZ6b2qkg'
+                    Authorization:'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjamdseSIsImlhdCI6MTYyNDI2NzE2OCwiZXhwIjoxNjI0ODcxOTY4fQ.XeWQE3nbUwpHRQm0dS0HPhGNSRIaD5fbJR5jiyByhLfURAfnUixwHsKw35BEykFw7tmxU0eFMCfmVk1m-gF24g'
                 }
             }).then(response => {
                 let resp = response.data;

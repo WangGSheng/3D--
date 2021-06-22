@@ -106,7 +106,7 @@ export default {
             this.canAddCamera = false;
             this.selected.type = 'sense';
             this.selected.senseId = 'sense';
-            this.currentDeviceId = 'sense';
+            // this.currentDeviceId = 'sense';
             this.currentSelect = 'sense';
         }
 
