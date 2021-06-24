@@ -1,0 +1,102 @@
+.control {
+    z-index: 10;
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    padding: 10px 0 5px 6px;
+    cursor: pointer;
+    color: #ddd;
+    background-color: #7499d9;
+    right: 10px;
+    bottom: 10px;
+    font-size: 18px;
+    //width: 200px;
+    //background-color: rgba(0, 0, 0, .5);
+    border-radius: 50%;
+
+    &:hover {
+        color: #fff;
+    }
+
+    .title {
+        padding: 5px;
+        background-color: #dff;
+    }
+
+    .item-box {;
+
+        .item-content {
+            background-color: grey;
+            display: flex;
+            padding: 10px;
+
+            .img {
+                width: 40px;
+                padding: 5px;
+
+                .item-content-name {
+                    color: #fff;
+                    text-align: center;
+                    letter-spacing: 2px;
+                }
+
+                &:hover {
+                    border: 1px solid;
+                }
+            }
+
+        }
+    }
+}
+
+/*弹窗*/
+.model-popup {
+    height: 230px;
+    width: 400px;
+    top: -165px;
+    left: 285px;
+    color: #B9EDF8;
+    background-color: transparent;
+    transition: height 0.2s linear;
+    position: absolute;
+
+    &:hover .close-bth {
+        display: block !important;
+    }
+
+    .close-bth {
+        position: absolute;
+        //display: none !important;
+        right: 20px;
+        top: -20px;
+        cursor: pointer;
+        //background-color: rgba(#d78a34,.8);
+        color: #f6b4b4;
+        //border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        z-index: 10;
+        //font-size:25px;
+        padding: 5px;
+        text-align: center;
+
+        &:hover {
+            color: #fff;
+        }
+    }
+}
+
+/*统计面板*/
+.status-ui {
+    position: absolute;
+    right: 5px;
+    top: 5px;
+    width: 150px;
+    //height: 300px;
+
+    .table {
+        background-color: rgba(#7499d9,.3);
+        color: white;
+    }
+}

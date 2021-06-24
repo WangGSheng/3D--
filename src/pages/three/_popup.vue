@@ -1,5 +1,12 @@
+
+<style scoped lang="scss">
+@import "scss/_popup.scss";
+</style>
 <template>
     <ui-main :title="title">
+        <div class="m-b-10">
+            <el-button type="primary" @click="setCenter">设为中心点</el-button>
+        </div>
         <div class="content-title">
             {{ canAddCamera ? '摄像头(朝向)' : '传感器' }}
         </div>
@@ -171,6 +178,9 @@ export default {
             this.selected.dataId = item.id;
             this.selected.dataName = item.label;
         },
+        setCenter() {
+            this.$parent.close('setCenter')
+        },
         submit() {
             if (this.selected.type !== 'delete' && !this.name) {
                 if (this.canAddCamera && !this.selected.senseId) {
@@ -193,108 +203,3 @@ export default {
 }
 </script>
 
-<style scoped lang="scss">
-.content-title {
-    clear: both;
-    padding: 10px 5px;
-    background-color: #235193;
-    color: white;
-    margin-bottom: 5px;
-}
-
-.camera-pos {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(3, 70px);
-    grid-gap: 5px;
-    margin-bottom: 5px;
-
-    .center-item {
-        background-color: #eaa447;
-    }
-
-    .camera-item {
-        line-height: 60px;
-        text-align: center;
-        cursor: pointer;
-        border: 1px dashed rgba(0, 0, 0, .2);
-        border-radius: 5px;
-
-        .iconfont {
-            font-size: 28px;
-        }
-
-        &.active {
-            background-color: #d3ea7f;
-        }
-
-        &:hover {
-            background-color: #45c2d0;
-        }
-    }
-}
-
-.sense-item {
-    width: 70px;
-    height: 70px;
-    line-height: 70px;
-    text-align: center;
-    cursor: pointer;
-    border: 1px solid rgba(0, 0, 0, .2);
-    //border-radius: 10px;
-    margin: 0 5px 5px 5px;
-
-    .iconfont {
-        font-size: 28px;
-    }
-
-    &.active {
-        background-color: #d3ea7f;
-    }
-
-    &:hover {
-        background-color: #45c2d0;
-    }
-}
-
-.content-list-box {
-    padding: 0 5px;
-    height: calc(100% - 60px);
-    overflow-y: scroll;
-    overflow-x: hidden;
-
-    &::-webkit-scrollbar {
-        width: 3px;
-    }
-
-    &::-webkit-scrollbar-thumb {
-        background-color: transparent;
-        border-radius: 3px;
-    }
-
-    &:hover::-webkit-scrollbar-thumb {
-        background-color: #0ff;
-    }
-
-    &::-webkit-scrollbar-track {
-        background-color: transparent;
-    }
-
-    .content-list-item {
-        padding: 5px;
-
-        .list-item-title {
-            padding: 5px 0;
-        }
-
-        .list-item-label {
-            padding: 5px 0px 5px 10px;
-            cursor: pointer;
-
-            &:hover, &.active {
-                background-color: rgba(37, 183, 211, 0.5);
-            }
-        }
-    }
-}
-</style>

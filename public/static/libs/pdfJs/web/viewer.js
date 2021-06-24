@@ -1941,7 +1941,10 @@ function webViewerPageRendered(evt) {
   }
 }
 
-function webViewerTextLayerRendered(evt) {}
+// pdf 加载完毕向外部发送一个消息
+function webViewerTextLayerRendered(evt) {
+    parent.postMessage({ msg: 'pdf is finished loaded' }, '*');
+}
 
 function webViewerPageMode(evt) {
   var mode = evt.mode,
@@ -15658,4 +15661,3 @@ _app.PDFPrintServiceFactory.instance = {
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=viewer.js.map

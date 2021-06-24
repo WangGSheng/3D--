@@ -1,3 +1,8 @@
+<style scoped lang="scss">
+    @import "scss/_editRoom.scss";
+    /*网格*/
+
+</style>
 <template>
     <ui-main title="编辑机房"
              v-loading="loading"
@@ -25,37 +30,44 @@
              :style="`grid-template-columns:repeat(${widthNum}, 40px);grid-template-rows: repeat(${heightNum}, 40px)`">
             <template v-for="item in roomList">
                 <div
-                    :class="{'grid-item':true,'left-border':item.leftBorder,'top-border':item.topBorder,'left-door':item.leftDoor,'top-door':item.topDoor,
+                    :class="{'grid-item':true,
+                    'left-border':item.leftBorder,
+                    'top-border':item.topBorder,
+                    'left-door':item.leftDoor,
+                    'top-door':item.topDoor,
+                    'is-center':item.isCenter,
                     'is-cabinet':item.type === 'cabinet' && act.includes(item.id),
                     'is-kt':item.type === 'kt' && act.includes(item.id),
                     'is-odf':item.type === 'odf' && act.includes(item.id)}"
                     :key="item.id"
                     :id="'room-' + item.id"
-                    @click.stop="select(item)" @contextmenu="selectSense(item)">
-                    <template v-if="act.includes(item.id)">
-                        <div class="item-position" :title="item.num">
-                            <div @click.stop="open(item)" class="pos-tip">
-                                <div class="pos-tip-num">{{ item.num }}</div>
+                    >
+                    <div style="overflow: hidden" class="w-100p h-100p" @click.stop="select(item)" @contextmenu="selectSense(item)">
+                        <template v-if="act.includes(item.id)">
+                            <div class="item-position" :title="item.num">
+                                <div @click.stop="open(item)" class="pos-tip">
+                                    <div class="pos-tip-num">{{ item.num }}</div>
+                                </div>
+                                <div class="pos-up" :class="{active:item.pos.includes('back')}"
+                                     @click.stop="changePos(item,'back')"><i class="icon caret up"></i></div>
+                                <div class="pos-left" :class="{active:item.pos.includes('left')}"
+                                     @click.stop="changePos(item,'left')"><i class="icon caret left"></i></div>
+                                <div class="pos-center" v-if="item.senseId === 'sense'"></div>
+                                <div class="pos-right" :class="{active:item.pos.includes('right')}"
+                                     @click.stop="changePos(item,'right')"><i class="icon caret right"></i></div>
+                                <div class="pos-down" :class="{active:item.pos.includes('head')}"
+                                     @click.stop="changePos(item,'head')"><i class="icon caret down"></i></div>
                             </div>
-                            <div class="pos-up" :class="{active:item.pos.includes('back')}"
-                                 @click.stop="changePos(item,'back')"><i class="icon caret up"></i></div>
-                            <div class="pos-left" :class="{active:item.pos.includes('left')}"
-                                 @click.stop="changePos(item,'left')"><i class="icon caret left"></i></div>
-                            <div class="pos-center" v-if="item.senseId === 'sense'"></div>
-                            <div class="pos-right" :class="{active:item.pos.includes('right')}"
-                                 @click.stop="changePos(item,'right')"><i class="icon caret right"></i></div>
-                            <div class="pos-down" :class="{active:item.pos.includes('head')}"
-                                 @click.stop="changePos(item,'head')"><i class="icon caret down"></i></div>
-                        </div>
-                    </template>
-                    <div class="sense-pos" v-if="item.senseId">
-                        <template v-for="(camera) in cameraPos">
-                            <div class="sense-item" :class="camera.id === item.senseId ?  `iconfont ${camera.icon}` :''"
-                                 :key="camera.id"></div>
                         </template>
-                    </div>
-                    <div class="item-name" v-if="item.name">
-                        {{ item.name }}
+                        <div class="sense-pos" v-if="item.senseId">
+                            <template v-for="(camera) in cameraPos">
+                                <div class="sense-item" :class="camera.id === item.senseId ?  `iconfont ${camera.icon}` :''"
+                                     :key="camera.id"></div>
+                            </template>
+                        </div>
+                        <div class="item-name" v-if="item.name">
+                            {{ item.name }}
+                        </div>
                     </div>
                 </div>
             </template>
@@ -105,6 +117,7 @@ export default {
             groundData: [], // 地板数据
             senseData: [], // 传感器数据
             selected: [], // 机柜数据存放
+            centerData:null, // 中心点
             editType: "room",
             wallType: "horizontal",
             widthNum: 36,
@@ -134,6 +147,7 @@ export default {
         })
     },
     mounted() {
+        this.centerData = this.$parent.params.centerData;
         this.$nextTick(() => {
             setTimeout(() => {
                 this.initDom();
@@ -141,18 +155,19 @@ export default {
                 this.initCabinetPos();
                 this.initSenseData();
                 this.initGroundData();
-
-                setTimeout(()=>{
-                    this.loading = false;
-                    this.dialogVisible = true;
-                })
+                this.loading = false;
+                this.dialogVisible = true;
+                // setTimeout(()=>{
+                //
+                //
+                // })
             }, 500)
         })
     },
     methods: {
         /*初始化网格数据，固定宽高*/
         initDom() {
-            let start = -17 * 4;
+            let start = 0;
             let x = start;
             let z = 0;
             for (let i = 0; i < this.widthNum * this.heightNum; i++) {
@@ -161,6 +176,7 @@ export default {
                     z += 4;
                     x = start;
                 }
+
                 this.roomList.push({
                     type: 'cabinet',
                     x: x,
@@ -171,6 +187,7 @@ export default {
                     topBorder: false,
                     topDoor: false,
                     leftDoor: false,
+                    isCenter: this.centerData ?.id === i ? true : false,
                     senseId: '',
                     dataId: '',
                     num: '',
@@ -395,7 +412,11 @@ export default {
                     padding: '50px 0 0 0'
                 },
                 callback: (data) => {
-                    if (data?.data.dataId) {
+                    if(data === 'setCenter'){
+                        vm.initCenter();
+                        item.isCenter = true;
+                        vm.centerData = item;
+                    }else if (data?.data.dataId) {
                         if (data.data.type === 'delete') {
                             vm.senseData = vm.senseData.filter((source) => {
                                 return item.id !== source.data.id;
@@ -422,28 +443,21 @@ export default {
                 }
             })
         },
+        initCenter() {
+            this.roomList.forEach(item => {
+                item.isCenter = false;
+            })
+        },
         submit() {
             this.$parent.close({
                 cabinetData: this.selected,
                 wallData: this.wallData,
                 senseData: this.senseData,
                 groundData: this.groundData,
+                centerData: this.centerData,
             });
         }
     }
 }
 </script>
 
-<style scoped lang="scss">
-@import "./index.scss";
-.help-btn {
-    margin-left: 30px;
-    color: #cda511;
-    cursor: pointer;
-
-    &:hover {
-        color: #00B247;
-    }
-}
-
-</style>

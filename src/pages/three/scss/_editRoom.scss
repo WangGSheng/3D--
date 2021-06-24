@@ -1,27 +1,53 @@
-/*网格*/
+/* eslint-disable */
+.help-btn {
+    margin-left: 30px;
+    color: #cda511;
+    cursor: pointer;
+
+    &:hover {
+        color: #00B247;
+    }
+}
+
 .grid-box {
     width: 1460px;
     //height: 100%;
     display: grid;
     overflow-x: auto;
     margin: 10px auto 0 auto;
-    //grid-template-columns: repeat(20, 40px);
-    //grid-template-rows: repeat(20, 40px);
 
 
     .grid-item {
         border: 1px solid rgba(0, 0, 0, .2);
         cursor: pointer;
-        overflow: hidden;
+        position: relative;
+        //overflow: hidden;
 
         &.is-cabinet {
             background-color: #d3ea7f;
         }
+
         &.is-kt {
             background-color: #5ffff4;
         }
+
         &.is-odf {
             background-color: #eed99b;
+        }
+
+        &.is-center {
+            ::before {
+                content: '';
+                width: 15px;
+                height: 15px;
+                position: absolute;
+                top: -8px;
+                left: -8px;
+                background-image: url("~@/pages/three/scss/add.svg");
+                background-repeat: no-repeat;
+                background-size: 15px;
+                background-position: center;
+            }
         }
     }
 
@@ -39,9 +65,11 @@
     .top-border {
         border-top: 3px solid rgba(200, 200, 10, 1);
     }
+
     .left-door {
         border-left: 3px solid rgb(18, 80, 212);
     }
+
     .top-door {
         border-top: 3px solid rgb(18, 80, 212);
     }
