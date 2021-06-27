@@ -79,7 +79,13 @@
             :visible.sync="dialogVisible"
             top="48px"
             width="75%">
-            <img class="w-100p" src="static/images/3D机房编辑手册.png" alt="">
+            <!--<img class="w-100p" src="static/images/help.png" alt="">-->
+            <el-image
+                style="width: 100%; height: 100%"
+                src="static/images/help.png"
+                fit="contain"
+                :preview-src-list="['static/images/help.png']">
+            </el-image>
             <span slot="footer" class="dialog-footer">
                 <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
             </span>
@@ -118,10 +124,17 @@ export default {
             senseData: [], // 传感器数据
             selected: [], // 机柜数据存放
             centerData:null, // 中心点
-            editType: "room",
             wallType: "horizontal",
             widthNum: 36,
             heightNum: 50,
+            editType: "room",
+            editTypeOption: [
+                "room",
+                "kt",
+                "odf",
+                "wall",
+                "door"
+            ],
             cameraPos: [  // 摄像头朝向数据
                 {label: '左前', id: 'leftHead', icon: 'ali-iconjiantou_zuoshang'},
                 {label: '正前', id: 'head', icon: 'ali-iconjiantou_xiangshang'},
@@ -138,6 +151,17 @@ export default {
     beforeCreate() {
         window.onkeydown = (e) => {
             if (e.code === 'Tab') {
+                for (let i = 0; i < this.editTypeOption.length; i++) {
+                    if (this.editType === this.editTypeOption[i]) {
+                        if (i === this.editTypeOption.length - 1) {
+                            this.editType = this.editTypeOption[0];
+                        }else{
+                            this.editType = this.editTypeOption[i + 1];
+                        }
+                        break;
+                    }
+                }
+            }else if (e.ctrlKey) {
                 e.preventDefault();
                 this.changeWallType();
             }

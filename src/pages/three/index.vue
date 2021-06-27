@@ -50,6 +50,8 @@ let camera = null;
 let renderer = null;
 // 灯光
 let light = null;
+// 点光源 聚光灯
+let spotLight = null;
 // 性能插件
 let stats = null;
 // 高光强度
@@ -189,17 +191,21 @@ export default {
         initScene() {
             scene = new THREE.Scene();
             scene.fog = new THREE.Fog("#0f1e3e", 20, 700);
-            group = new THREE.Group();
-            otherGroup = new THREE.Group();
             scene.position.set(0, 0, 0);
-            scene.add(group);
-            scene.add(otherGroup);
+           this.initGroup()
             // 加载辅助坐标系 实际应用的时候需要注释此代码
             // const axisHelper = new THREE.AxisHelper(250)
             // axisHelper.position.set(0, 0, 0);//位置
             // scene.add(axisHelper)
         },
+        initGroup() {
+            group = new THREE.Group();
+            otherGroup = new THREE.Group();
+            scene.add(group);
+            scene.add(otherGroup);
+        },
         initCenter(item) {
+            spotLight.position.set(item.x,150,item.z);
             controls.target = new THREE.Vector3( item.x,0,item.z);
             //动态阻尼系数 就是鼠标拖拽旋转灵敏度
             controls.dampingFactor = 0.5;
@@ -216,7 +222,7 @@ export default {
             light = new THREE.AmbientLight('#a7a3a3') // 环境光源颜色;
             scene.add(light);
 
-            let spotLight = new THREE.SpotLight(
+            spotLight = new THREE.SpotLight(
                 '#a7a3a3', 2.0, 200, 90, 1, 0
             );  // 聚光
 
@@ -273,6 +279,10 @@ export default {
                 if (intersects.length) {
                     if (intersects[0].object.children[0]?.isScene) {
                         let obj = intersects[0].object.children[0];
+                        // this.initCenter({
+                        //     x:obj.parent.position.x,
+                        //     z:obj.parent.position.z
+                        // })
                         // 给选中的模型添加弹窗或移除弹窗
                         let dom = obj.children[1].element;
                         this.openOrClose(dom)
@@ -342,19 +352,17 @@ export default {
                 });
 
         },
+
         // 初始化数据
         initData(item) {
             if (!item) {
                 return;
             }
             this.removeMesh().then(() => {
-                scene.add(group);
-                scene.add(otherGroup);
-
+                this.initGroup();
 
                 if (item.centerData) {
                     this.centerData = item.centerData;
-                    console.log(this.centerData)
                     this.initCenter({
                         x:item.centerData.x,
                         z:item.centerData.z
@@ -969,48 +977,85 @@ export default {
         // 移除所有Mesh
         removeMesh() {
             return new Promise(resolve => {
-                scene.remove(group)
-                scene.remove(otherGroup)
-                group.traverse((child) => {
-                    if (child instanceof THREE.Mesh) {
-                        child.geometry.dispose(); //删除几何体
-                        if (child.material.length) {
-                            child.material.forEach(i => {
-                                i.dispose()
-                            });
-                        } else {
-                            child.material.dispose();
-                        }
-                    }
-                })
-                otherGroup.traverse((child) => {
-                    if (child instanceof THREE.Mesh) {
-                        child.geometry.dispose(); //删除几何体
-                        if (child.material.length) {
-                            child.material.forEach(i => {
-                                i.dispose()
-                            });
-                        } else {
-                            child.material.dispose();
-                        }
-                    }else{
-                        child.geometry ?.dispose(); //删除几何体
-                        if (child.material ?.length) {
-                            child.material.forEach(i => {
-                                i.dispose()
-                            });
-                        } else {
-                            child.material ?.dispose();
-                        }
-                    }
-                })
+                // scene.remove(group)
+                // scene.remove(otherGroup)
+                this.dispose(scene,group)
+                this.dispose(scene,otherGroup)
+                // group.traverse((child) => {
+                //     if (child instanceof THREE.Mesh) {
+                //         child.geometry.dispose(); //删除几何体
+                //         if (child.material.length) {
+                //             child.material.forEach(i => {
+                //                 i.dispose()
+                //             });
+                //         } else {
+                //             child.material.dispose();
+                //         }
+                //     }
+                // })
+                // otherGroup.traverse((child) => {
+                //     if (child instanceof THREE.Mesh) {
+                //         child.geometry.dispose(); //删除几何体
+                //         if (child.material.length) {
+                //             child.material.forEach(i => {
+                //                 i.dispose()
+                //             });
+                //         } else {
+                //             child.material.dispose();
+                //         }
+                //     }else{
+                //         child.geometry ?.dispose(); //删除几何体
+                //         if (child.material ?.length) {
+                //             child.material.forEach(i => {
+                //                 i.dispose()
+                //             });
+                //         } else {
+                //             child.material ?.dispose();
+                //         }
+                //     }
+                // })
                 this.objects = [];
                 this.cabinetNum = 0;
                 this.cameraNum = 0;
                 this.sensorNum = 0;
-
+                group = null;
+                otherGroup = null;
                 resolve()
             })
+        },
+        dispose(parent,child){
+            if(child.children.length){
+                let arr  = child.children.filter(x=>x);
+                arr.forEach(a=>{
+                    this.dispose(child,a)
+                })
+            }
+            if (child.type !== 'Group') {
+                if(child instanceof THREE.Mesh||child instanceof THREE.Object3D||child instanceof THREE.LineSegments){
+                    if (child.material) {
+                        if(child.material.map && typeof  child.material.map !== 'function') {
+                            child.material.map.dispose();
+                        }
+                        if (child.material.length) {
+                            child.material.forEach(i => {
+                                i.dispose()
+                            });
+                        } else {
+                            child.material.dispose();
+                        }
+                    }
+                    child.geometry ?.dispose();
+                }else if(child.material){
+                    child.material.dispose();
+                }
+                child.remove();
+                parent.remove(child);
+            }else if (child.isScene) {
+                child.dispose();
+            }else {
+                parent.remove(child)
+            }
+
         },
         unique(arr, key) {
             const res = new Map();
