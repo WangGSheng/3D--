@@ -63,7 +63,7 @@ let rayCaster = null;
 // 鼠标
 let mouse = null;
 // 时钟
-// let clock = null;
+let clock = null;
 //
 let mixer = null;
 // 鼠标拖拽
@@ -100,8 +100,6 @@ export default {
             centerData: null,
             sensorList: [],
             linePoints: [],
-            cssRender: null,
-            videoVm: null,
             cabinetNum: 0,
             cameraNum: 0,
             sensorNum: 0,
@@ -283,6 +281,7 @@ export default {
                         //     x:obj.parent.position.x,
                         //     z:obj.parent.position.z
                         // })
+                        console.log(obj)
                         // 给选中的模型添加弹窗或移除弹窗
                         let dom = obj.children[1].element;
                         this.openOrClose(dom)
@@ -425,7 +424,7 @@ export default {
             emptyMesh = new THREE.Mesh(geometry, material);
         },
         // 添加温湿度传感器模型
-        addScene(item, moonLabel) {
+        addSensor(item, moonLabel) {
             let model = sensorObj.clone(), x = item.x, y = 9, z = item.z;
             model.rotateZ(Math.PI);
             if (item.pos.includes('head')) {
@@ -513,7 +512,6 @@ export default {
             other.position.set(item.x, 12, item.z)
             other.add(mesh)
 
-            // geometryMerge.merge(other.geometry,other.matrix)
             group.add(other)
 
 
@@ -533,14 +531,14 @@ export default {
                     this.addCamera(item.data,moonLabel.clone())
                 } else {
                     this.sensorNum++;
-                    this.addScene(item.data,moonLabel.clone())
+                    this.addSensor(item.data,moonLabel.clone())
                 }
             })
         },
         // 创建墙体
-        createWall(item, type, texture) {
+        createWall(item, materials,type,obj) {
             let material;
-            let width = 4, height = 10, rotate = false, x = item.x, z = item.z;
+            let rotate = false, x = item.x, z = item.z;
             if (type === 'v' || type === 'vDoor') {
                 rotate = true;
                 x -= 2;
@@ -549,67 +547,77 @@ export default {
             }
 
             if (type === 'vDoor' || type === 'hDoor') {
-                material = new THREE.MeshPhongMaterial(
-                    {
-                        map: texture,
-                        side: THREE.DoubleSide,
-                        wireframe: false,
-                        transparent: true,
-                        opacity: 1,
-                        specular: 0x4488ee,
-                        shininess: shininessNum
-                    }
-                );
+                material = materials[0]
             } else {
-                let color = "#425fac";
-                //直接使用材质数组来构建物体，数组里的材质分别对应物体的右、左、上、下、前、后
-                material = [
-                    new THREE.MeshLambertMaterial({color: color, opacity: 0, transparent: true}),
-                    new THREE.MeshLambertMaterial({color: color, opacity: 0, transparent: true}),
-                    new THREE.MeshPhongMaterial({color: color, opacity: 0.4, transparent: true}),
-                    new THREE.MeshLambertMaterial({color: color, opacity: 0.4, transparent: true}),
-                    new THREE.MeshPhongMaterial({
-                        color: color,
-                        specular: 0x4488ee,
-                        shininess: shininessNum,
-                        opacity: 0.6,
-                        transparent: true
-                    }),
-                    new THREE.MeshPhongMaterial({
-                        color: color,
-                        specular: 0x4488ee,
-                        shininess: shininessNum,
-                        opacity: 0.6,
-                        transparent: true
-                    }),
-                ]
+                material = materials[1]
             }
 
 
-            let geometry = new THREE.BoxGeometry(width, height, 0.3);
-
-            let plane = new THREE.Mesh(geometry, material);
+            let plane = obj.clone();
+            plane.material = material;
             plane.position.set(x, 5, z)
             if (rotate) plane.rotateY(Math.PI / 2);
             otherGroup.add(plane);
-            // this.objects.push(plane)
+        },
+        getWallMaterial() {
+            let texture = new THREE.TextureLoader().load('static/images/door.png');
+
+            let materials1 = new THREE.MeshPhongMaterial(
+                {
+                    map: texture,
+                    side: THREE.DoubleSide,
+                    wireframe: false,
+                    transparent: true,
+                    opacity: 1,
+                    specular: 0x4488ee,
+                    shininess: shininessNum
+                }
+            );
+
+
+            let color = "#425fac";
+            let materials2 = [
+                //直接使用材质数组来构建物体，数组里的材质分别对应物体的右、左、上、下、前、后
+                new THREE.MeshLambertMaterial({color: color, opacity: 0, transparent: true}),
+                new THREE.MeshLambertMaterial({color: color, opacity: 0, transparent: true}),
+                new THREE.MeshPhongMaterial({color: color, opacity: 0.4, transparent: true}),
+                new THREE.MeshLambertMaterial({color: color, opacity: 0.4, transparent: true}),
+                new THREE.MeshPhongMaterial({
+                    color: color,
+                    specular: 0x4488ee,
+                    shininess: shininessNum,
+                    opacity: 0.6,
+                    transparent: true
+                }),
+                new THREE.MeshPhongMaterial({
+                    color: color,
+                    specular: 0x4488ee,
+                    shininess: shininessNum,
+                    opacity: 0.6,
+                    transparent: true
+                }),
+            ]
+            return [materials1, materials2];
         },
         // 创建面
         createPlane(type) {
             if (type === 'wall') {
-                let texture = new THREE.TextureLoader().load('static/images/door.png');
+                let materials = this.getWallMaterial();
+                let geometry = new THREE.BoxBufferGeometry(4, 10, 0.3);
+                let plane = new THREE.Mesh(geometry);
+
                 this.wallList.forEach((item) => {
                     if (item.leftBorder) {
-                        this.createWall(item, 'v');
+                        this.createWall(item, materials,'v',plane);
                     }
                     if (item.topBorder) {
-                        this.createWall(item, 'h');
+                        this.createWall(item, materials,'h',plane);
                     }
                     if (item.leftDoor) {
-                        this.createWall(item, 'vDoor', texture);
+                        this.createWall(item, materials,'vDoor',plane);
                     }
                     if (item.topDoor) {
-                        this.createWall(item, 'hDoor', texture);
+                        this.createWall(item, materials,'hDoor',plane);
                     }
                 })
 
@@ -653,64 +661,34 @@ export default {
                 }
 
                 /*获取轨道线路*/
-                // let lineX = minX, lineY = 16, lineZ = minZ, change = false;
-                // let num = maxZ - minZ;
-                // for (let i = minX; i < maxX - minX; i += 4) {
-                //
-                //     if (change) {
-                //         num += 4;
-                //         lineZ -= num;
-                //     } else {
-                //         num -= 4;
-                //         lineZ += num;
-                //     }
-                //
-                //     if (lineZ > maxZ) {
-                //         lineZ = maxZ;
-                //         change = true;
-                //     }
-                //     if (lineZ < minZ) {
-                //         lineZ = minZ;
-                //         change = false
-                //     }
-                //     lineX += 4;
-                //     this.linePoints.push({
-                //         x: lineX,
-                //         y: lineY,
-                //         z: lineZ
-                //     })
-                // }
-                //
-                // lineX = maxX, lineZ = maxZ, change = true;
-                // num = maxZ - minZ;
-                // for (let i = maxX - minX; i > minX; i -= 4) {
-                //
-                //     if (change) {
-                //         num += 4;
-                //         lineZ -= num;
-                //     } else {
-                //         num -= 4;
-                //         lineZ += num;
-                //     }
-                //
-                //     if (lineZ > maxZ) {
-                //         lineZ = maxZ;
-                //         change = true;
-                //     }
-                //     if (lineZ < minZ) {
-                //         lineZ = minZ;
-                //         change = false
-                //     }
-                //     lineX -= 4;
-                //     this.linePoints.push({
-                //         x: lineX,
-                //         y: lineY,
-                //         z: lineZ
-                //     })
-                // }
+                let lineX = minX, lineY = 16, lineZ = minZ, change = false;
+                let diff = (maxX - minX) / 4 ;
+                let dis = -4;
+                for (let i = minZ; i < maxZ; i+=4) {
+                    if (lineX <= minX) {
+                        dis = 4;
+                    }else{
+                        dis = -4;
+                    }
+                    diff += dis;
+                    lineZ = i;
+                    lineX += diff;
+
+
+
+                    this.linePoints.push({
+                        x: lineX,
+                        y: lineY,
+                        z: lineZ
+                    })
+                }
+                let arr = JSON.parse(JSON.stringify(this.linePoints))
+                let rs = arr.reverse()
+                this.linePoints.push(...rs)
 
                 this.createSelfGround(result)
                 this.createGround(res)
+                this.animate()
                 if (this.groundDataList.length) this.groundText(res)
 
             }
@@ -747,26 +725,6 @@ export default {
                 floorMat.needsUpdate = true;
                 floorMat.side = THREE.DoubleSide;
             });
-            // textureLoader.load( "static/images/hardwood2_bump.jpg", function ( map ) {
-            //
-            //     map.wrapS = THREE.RepeatWrapping;
-            //     map.wrapT = THREE.RepeatWrapping;
-            //     map.anisotropy = 4;
-            //     map.repeat.set( 10, 24 );
-            //     floorMat.bumpMap = map;
-            //     floorMat.needsUpdate = true;
-            //
-            // } );
-            // textureLoader.load( "static/images/hardwood2_roughness.jpg", function ( map ) {
-            //
-            //     map.wrapS = THREE.RepeatWrapping;
-            //     map.wrapT = THREE.RepeatWrapping;
-            //     map.anisotropy = 4;
-            //     map.repeat.set( 10, 24 );
-            //     floorMat.roughnessMap = map;
-            //     floorMat.needsUpdate = true;
-            //
-            // } );
             let width = window.innerWidth, height = window.innerWidth;
             let geometry = new THREE.PlaneGeometry(width, height);
             let plane = new THREE.Mesh(geometry, floorMat);
@@ -779,9 +737,9 @@ export default {
         },
         createSelfGround(arr) {
             const textureLoader = new THREE.TextureLoader();
-            let map = textureLoader.load("static/images/地板2.jpg");
+            // let map = textureLoader.load("static/images/地板2.jpg");
             let width = 4, height = 4;
-            let geometry = new THREE.PlaneGeometry(width, height);
+            let geometry = new THREE.PlaneBufferGeometry(width, height);
             let material = new THREE.MeshPhongMaterial(
                 {
                     // map: map,
@@ -830,14 +788,15 @@ export default {
                     if (x === this.groundDataList[j].x && z === this.groundDataList[j].z) {
                         let width = 4, height = 4;
                         let geometry = new THREE.PlaneGeometry(width, height);
-                        let textMaterial = new THREE.MeshLambertMaterial(
+                        let textMaterial = new THREE.MeshPhongMaterial(
                             {
                                 map: new THREE.CanvasTexture(this.getTextCanvas(this.groundDataList[j].name, "#182245", '#fff')),
                                 side: THREE.DoubleSide,
-                                wireframe: false,
+                                specular: "#8D93AB",
+                                shininess: shininessNum,
                             }
                         );
-                        let plane = new THREE.Mesh(geometry, textMaterial ? textMaterial : material);
+                        let plane = new THREE.Mesh(geometry, textMaterial);
                         plane.position.set(x, 0.1, z)
                         // plane.rotateY(- Math.PI / 2); // 沿 Y 轴旋转 90°
                         plane.rotateX(-Math.PI / 2); // 沿 X 轴旋转 90°
@@ -886,7 +845,6 @@ export default {
                     } else if (item.pos.includes('right')) {
                         cube.rotateY(Math.PI / 2);
                     }
-                    // this.objects.push(cube)
                     otherGroup.add(cube);
                 })
             }
@@ -971,7 +929,7 @@ export default {
             ctx.fillStyle = textColor; // 字体颜色
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillText(text || '', width / 2, height / 2, 150);
+            ctx.fillText(text || '', width / 2, height / 2);
             return canvas;
         },
         // 移除所有Mesh
@@ -1066,75 +1024,81 @@ export default {
         animate() {
             let other;
             let vm = this;
-            this.GLTFLoader.load('static/three/model/scene.gltf', function (obj) {
-                    let mesh = obj.scene;
-                    let scale = 0.5
-                    mesh.scale.set(scale, scale, scale) // scale here
-                    // 添加一个透明的Mesh 将模型添加进去，用以点击
-                    let geometry = new THREE.BoxBufferGeometry(2, 2, 2);
-                    let material = new THREE.MeshBasicMaterial({color: 0xffffff});
-                    material.transparent = true;
-                    material.opacity = 0;
-                    other = new THREE.Mesh(geometry, material);
-                    other.add(mesh)
-                    other.position.set(10, 15, 20)
-                    otherGroup.add(other);
+            let mesh = cameraObj.clone();
+            let scale = 0.5
+            mesh.scale.set(scale, scale, scale) // scale here
+            mesh.name = '610-西南侧-热成像';
+            mesh.userData.dataId = '29e3fbfc923d11eb908d0242ac110004';
+            const popupDiv = document.getElementsByClassName('model-popup')[0].cloneNode(true);
+            popupDiv.style.overflow = 'hidden';
+            popupDiv.style.width = '0px';
+            popupDiv.style.height = '0px';
+            popupDiv.style.padding = '0px';
+            popupDiv.style.fontSize = '0px';
+            let moonLabel = new CSS2DObject(popupDiv);
+            moonLabel.position.set(0, 1, 0);
+            mesh.add(moonLabel)
+            // 添加一个透明的Mesh 将模型添加进去，用以点击
+            let geometry = new THREE.BoxBufferGeometry(2, 2, 2);
+            let material = new THREE.MeshBasicMaterial({color: 0xffffff});
+            material.transparent = true;
+            material.opacity = 0;
+            other = new THREE.Mesh(geometry, material);
+            other.add(mesh)
+            other.position.set(10, 15, 20)
 
-                    let pointsArr = []
-                    vm.linePoints.forEach(item => {
-                        pointsArr.push(
-                            new THREE.Vector3(item.x, item.y, item.z),
-                        )
-                    })
-                    pointsArr.push(
-                        new THREE.Vector3(vm.linePoints[0].x, vm.linePoints[0].y, vm.linePoints[0].z)
-                    )
-                    // 通过类CatmullRomCurve3创建一个3D样条曲线
-                    let curve = new THREE.CatmullRomCurve3(pointsArr);
 
-                    // 样条曲线均匀分割200分，返回102个顶点坐标
-                    let points = curve.getPoints(200);
-                    // console.log('points', points);//控制台查看返回的顶点坐标
-                    let geometryLine = new THREE.Geometry();
-                    // 把从曲线轨迹上获得的顶点坐标赋值给几何体
-                    geometryLine.vertices = points
-                    let lineMaterial = new THREE.LineBasicMaterial({
-                        color: "#dbb14a"
-                    });
-                    let line = new THREE.Line(geometryLine, lineMaterial);
-                    otherGroup.add(line)
 
-                    // 通过Threejs的帧动画相关API播放网格模型沿着曲线做动画运动
+            group.add(other);
 
-                    // 声明一个数组用于存储时间序列
-                    let arr = []
-                    for (let i = 0; i < 201; i++) {
-                        arr.push(i)
-                    }
+            let pointsArr = []
+            vm.linePoints.forEach(item => {
+                pointsArr.push(
+                    new THREE.Vector3(item.x, item.y, item.z),
+                )
+            })
+            // 通过类CatmullRomCurve3创建一个3D样条曲线
+            let curve = new THREE.CatmullRomCurve3(pointsArr);
+            let divisions = 800;
+            // 样条曲线均匀分割200分，返回102个顶点坐标
+            let points = curve.getPoints(divisions);
+            // console.log('points', points);//控制台查看返回的顶点坐标
+            let geometryLine = new THREE.Geometry();
+            // 把从曲线轨迹上获得的顶点坐标赋值给几何体
+            geometryLine.vertices = points
+            let lineMaterial = new THREE.LineBasicMaterial({
+                color: "#dbb14a"
+            });
+            let line = new THREE.Line(geometryLine, lineMaterial);
+            otherGroup.add(line)
 
-                    // 生成一个时间序列
-                    let times = new Float32Array(arr);
+            // 通过Threejs的帧动画相关API播放网格模型沿着曲线做动画运动
 
-                    let posArr = []
-                    points.forEach(elem => {
-                        posArr.push(elem.x, elem.y, elem.z)
-                    });
-                    // 创建一个和时间序列相对应的位置坐标系列
-                    let values = new Float32Array(posArr);
-                    // 创建一个帧动画的关键帧数据，曲线上的位置序列对应一个时间序列
-                    let posTrack = new THREE.KeyframeTrack('.position', times, values);
-                    let duration = 201;
-                    let clip = new THREE.AnimationClip("default", duration, [posTrack]);
-                    mixer = new THREE.AnimationMixer(other);
-                    let AnimationAction = mixer.clipAction(clip);
-                    AnimationAction.timeScale = 10;
-                    AnimationAction.play();
+            // 声明一个数组用于存储时间序列
+            let arr = []
+            for (let i = 0; i < divisions + 1; i++) {
+                arr.push(i)
+            }
 
-                    // clock = new THREE.Clock();//声明一个时钟对象
-                }, undefined,
-                function (error) {
-                    console.error(error)
-                });
+            // 生成一个时间序列
+            let times = new Float32Array(arr);
+
+            let posArr = []
+            points.forEach(elem => {
+                posArr.push(elem.x, elem.y, elem.z)
+            });
+            // 创建一个和时间序列相对应的位置坐标系列
+            let values = new Float32Array(posArr);
+            // 创建一个帧动画的关键帧数据，曲线上的位置序列对应一个时间序列
+            let posTrack = new THREE.KeyframeTrack('.position', times, values);
+            let duration = divisions + 1;
+            let clip = new THREE.AnimationClip("default", duration, [posTrack]);
+            mixer = new THREE.AnimationMixer(other);
+            let AnimationAction = mixer.clipAction(clip);
+            AnimationAction.timeScale = 10;
+            AnimationAction.play();
+
+            clock = new THREE.Clock();//声明一个时钟对象
             // // 创建一个模型，用于沿着三维曲线运动
             // let box = new THREE.BoxGeometry(5, 5, 5);
             // let material = new THREE.MeshLambertMaterial({
@@ -1174,7 +1138,7 @@ export default {
             //更新性能插件
             stats.update();
             // 更新帧动画的时间
-            // mixer.update(clock.getDelta());
+            mixer.update(clock.getDelta());
         }
     },
     beforeDestroy() {
