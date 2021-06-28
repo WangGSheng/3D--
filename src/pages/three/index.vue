@@ -66,6 +66,7 @@ let mouse = null;
 let clock = null;
 //
 let mixer = null;
+let AnimationAction = null;
 // 鼠标拖拽
 // let dragControls = null;
 // 鼠标控件 旋转缩放
@@ -134,6 +135,7 @@ export default {
 
         // 添加点击事件
         this.initRayCaster();
+        this.initHoverRayCaster();
 
         // 轨迹动画
         // this.animate();
@@ -281,7 +283,6 @@ export default {
                         //     x:obj.parent.position.x,
                         //     z:obj.parent.position.z
                         // })
-                        console.log(obj)
                         // 给选中的模型添加弹窗或移除弹窗
                         let dom = obj.children[1].element;
                         this.openOrClose(dom)
@@ -1029,6 +1030,7 @@ export default {
             mesh.scale.set(scale, scale, scale) // scale here
             mesh.name = '610-西南侧-热成像';
             mesh.userData.dataId = '29e3fbfc923d11eb908d0242ac110004';
+            mesh.userData.isAnimation = true;
             const popupDiv = document.getElementsByClassName('model-popup')[0].cloneNode(true);
             popupDiv.style.overflow = 'hidden';
             popupDiv.style.width = '0px';
@@ -1094,7 +1096,7 @@ export default {
             let duration = divisions + 1;
             let clip = new THREE.AnimationClip("default", duration, [posTrack]);
             mixer = new THREE.AnimationMixer(other);
-            let AnimationAction = mixer.clipAction(clip);
+            AnimationAction = mixer.clipAction(clip);
             AnimationAction.timeScale = 10;
             AnimationAction.play();
 
@@ -1107,6 +1109,30 @@ export default {
             // let mesh = new THREE.Mesh(box, material);
 
 
+        },
+        initHoverRayCaster() {
+            //监听全局点击事件,通过ray检测选中哪一个object
+            cssRender.domElement.addEventListener("mousemove", (event) => {
+
+                mouse.x = (event.clientX / cssRender.domElement.clientWidth) * 2 - 1;
+                mouse.y = -(event.clientY / cssRender.domElement.clientHeight) * 2 + 1;
+
+                rayCaster.setFromCamera(mouse, camera);
+                let intersects = rayCaster.intersectObjects(group.children, true);
+                if (intersects.length) {
+                    if (intersects[0].object.children[0]?.isScene) {
+                        let obj = intersects[0].object.children[0];
+                        // this.initCenter({
+                        //     x:obj.parent.position.x,
+                        //     z:obj.parent.position.z
+                        // })
+                        console.log(obj)
+                        if (obj.userData.isAnimation) {
+                            AnimationAction.pause()
+                        }
+                    }
+                }
+            }, false)
         },
         // 创建鼠标控件
         getOrbitControls() {
