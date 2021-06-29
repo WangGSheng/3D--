@@ -17,8 +17,9 @@
                 <el-radio-button label="odf">编辑ODF架</el-radio-button>
                 <el-radio-button label="wall">编辑围墙</el-radio-button>
                 <el-radio-button label="door">编辑门</el-radio-button>
+                <el-radio-button label="line">编辑轨道</el-radio-button>
             </el-radio-group>
-            <el-radio-group v-model="wallType" class="m-l-20" :disabled="editType !== 'wall' && editType !== 'door'">
+            <el-radio-group v-model="wallType" class="m-l-20" :disabled="editType !== 'wall' && editType !== 'door'&& editType !== 'line'">
                 <el-radio label="horizontal">—</el-radio>
                 <el-radio label="vertical">|</el-radio>
             </el-radio-group>
@@ -35,6 +36,8 @@
                     'top-border':item.topBorder,
                     'left-door':item.leftDoor,
                     'top-door':item.topDoor,
+                    'left-line':item.leftLine,
+                    'top-line':item.topLine,
                     'is-center':item.isCenter,
                     'is-cabinet':item.type === 'cabinet' && act.includes(item.id),
                     'is-kt':item.type === 'kt' && act.includes(item.id),
@@ -133,7 +136,8 @@ export default {
                 "kt",
                 "odf",
                 "wall",
-                "door"
+                "door",
+                "line",
             ],
             cameraPos: [  // 摄像头朝向数据
                 {label: '左前', id: 'leftHead', icon: 'ali-iconjiantou_zuoshang'},
@@ -151,6 +155,7 @@ export default {
     beforeCreate() {
         window.onkeydown = (e) => {
             if (e.code === 'Tab') {
+                e.preventDefault();
                 for (let i = 0; i < this.editTypeOption.length; i++) {
                     if (this.editType === this.editTypeOption[i]) {
                         if (i === this.editTypeOption.length - 1) {
@@ -211,6 +216,8 @@ export default {
                     topBorder: false,
                     topDoor: false,
                     leftDoor: false,
+                    leftLine: false,
+                    topLine: false,
                     isCenter: this.centerData ?.id === i ? true : false,
                     senseId: '',
                     dataId: '',
@@ -246,6 +253,8 @@ export default {
                         room.topBorder = item.topBorder;
                         room.topDoor = item.topDoor;
                         room.leftDoor = item.leftDoor;
+                        room.leftLine = item.leftLine;
+                        room.topLine = item.topLine;
                         room.name = item.name;
                     }
                 })
@@ -308,7 +317,11 @@ export default {
             }else if (this.editType === 'room') {
                 item.type = 'cabinet'
                 this.changeSelect(item)
-            } else {
+            } else if(this.editType === 'door'){
+                item.type = 'door'
+                this.changeDoorOrWall(item)
+            }else {
+                item.type = 'line'
                 this.changeDoorOrWall(item)
             }
         },
@@ -318,23 +331,38 @@ export default {
                     if (this.wallType === 'vertical') {
                         item.leftBorder = !item.leftBorder;
                         item.leftDoor = false;
+                        item.leftLine = false;
                     } else {
                         item.topBorder = !item.topBorder;
                         item.topDoor = false;
+                        item.topLine = false;
                     }
 
-                }else {
+                }else if(this.editType === 'door'){
                     if (this.wallType === 'vertical') {
                         item.leftDoor = !item.leftDoor;
                         item.leftBorder = false;
+                        item.leftLine = false;
                     } else {
                         item.topDoor = !item.topDoor;
                         item.topBorder = false;
+                        item.topLine = false;
+                    }
+                }else {
+                    if (this.wallType === 'vertical') {
+                        item.leftLine = !item.leftLine;
+                        item.leftDoor = false;
+                        item.leftBorder = false;
+                    } else {
+                        item.topLine = !item.topLine;
+                        item.topBorder = false;
+                        item.topDoor = false;
                     }
                 }
 
                 if (!item.topBorder && !item.leftBorder
-                    && !item.topDoor && !item.leftDoor) {
+                    && !item.topDoor && !item.leftDoor
+                    && !item.topLine && !item.leftLine) {
                     this.deleteData(item.id);
                 }
             } else {
@@ -342,17 +370,29 @@ export default {
                     if (this.editType === 'wall') {
                         item.topBorder = true;
                         item.topDoor = false;
-                    }else{
+                        item.topLine = false;
+                    }else if(this.editType === 'door'){
                         item.topDoor = true;
                         item.topBorder = false;
+                        item.topLine = false;
+                    }else {
+                        item.topLine = true;
+                        item.topBorder = false;
+                        item.topDoor = false;
                     }
 
                 } else {
                     if (this.editType === 'wall') {
                         item.leftBorder = true;
                         item.leftDoor = false;
-                    }else{
+                        item.leftLine = false;
+                    }else if(this.editType === 'door'){
                         item.leftDoor = true;
+                        item.leftBorder = false;
+                        item.leftLine = false;
+                    }else {
+                        item.leftLine = true;
+                        item.leftDoor = false;
                         item.leftBorder = false;
                     }
                 }
@@ -376,7 +416,8 @@ export default {
         },
         /*墙体方向切换方法*/
         changeWallType() {
-            if (this.editType !== 'room') {
+            if (this.editType !== 'room' && this.editType !== 'kt'
+                && this.editType !== 'odf') {
                 this.wallType === 'horizontal' ?
                     this.wallType = 'vertical' : this.wallType = 'horizontal';
             }

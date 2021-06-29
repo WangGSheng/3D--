@@ -90,6 +90,7 @@ export default {
         return {
             showStatusUi: false,
             loading: true,
+            flag: true,
             max: 0,
             near: 1,
             far: 1000,
@@ -135,18 +136,18 @@ export default {
 
         // 添加点击事件
         this.initRayCaster();
-        this.initHoverRayCaster();
 
         // 轨迹动画
         // this.animate();
         //加入事件监听器,窗口自适应
+        let vm = this;
         window.addEventListener('resize', function () {
             let width = window.innerWidth;
             let height = window.innerHeight;
             renderer.setSize(width, height);
             camera.aspect = width / height;
             camera.updateProjectionMatrix();
-            this.render()
+            vm.render()
         })
 
         setTimeout(() => {
@@ -309,6 +310,7 @@ export default {
                             videoVm = null;
                             beforeSelected = null;
                             dom.lastElementChild.remove();
+                            this.flag = true;
                         }
 
                     }
@@ -383,6 +385,7 @@ export default {
                 if (item.wallData && item.wallData.length) {
                     this.wallList = item.wallData;
                     this.createPlane('wall');
+                    this.initLineData();
                 }
                 this.createPlane('ground');
 
@@ -447,7 +450,8 @@ export default {
             model.isCustomer = true
             let scale = 1;
             model.scale.set(scale, scale, scale) // scale here
-            model.name = '传感器-' + item.id
+            model.name = item.dataName;
+            model.userData.dataId = item.dataId;
             // // 给模型定制弹窗
             // const popupDiv = document.getElementsByClassName('model-popup')[0].cloneNode(true);
             //
@@ -457,6 +461,7 @@ export default {
             // popupDiv.style.padding = '0px';
             // popupDiv.style.fontSize = '0px';
             // let moonLabel = new CSS2DObject(popupDiv);
+            moonLabel.element.id = item.dataId
             moonLabel.position.set(0, 1, 0);
             model.add(moonLabel)
 
@@ -506,6 +511,7 @@ export default {
             mesh.name = item.dataName;
             mesh.userData.dataId = item.dataId;
 
+            moonLabel.element.id = item.dataId
             moonLabel.position.set(0, 1, 0);
             mesh.add(moonLabel)
 
@@ -623,21 +629,10 @@ export default {
                 })
 
             } else {
-                let maxZ = Math.max.apply(Math, this.wallList.map(function (o) {
-                    return o.z
-                })) // 最大 Z 值
-                let minZ = Math.min.apply(Math, this.wallList.map(function (o) {
-                    return o.z
-                })) // 最小 Z 值
-                let maxX = Math.max.apply(Math, this.wallList.map(function (o) {
-                    return o.x
-                })) // 最大 X 值
-                let minX = Math.min.apply(Math, this.wallList.map(function (o) {
-                    return o.x
-                })) // 最小 X 值
+                let obj = this.getMinAndMax(this.wallList);
 
                 let result = []
-                for (let i = minZ; i < maxZ; i += 4) {
+                for (let i = obj.minZ; i < obj.maxZ; i += 4) {
                     let arr = [];
                     this.wallList.forEach(item => {
                         if (item.z === i && (!item.topBorder || (item.topBorder && item.leftBorder))) {
@@ -655,46 +650,34 @@ export default {
 
                 // 减 4 是为了让地板往外延伸
                 let res = {
-                    maxZ: maxZ,
-                    minZ: minZ - 4,
-                    maxX: maxX,
-                    minX: minX - 4,
+                    maxZ: obj.maxZ,
+                    minZ: obj.minZ - 4,
+                    maxX: obj.maxX,
+                    minX: obj.minX - 4,
                 }
-
-                /*获取轨道线路*/
-                let lineX = minX, lineY = 16, lineZ = minZ, change = false;
-                let diff = (maxX - minX) / 4 ;
-                let dis = -4;
-                for (let i = minZ; i < maxZ; i+=4) {
-                    if (lineX <= minX) {
-                        dis = 4;
-                    }else{
-                        dis = -4;
-                    }
-                    diff += dis;
-                    lineZ = i;
-                    lineX += diff;
-
-
-
-                    this.linePoints.push({
-                        x: lineX,
-                        y: lineY,
-                        z: lineZ
-                    })
-                }
-                let arr = JSON.parse(JSON.stringify(this.linePoints))
-                let rs = arr.reverse()
-                this.linePoints.push(...rs)
 
                 this.createSelfGround(result)
                 this.createGround(res)
-                this.animate()
                 if (this.groundDataList.length) this.groundText(res)
 
             }
         },
-        getDistance(arr) {
+        getMinAndMax(arr) {
+            let maxZ = Math.max.apply(Math, arr.map(function (o) {
+                return o.z
+            })) // 最大 Z 值
+            let minZ = Math.min.apply(Math, arr.map(function (o) {
+                return o.z
+            })) // 最小 Z 值
+            let maxX = Math.max.apply(Math, arr.map(function (o) {
+                return o.x
+            })) // 最大 X 值
+            let minX = Math.min.apply(Math, arr.map(function (o) {
+                return o.x
+            })) // 最小 X 值
+            return {maxX:maxX,minX:minX,maxZ:maxZ,minZ:minZ}
+        },
+        sortArr(arr,sortOrder) {
             const handle = (prop) => {
                 return (a,b) => {
                     const val1 = a[prop];
@@ -702,8 +685,12 @@ export default {
                     return val1 - val2;
                 }
             }
-            arr.sort(handle('x'));
-            return {min:arr[0],max:arr[arr.length - 1]}
+            arr.sort(handle(sortOrder));
+            return arr;
+        },
+        getDistance(arr) {
+            let res = this.sortArr(arr,'x')
+            return {min:res[0],max:res[res.length - 1]}
         },
         // 创建地板
         createGround() {
@@ -818,37 +805,76 @@ export default {
 
             }
         },
+        // 获取轨道线路
+        initLineData() {
+
+            let lineData = this.wallList.reduce((arr,cur) => {
+                if (cur.type === 'line') {
+                    arr.push(cur)
+                }
+                return arr;
+            },[]);
+            if (lineData.length) {
+                lineData.forEach(item => {
+                    this.linePoints.push({
+                        x:item.x,
+                        y:16,
+                        z:item.z + 4
+                    })
+                });
+                this.linePoints.push({
+                    x:lineData[0].x,
+                    y:16,
+                    z:lineData[0].z + 4
+                })
+                if (this.linePoints.length) {
+                    /*加载沿线动画*/
+                    this.animate()
+                    this.initHoverRayCaster()
+                }
+            }
+
+        },
+        groupBy(array, f) {
+            let groups = {};
+            array.forEach(function (o) {
+                let group = JSON.stringify(f(o));
+                groups[group] = groups[group] || [];
+                groups[group].push(o);
+            });
+            return Object.keys(groups).map(function (group) {
+                return groups[group];
+            });
+        },
         // 创建机柜
         createCabinet() {
-            if (this.cubeList && this.cubeList.length) {
-                //添加长方体
-                let geometry = new THREE.BoxBufferGeometry(3.7, 8, 3);
-                let texture = {
-                    fuwuqiTex: new THREE.TextureLoader().load('static/images/fuwuqi.png'),
-                    kontiaoTex: new THREE.TextureLoader().load('static/images/空调.png'),
-                    odfTex: new THREE.TextureLoader().load('static/images/ODF.png')
-                }
-                let cabinetCube = new THREE.Mesh(geometry);
-
-                this.cubeList.forEach(item => {
-                    this.cabinetNum++;
-                    let cube = cabinetCube.clone();
-                    let material = this.getMaterial(item,texture);
-                    cube.material = material;
-                    cube.material.map.needsUpdate = true;
-                    cube.position.set(item.x, 4, item.z);
-
-
-                    cube.castShadow = true;
-                    cube.receiveShadow = true;
-                    if (item.pos.includes('left')) {
-                        cube.rotateY(Math.PI / -2);
-                    } else if (item.pos.includes('right')) {
-                        cube.rotateY(Math.PI / 2);
-                    }
-                    otherGroup.add(cube);
-                })
+            //添加长方体
+            let geometry = new THREE.BoxBufferGeometry(3.7, 8, 3);
+            let texture = {
+                fuwuqiTex: new THREE.TextureLoader().load('static/images/fuwuqi.png'),
+                kontiaoTex: new THREE.TextureLoader().load('static/images/空调.png'),
+                odfTex: new THREE.TextureLoader().load('static/images/ODF.png')
             }
+            let cabinetCube = new THREE.Mesh(geometry);
+
+            this.cubeList.forEach(item => {
+                this.cabinetNum++;
+                let cube = cabinetCube.clone();
+                let material = this.getMaterial(item,texture);
+                cube.material = material;
+                cube.material.map.needsUpdate = true;
+                cube.position.set(item.x, 4, item.z);
+
+
+                cube.castShadow = true;
+                cube.receiveShadow = true;
+                if (item.pos.includes('left')) {
+                    cube.rotateY(Math.PI / -2);
+                } else if (item.pos.includes('right')) {
+                    cube.rotateY(Math.PI / 2);
+                }
+                otherGroup.add(cube);
+            })
         },
         getMaterial(item,textures) {
             let color1, // 左右
@@ -940,39 +966,6 @@ export default {
                 // scene.remove(otherGroup)
                 this.dispose(scene,group)
                 this.dispose(scene,otherGroup)
-                // group.traverse((child) => {
-                //     if (child instanceof THREE.Mesh) {
-                //         child.geometry.dispose(); //删除几何体
-                //         if (child.material.length) {
-                //             child.material.forEach(i => {
-                //                 i.dispose()
-                //             });
-                //         } else {
-                //             child.material.dispose();
-                //         }
-                //     }
-                // })
-                // otherGroup.traverse((child) => {
-                //     if (child instanceof THREE.Mesh) {
-                //         child.geometry.dispose(); //删除几何体
-                //         if (child.material.length) {
-                //             child.material.forEach(i => {
-                //                 i.dispose()
-                //             });
-                //         } else {
-                //             child.material.dispose();
-                //         }
-                //     }else{
-                //         child.geometry ?.dispose(); //删除几何体
-                //         if (child.material ?.length) {
-                //             child.material.forEach(i => {
-                //                 i.dispose()
-                //             });
-                //         } else {
-                //             child.material ?.dispose();
-                //         }
-                //     }
-                // })
                 this.objects = [];
                 this.cabinetNum = 0;
                 this.cameraNum = 0;
@@ -1038,10 +1031,19 @@ export default {
             popupDiv.style.padding = '0px';
             popupDiv.style.fontSize = '0px';
             let moonLabel = new CSS2DObject(popupDiv);
+            moonLabel.element.id = '29e3fbfc923d11eb908d0242ac110004';
+            moonLabel.element.addEventListener('mouseover', event => {
+                AnimationAction.paused = true;
+                this.flag = false;
+            });
+            moonLabel.element.addEventListener('mouseleave', event => {
+                AnimationAction.paused = false;
+                this.flag = true;
+            });
             moonLabel.position.set(0, 1, 0);
             mesh.add(moonLabel)
             // 添加一个透明的Mesh 将模型添加进去，用以点击
-            let geometry = new THREE.BoxBufferGeometry(2, 2, 2);
+            let geometry = new THREE.BoxBufferGeometry(4, 4, 4);
             let material = new THREE.MeshBasicMaterial({color: 0xffffff});
             material.transparent = true;
             material.opacity = 0;
@@ -1101,14 +1103,6 @@ export default {
             AnimationAction.play();
 
             clock = new THREE.Clock();//声明一个时钟对象
-            // // 创建一个模型，用于沿着三维曲线运动
-            // let box = new THREE.BoxGeometry(5, 5, 5);
-            // let material = new THREE.MeshLambertMaterial({
-            //     color: 0x0000ff
-            // }); //材质对象
-            // let mesh = new THREE.Mesh(box, material);
-
-
         },
         initHoverRayCaster() {
             //监听全局点击事件,通过ray检测选中哪一个object
@@ -1119,16 +1113,14 @@ export default {
 
                 rayCaster.setFromCamera(mouse, camera);
                 let intersects = rayCaster.intersectObjects(group.children, true);
+                if (this.flag) {
+                    AnimationAction.paused = false;
+                }
                 if (intersects.length) {
                     if (intersects[0].object.children[0]?.isScene) {
                         let obj = intersects[0].object.children[0];
-                        // this.initCenter({
-                        //     x:obj.parent.position.x,
-                        //     z:obj.parent.position.z
-                        // })
-                        console.log(obj)
                         if (obj.userData.isAnimation) {
-                            AnimationAction.pause()
+                            AnimationAction.paused = true
                         }
                     }
                 }
@@ -1163,13 +1155,21 @@ export default {
             renderer.render(scene, camera);
             //更新性能插件
             stats.update();
-            // 更新帧动画的时间
-            mixer.update(clock.getDelta());
+            if (this.linePoints.length) {
+                // 更新帧动画的时间
+                mixer.update(clock.getDelta());
+            }
         }
     },
     beforeDestroy() {
         this.closeVideo();
         this.removeMesh();
+        scene.remove();
+        renderer.dispose();
+        renderer.forceContextLoss();
+        renderer.content = null;
+        renderer.domElement = null;
+        cancelAnimationFrame(this.render)
     }
 }
 </script>
