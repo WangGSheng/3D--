@@ -193,7 +193,10 @@ export default {
             scene = new THREE.Scene();
             scene.fog = new THREE.Fog("#0f1e3e", 20, 700);
             scene.position.set(0, 0, 0);
-           this.initGroup()
+
+            clock = new THREE.Clock();//声明一个时钟对象
+
+            this.initGroup()
             // 加载辅助坐标系 实际应用的时候需要注释此代码
             // const axisHelper = new THREE.AxisHelper(250)
             // axisHelper.position.set(0, 0, 0);//位置
@@ -807,7 +810,6 @@ export default {
         },
         // 获取轨道线路
         initLineData() {
-
             let lineData = this.wallList.reduce((arr,cur) => {
                 if (cur.type === 'line') {
                     arr.push(cur)
@@ -967,6 +969,7 @@ export default {
                 this.dispose(scene,group)
                 this.dispose(scene,otherGroup)
                 this.objects = [];
+                this.linePoints = [];
                 this.cabinetNum = 0;
                 this.cameraNum = 0;
                 this.sensorNum = 0;
@@ -983,7 +986,10 @@ export default {
                 })
             }
             if (child.type !== 'Group') {
-                if(child instanceof THREE.Mesh||child instanceof THREE.Object3D||child instanceof THREE.LineSegments){
+                if(child instanceof THREE.Mesh
+                    ||child instanceof THREE.Object3D
+                    ||child instanceof THREE.LineSegments
+                    ||child instanceof THREE.Line){
                     if (child.material) {
                         if(child.material.map && typeof  child.material.map !== 'function') {
                             child.material.map.dispose();
@@ -1074,7 +1080,7 @@ export default {
                 color: "#dbb14a"
             });
             let line = new THREE.Line(geometryLine, lineMaterial);
-            otherGroup.add(line)
+            group.add(line)
 
             // 通过Threejs的帧动画相关API播放网格模型沿着曲线做动画运动
 
@@ -1102,7 +1108,7 @@ export default {
             AnimationAction.timeScale = 10;
             AnimationAction.play();
 
-            clock = new THREE.Clock();//声明一个时钟对象
+
         },
         initHoverRayCaster() {
             //监听全局点击事件,通过ray检测选中哪一个object
