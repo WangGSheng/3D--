@@ -19,12 +19,30 @@
                 <el-radio-button label="door">编辑门</el-radio-button>
                 <el-radio-button label="line">编辑轨道</el-radio-button>
             </el-radio-group>
-            <el-radio-group v-model="wallType" class="m-l-20" :disabled="editType !== 'wall' && editType !== 'door'&& editType !== 'line'">
+            <el-radio-group v-model="wallType" class="m-l-20"
+                            :disabled="editType !== 'wall' && editType !== 'door'&& editType !== 'line'">
                 <el-radio label="horizontal">—</el-radio>
                 <el-radio label="vertical">|</el-radio>
             </el-radio-group>
 
             <i class="icon question circle outline help-btn" @click="dialogVisible = true" title="帮助手册"></i>
+            <span class="m-l-50">
+                <el-dropdown @command="handleCommand">
+                      <span class="el-dropdown-link t-blue" style="cursor: pointer">
+                        清除<i class="el-icon-arrow-down el-icon--right"></i>
+                      </span>
+                    <el-dropdown-menu slot="dropdown">
+                        <el-dropdown-item command="cabinet-机柜方块">机柜方块</el-dropdown-item>
+                        <el-dropdown-item command="kt-空调方块">空调方块</el-dropdown-item>
+                        <el-dropdown-item command="odf-ODF架方块">ODF架方块</el-dropdown-item>
+                        <el-dropdown-item command="wall-围墙线条">围墙线条</el-dropdown-item>
+                        <el-dropdown-item command="door-门线条">门线条</el-dropdown-item>
+                        <el-dropdown-item command="line-轨道线条">轨道线条</el-dropdown-item>
+                        <el-dropdown-item command="camera-轨道线条">摄像头</el-dropdown-item>
+                        <el-dropdown-item command="all-all">全部</el-dropdown-item>
+                    </el-dropdown-menu>
+                </el-dropdown>
+            </span>
         </div>
         <!--编辑网格-->
         <div class="grid-box auto-center"
@@ -44,8 +62,9 @@
                     'is-odf':item.type === 'odf' && act.includes(item.id)}"
                     :key="item.id"
                     :id="'room-' + item.id"
-                    >
-                    <div style="overflow: hidden" class="w-100p h-100p" @click.stop="select(item)" @contextmenu="selectSense(item)">
+                >
+                    <div style="overflow: hidden" class="w-100p h-100p" @click.stop="select(item)"
+                         @contextmenu="selectSense(item)">
                         <template v-if="act.includes(item.id)">
                             <div class="item-position" :title="item.num">
                                 <div @click.stop="open(item)" class="pos-tip">
@@ -64,7 +83,8 @@
                         </template>
                         <div class="sense-pos" v-if="item.senseId">
                             <template v-for="(camera) in cameraPos">
-                                <div class="sense-item" :class="camera.id === item.senseId ?  `iconfont ${camera.icon}` :''"
+                                <div class="sense-item"
+                                     :class="camera.id === item.senseId ?  `iconfont ${camera.icon}` :''"
                                      :key="camera.id"></div>
                             </template>
                         </div>
@@ -110,419 +130,456 @@
 </template>
 
 <script>
-/* eslint-disable */
-export default {
-    name: "editRoom",
-    data() {
-        return {
-            dialogVisible: false,
-            loading: true,
-            showMark: false,
-            canAddCamera: true,
-            roomList: [],// 网格数据
-            act: [],// 被选中的网格
-            actWall: [], // 选中的墙
-            wallData: [], // 墙数据
-            groundData: [], // 地板数据
-            senseData: [], // 传感器数据
-            selected: [], // 机柜数据存放
-            centerData:null, // 中心点
-            wallType: "horizontal",
-            widthNum: 36,
-            heightNum: 50,
-            editType: "room",
-            editTypeOption: [
-                "room",
-                "kt",
-                "odf",
-                "wall",
-                "door",
-                "line",
-            ],
-            cameraPos: [  // 摄像头朝向数据
-                {label: '左前', id: 'leftHead', icon: 'ali-iconjiantou_zuoshang'},
-                {label: '正前', id: 'head', icon: 'ali-iconjiantou_xiangshang'},
-                {label: '右前', id: 'rightHead', icon: 'ali-iconjiantou_youshang'},
-                {label: '正左', id: 'left', icon: 'ali-iconjiantou_xiangzuo'},
-                {label: '删除', id: 'delete', icon: 'ali-iconshanchu t-red'},
-                {label: '正右', id: 'right', icon: 'ali-iconjiantou_xiangyou'},
-                {label: '左后', id: 'leftBack', icon: 'ali-iconjiantou_zuoxia'},
-                {label: '正后', id: 'back', icon: 'ali-iconjiantou_xiangxia'},
-                {label: '右后', id: 'rightBack', icon: 'ali-iconjiantou_youxia'},
-            ],
-        }
-    },
-    beforeCreate() {
-        window.onkeydown = (e) => {
-            if (e.code === 'Tab') {
-                e.preventDefault();
-                for (let i = 0; i < this.editTypeOption.length; i++) {
-                    if (this.editType === this.editTypeOption[i]) {
-                        if (i === this.editTypeOption.length - 1) {
-                            this.editType = this.editTypeOption[0];
-                        }else{
-                            this.editType = this.editTypeOption[i + 1];
-                        }
-                        break;
-                    }
-                }
-            }else if (e.ctrlKey) {
-                e.preventDefault();
-                this.changeWallType();
-            }
-        }
-        document.addEventListener('contextmenu', (e) => {
-            e.preventDefault();
-        })
-    },
-    mounted() {
-        this.centerData = this.$parent.params.centerData;
-        this.$nextTick(() => {
-            setTimeout(() => {
-                this.initDom();
-                this.initWallData();
-                this.initCabinetPos();
-                this.initSenseData();
-                this.initGroundData();
-                this.loading = false;
-                this.dialogVisible = true;
-                // setTimeout(()=>{
-                //
-                //
-                // })
-            }, 500)
-        })
-    },
-    methods: {
-        /*初始化网格数据，固定宽高*/
-        initDom() {
-            let start = 0;
-            let x = start;
-            let z = 0;
-            for (let i = 0; i < this.widthNum * this.heightNum; i++) {
-                if (i !== 0 ) x += 4;
-                if (i % this.widthNum === 0 && i !== 0 ) {
-                    z += 4;
-                    x = start;
-                }
-
-                this.roomList.push({
-                    type: 'cabinet',
-                    x: x,
-                    z: z,
-                    id: i,
-                    pos: ['head'],
-                    leftBorder: false,
-                    topBorder: false,
-                    topDoor: false,
-                    leftDoor: false,
-                    leftLine: false,
-                    topLine: false,
-                    isCenter: this.centerData ?.id === i ? true : false,
-                    senseId: '',
-                    dataId: '',
-                    num: '',
-                    name: '',
-                });
+    /* eslint-disable */
+    export default {
+        name: "editRoom",
+        data() {
+            return {
+                dialogVisible: false,
+                loading: true,
+                showMark: false,
+                canAddCamera: true,
+                roomList: [],// 网格数据
+                act: [],// 被选中的网格
+                actWall: [], // 选中的墙
+                wallData: [], // 墙数据
+                groundData: [], // 地板数据
+                senseData: [], // 传感器数据
+                selected: [], // 机柜数据存放
+                centerData: null, // 中心点
+                wallType: "horizontal",
+                widthNum: 36,
+                heightNum: 50,
+                editType: "room",
+                editTypeOption: [
+                    "room",
+                    "kt",
+                    "odf",
+                    "wall",
+                    "door",
+                    "line",
+                ],
+                cameraPos: [  // 摄像头朝向数据
+                    {label: '左前', id: 'leftHead', icon: 'ali-iconjiantou_zuoshang'},
+                    {label: '正前', id: 'head', icon: 'ali-iconjiantou_xiangshang'},
+                    {label: '右前', id: 'rightHead', icon: 'ali-iconjiantou_youshang'},
+                    {label: '正左', id: 'left', icon: 'ali-iconjiantou_xiangzuo'},
+                    {label: '删除', id: 'delete', icon: 'ali-iconshanchu t-red'},
+                    {label: '正右', id: 'right', icon: 'ali-iconjiantou_xiangyou'},
+                    {label: '左后', id: 'leftBack', icon: 'ali-iconjiantou_zuoxia'},
+                    {label: '正后', id: 'back', icon: 'ali-iconjiantou_xiangxia'},
+                    {label: '右后', id: 'rightBack', icon: 'ali-iconjiantou_youxia'},
+                ],
             }
         },
-        /*初始化机柜数据*/
-        initCabinetPos() {
-            this.$parent.params.selected && this.$parent.params.selected.forEach(item => {
-                this.act.push(item.id);
-                this.selected.push(item);
+        beforeCreate() {
+            window.onkeydown = (e) => {
+                if (e.code === 'Tab') {
+                    e.preventDefault();
+                    for (let i = 0; i < this.editTypeOption.length; i++) {
+                        if (this.editType === this.editTypeOption[i]) {
+                            if (i === this.editTypeOption.length - 1) {
+                                this.editType = this.editTypeOption[0];
+                            } else {
+                                this.editType = this.editTypeOption[i + 1];
+                            }
+                            break;
+                        }
+                    }
+                } else if (e.ctrlKey) {
+                    e.preventDefault();
+                    this.changeWallType();
+                }
+            }
+            document.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+            })
+        },
+        mounted() {
+            this.centerData = this.$parent.params.centerData;
+            this.$nextTick(() => {
                 setTimeout(() => {
+                    this.initDom();
+                    this.initWallData();
+                    this.initCabinetPos();
+                    this.initSenseData();
+                    this.initGroundData();
+                    this.loading = false;
+                    this.dialogVisible = true;
+                    // setTimeout(()=>{
+                    //
+                    //
+                    // })
+                }, 500)
+            })
+        },
+        methods: {
+            /*初始化网格数据，固定宽高*/
+            initDom() {
+                let start = 0;
+                let x = start;
+                let z = 0;
+                for (let i = 0; i < this.widthNum * this.heightNum; i++) {
+                    if (i !== 0) x += 4;
+                    if (i % this.widthNum === 0 && i !== 0) {
+                        z += 4;
+                        x = start;
+                    }
+
+                    this.roomList.push({
+                        type: 'cabinet',
+                        x: x,
+                        z: z,
+                        id: i,
+                        pos: ['head'],
+                        leftBorder: false,
+                        topBorder: false,
+                        topDoor: false,
+                        leftDoor: false,
+                        leftLine: false,
+                        topLine: false,
+                        isCenter: this.centerData?.id === i ? true : false,
+                        senseId: '',
+                        dataId: '',
+                        num: '',
+                        name: '',
+                    });
+                }
+            },
+            /*初始化机柜数据*/
+            initCabinetPos() {
+                this.$parent.params.selected && this.$parent.params.selected.forEach(item => {
+                    this.act.push(item.id);
+                    this.selected.push(item);
+                    setTimeout(() => {
+                        this.roomList.forEach(room => {
+                            if (item.id === room.id) {
+                                room.pos = item.pos;
+                                room.num = item.num;
+                                room.type = item.type;
+                            }
+                        })
+                    })
+                })
+            },
+            /*初始化墙体数据*/
+            initWallData() {
+                this.$parent.params.wallList && this.$parent.params.wallList.forEach(item => {
+                    this.wallData.push(item)
+                    this.actWall.push(item.id)
                     this.roomList.forEach(room => {
-                        if (item.id === room.id) {
-                            room.pos = item.pos;
-                            room.num = item.num;
-                            room.type = item.type;
+                        if (room.id === item.id) {
+                            room.leftBorder = item.leftBorder;
+                            room.topBorder = item.topBorder;
+                            room.topDoor = item.topDoor;
+                            room.leftDoor = item.leftDoor;
+                            room.leftLine = item.leftLine;
+                            room.topLine = item.topLine;
+                            room.name = item.name;
                         }
                     })
                 })
-            })
-        },
-        /*初始化墙体数据*/
-        initWallData() {
-            this.$parent.params.wallList && this.$parent.params.wallList.forEach(item => {
-                this.wallData.push(item)
-                this.actWall.push(item.id)
-                this.roomList.forEach(room => {
-                    if (room.id === item.id) {
-                        room.leftBorder = item.leftBorder;
-                        room.topBorder = item.topBorder;
-                        room.topDoor = item.topDoor;
-                        room.leftDoor = item.leftDoor;
-                        room.leftLine = item.leftLine;
-                        room.topLine = item.topLine;
-                        room.name = item.name;
-                    }
-                })
-            })
-        },
-        /*初始化摄像头，传感器数据*/
-        initSenseData() {
-            this.$parent.params.senseList && this.$parent.params.senseList.forEach(item => {
-                this.senseData.push(item)
-                this.roomList.forEach(room => {
-                    if (room.id === item.data.id) {
-                        room.senseId = item.data.senseId;
-                        room.dataId = item.data.dataId;
-                    }
-                })
-            })
-        },
-        /*初始化地板数据*/
-        initGroundData() {
-            this.$parent.params.groundData && this.$parent.params.groundData.forEach(item => {
-                this.groundData.push(item)
-                this.roomList.forEach(room => {
-                    if (room.id === item.id) {
-                        room.name = item.name;
-                    }
-                })
-            })
-        },
-        open(item) {
-            let text;
-            if (item.type === 'kt') {
-                text = '空调名称';
-            }else if (item.type === 'odf') {
-                text = 'OTF架名称';
-            }else{
-                text = '机柜编号';
-            }
-
-            this.$prompt('', text, {
-                inputValue: item.num,
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-            }).then(({value}) => {
-                item.num = value;
-            }).catch(() => {
-                // this.$message({
-                //     type: 'info',
-                //     message: '取消输入'
-                // });
-            });
-        },
-        /*网格选中事件*/
-        select(item) {
-            if (this.editType === 'kt') {
-                item.type = 'kt';
-                this.changeSelect(item)
-            }else if (this.editType === 'odf') {
-                item.type = 'odf'
-                this.changeSelect(item)
-            }else if (this.editType === 'room') {
-                item.type = 'cabinet'
-                this.changeSelect(item)
-            } else if(this.editType === 'door'){
-                item.type = 'door'
-                this.changeDoorOrWall(item)
-            }else {
-                item.type = 'line'
-                this.changeDoorOrWall(item)
-            }
-        },
-        changeDoorOrWall(item) {
-            if (this.actWall.length && this.actWall.includes(item.id)) {
-                if (this.editType === 'wall') {
-                    if (this.wallType === 'vertical') {
-                        item.leftBorder = !item.leftBorder;
-                        item.leftDoor = false;
-                        item.leftLine = false;
-                    } else {
-                        item.topBorder = !item.topBorder;
-                        item.topDoor = false;
-                        item.topLine = false;
-                    }
-
-                }else if(this.editType === 'door'){
-                    if (this.wallType === 'vertical') {
-                        item.leftDoor = !item.leftDoor;
-                        item.leftBorder = false;
-                        item.leftLine = false;
-                    } else {
-                        item.topDoor = !item.topDoor;
-                        item.topBorder = false;
-                        item.topLine = false;
-                    }
-                }else {
-                    if (this.wallType === 'vertical') {
-                        item.leftLine = !item.leftLine;
-                        item.leftDoor = false;
-                        item.leftBorder = false;
-                    } else {
-                        item.topLine = !item.topLine;
-                        item.topBorder = false;
-                        item.topDoor = false;
-                    }
-                }
-
-                if (!item.topBorder && !item.leftBorder
-                    && !item.topDoor && !item.leftDoor
-                    && !item.topLine && !item.leftLine) {
-                    this.deleteData(item.id);
-                }
-            } else {
-                if (this.wallType === 'horizontal') {
-                    if (this.editType === 'wall') {
-                        item.topBorder = true;
-                        item.topDoor = false;
-                        item.topLine = false;
-                    }else if(this.editType === 'door'){
-                        item.topDoor = true;
-                        item.topBorder = false;
-                        item.topLine = false;
-                    }else {
-                        item.topLine = true;
-                        item.topBorder = false;
-                        item.topDoor = false;
-                    }
-
-                } else {
-                    if (this.editType === 'wall') {
-                        item.leftBorder = true;
-                        item.leftDoor = false;
-                        item.leftLine = false;
-                    }else if(this.editType === 'door'){
-                        item.leftDoor = true;
-                        item.leftBorder = false;
-                        item.leftLine = false;
-                    }else {
-                        item.leftLine = true;
-                        item.leftDoor = false;
-                        item.leftBorder = false;
-                    }
-                }
-
-                this.wallData.push(item)
-                this.actWall.push(item.id);
-            }
-        },
-        changeSelect(item) {
-            if (this.act.length && this.act.includes(item.id)) {
-                this.act = this.act.filter((source) => {
-                    return item.id !== source;
-                });
-                this.selected = this.selected.filter((source) => {
-                    return item.id !== source.id;
-                });
-            } else {
-                this.act.push(item.id);
-                this.selected.push(item);
-            }
-        },
-        /*墙体方向切换方法*/
-        changeWallType() {
-            if (this.editType !== 'room' && this.editType !== 'kt'
-                && this.editType !== 'odf') {
-                this.wallType === 'horizontal' ?
-                    this.wallType = 'vertical' : this.wallType = 'horizontal';
-            }
-        },
-        /*数据过滤*/
-        deleteData(id) {
-            this.actWall = this.actWall.filter((source) => {
-                return id !== source;
-            });
-            this.wallData = this.wallData.filter((source) => {
-                return id !== source.id;
-            });
-        },
-        /*改变机柜柜门朝向*/
-        changePos(item, pos) {
-            this.selected.forEach(data => {
-                if (data.id === item.id) {
-                    if (data.pos.indexOf(pos) > -1) {
-                        data.pos.splice(data.pos.indexOf(pos), 1)
-                        item.pos.splice(item.pos.indexOf(pos), 1)
-                    } else {
-                        data.pos.push(pos);
-                        item.pos.push(pos)
-                    }
-                }
-            })
-
-        },
-        /*选择摄像头或传感器*/
-        selectSense(item) {
-            // 有机柜的地方不能添加摄像头
-            if (this.act.includes(item.id)) {
-                this.canAddCamera = false
-            } else {
-                this.canAddCamera = true
-            }
-
-            this.showMark = true;
-            let vm = this;
-
-            let selectedData = this.roomList.reduce((arr,cur) => {
-                if (cur.dataId) {
-                  arr.push(cur.dataId)
-                }
-                return arr;
-            },[]);
-            this.$bui.drawer({
-                comp: () => import('./_popup.vue'),
-                params: {
-                    canAddCamera: vm.canAddCamera,
-                    currentSense: item,
-                    selectedData: selectedData,
-                },
-                size: {
-                    width: '300px',
-                    right: '0',
-                    padding: '50px 0 0 0'
-                },
-                callback: (data) => {
-                    if(data === 'setCenter'){
-                        vm.initCenter();
-                        item.isCenter = true;
-                        vm.centerData = item;
-                    }else if (data?.data.dataId) {
-                        if (data.data.type === 'delete') {
-                            vm.senseData = vm.senseData.filter((source) => {
-                                return item.id !== source.data.id;
-                            });
-                            item.senseId = '';
-                            item.dataId = '';
-                        } else {
-                            item.senseId = data.data.senseId;
-                            item.dataId = data.data.dataId;
-                            item.dataName = data.data.dataName;
-                            vm.senseData.push({
-                                type: data.data.type,
-                                data: item
-                            })
+            },
+            /*初始化摄像头，传感器数据*/
+            initSenseData() {
+                this.$parent.params.senseList && this.$parent.params.senseList.forEach(item => {
+                    this.senseData.push(item)
+                    this.roomList.forEach(room => {
+                        if (room.id === item.data.id) {
+                            room.senseId = item.data.senseId;
+                            room.dataId = item.data.dataId;
                         }
-                    } else if (data ?.name) {
-                        vm.groundData = vm.groundData.filter((source) => {
-                            return item.id !== source.id;
-                        });
-                        item.name = data.name;
-                        vm.groundData.push(item)
-                    }
-                    vm.showMark = false;
+                    })
+                })
+            },
+            /*初始化地板数据*/
+            initGroundData() {
+                this.$parent.params.groundData && this.$parent.params.groundData.forEach(item => {
+                    this.groundData.push(item)
+                    this.roomList.forEach(room => {
+                        if (room.id === item.id) {
+                            room.name = item.name;
+                        }
+                    })
+                })
+            },
+            open(item) {
+                let text;
+                if (item.type === 'kt') {
+                    text = '空调名称';
+                } else if (item.type === 'odf') {
+                    text = 'OTF架名称';
+                } else {
+                    text = '机柜编号';
                 }
-            })
-        },
-        initCenter() {
-            this.roomList.forEach(item => {
-                item.isCenter = false;
-            })
-        },
-        submit() {
-            this.$parent.close({
-                cabinetData: this.selected,
-                wallData: this.wallData,
-                senseData: this.senseData,
-                groundData: this.groundData,
-                centerData: this.centerData,
-            });
+
+                this.$prompt('', text, {
+                    inputValue: item.num,
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                }).then(({value}) => {
+                    item.num = value;
+                }).catch(() => {
+                    // this.$message({
+                    //     type: 'info',
+                    //     message: '取消输入'
+                    // });
+                });
+            },
+            /*网格选中事件*/
+            select(item) {
+                if (this.editType === 'kt') {
+                    item.type = 'kt';
+                    this.changeSelect(item)
+                } else if (this.editType === 'odf') {
+                    item.type = 'odf'
+                    this.changeSelect(item)
+                } else if (this.editType === 'room') {
+                    item.type = 'cabinet'
+                    this.changeSelect(item)
+                } else if (this.editType === 'door') {
+                    item.type = 'door'
+                    this.changeDoorOrWall(item)
+                } else {
+                    item.type = 'line'
+                    this.changeDoorOrWall(item)
+                }
+            },
+            changeDoorOrWall(item) {
+                if (this.actWall.length && this.actWall.includes(item.id)) {
+                    if (this.editType === 'wall') {
+                        if (this.wallType === 'vertical') {
+                            item.leftBorder = !item.leftBorder;
+                            item.leftDoor = false;
+                            item.leftLine = false;
+                        } else {
+                            item.topBorder = !item.topBorder;
+                            item.topDoor = false;
+                            item.topLine = false;
+                        }
+
+                    } else if (this.editType === 'door') {
+                        if (this.wallType === 'vertical') {
+                            item.leftDoor = !item.leftDoor;
+                            item.leftBorder = false;
+                            item.leftLine = false;
+                        } else {
+                            item.topDoor = !item.topDoor;
+                            item.topBorder = false;
+                            item.topLine = false;
+                        }
+                    } else {
+                        if (this.wallType === 'vertical') {
+                            item.leftLine = !item.leftLine;
+                            item.leftDoor = false;
+                            item.leftBorder = false;
+                        } else {
+                            item.topLine = !item.topLine;
+                            item.topBorder = false;
+                            item.topDoor = false;
+                        }
+                    }
+
+                    if (!item.topBorder && !item.leftBorder
+                        && !item.topDoor && !item.leftDoor
+                        && !item.topLine && !item.leftLine) {
+                        this.deleteData(item.id);
+                    }
+                } else {
+                    if (this.wallType === 'horizontal') {
+                        if (this.editType === 'wall') {
+                            item.topBorder = true;
+                            item.topDoor = false;
+                            item.topLine = false;
+                        } else if (this.editType === 'door') {
+                            item.topDoor = true;
+                            item.topBorder = false;
+                            item.topLine = false;
+                        } else {
+                            item.topLine = true;
+                            item.topBorder = false;
+                            item.topDoor = false;
+                        }
+
+                    } else {
+                        if (this.editType === 'wall') {
+                            item.leftBorder = true;
+                            item.leftDoor = false;
+                            item.leftLine = false;
+                        } else if (this.editType === 'door') {
+                            item.leftDoor = true;
+                            item.leftBorder = false;
+                            item.leftLine = false;
+                        } else {
+                            item.leftLine = true;
+                            item.leftDoor = false;
+                            item.leftBorder = false;
+                        }
+                    }
+
+                    this.wallData.push(item)
+                    this.actWall.push(item.id);
+                }
+            },
+            changeSelect(item) {
+                if (this.act.length && this.act.includes(item.id)) {
+                    this.act = this.act.filter((source) => {
+                        return item.id !== source;
+                    });
+                    this.selected = this.selected.filter((source) => {
+                        return item.id !== source.id;
+                    });
+                } else {
+                    this.act.push(item.id);
+                    this.selected.push(item);
+                }
+            },
+            /*墙体方向切换方法*/
+            changeWallType() {
+                if (this.editType !== 'room' && this.editType !== 'kt'
+                    && this.editType !== 'odf') {
+                    this.wallType === 'horizontal' ?
+                        this.wallType = 'vertical' : this.wallType = 'horizontal';
+                }
+            },
+            /*数据过滤*/
+            deleteData(id) {
+                this.actWall = this.actWall.filter((source) => {
+                    return id !== source;
+                });
+                this.wallData = this.wallData.filter((source) => {
+                    return id !== source.id;
+                });
+            },
+            /*改变机柜柜门朝向*/
+            changePos(item, pos) {
+                this.selected.forEach(data => {
+                    if (data.id === item.id) {
+                        if (data.pos.indexOf(pos) > -1) {
+                            data.pos.splice(data.pos.indexOf(pos), 1)
+                            item.pos.splice(item.pos.indexOf(pos), 1)
+                        } else {
+                            data.pos.push(pos);
+                            item.pos.push(pos)
+                        }
+                    }
+                })
+
+            },
+            /*选择摄像头或传感器*/
+            selectSense(item) {
+                // 有机柜的地方不能添加摄像头
+                if (this.act.includes(item.id)) {
+                    this.canAddCamera = false
+                } else {
+                    this.canAddCamera = true
+                }
+
+                this.showMark = true;
+                let vm = this;
+
+                let selectedData = this.roomList.reduce((arr, cur) => {
+                    if (cur.dataId) {
+                        arr.push(cur.dataId)
+                    }
+                    return arr;
+                }, []);
+                this.$bui.drawer({
+                    comp: () => import('./_popup.vue'),
+                    params: {
+                        canAddCamera: vm.canAddCamera,
+                        currentSense: item,
+                        selectedData: selectedData,
+                    },
+                    size: {
+                        width: '300px',
+                        right: '0',
+                        padding: '50px 0 0 0'
+                    },
+                    callback: (data) => {
+                        if (data === 'setCenter') {
+                            vm.initCenter();
+                            item.isCenter = true;
+                            vm.centerData = item;
+                        } else if (data?.data.dataId) {
+                            if (data.data.type === 'delete') {
+                                vm.senseData = vm.senseData.filter((source) => {
+                                    return item.id !== source.data.id;
+                                });
+                                item.senseId = '';
+                                item.dataId = '';
+                            } else {
+                                item.senseId = data.data.senseId;
+                                item.dataId = data.data.dataId;
+                                item.dataName = data.data.dataName;
+                                vm.senseData.push({
+                                    type: data.data.type,
+                                    data: item
+                                })
+                            }
+                        } else if (data?.name) {
+                            vm.groundData = vm.groundData.filter((source) => {
+                                return item.id !== source.id;
+                            });
+                            item.name = data.name;
+                            vm.groundData.push(item)
+                        }
+                        vm.showMark = false;
+                    }
+                })
+            },
+            initCenter() {
+                this.roomList.forEach(item => {
+                    item.isCenter = false;
+                })
+            },
+            handleCommand(command) {
+
+                let res = command.split('-')
+                let content = `删除后不可恢复,确认删除所有${res[1]}?`;
+                if (res[0] === 'cabinet') {
+                    content = `删除机柜方块会删除对应传感器数据且不可恢复，确认删除所有${res[1]}?`
+                }
+                this.$confirm(content, '提示', {
+                    type:'warning'
+                }).then(()=>{
+                    switch (res[0]) {
+                        case 'cabinet':
+                        case 'kt':
+                        case 'odf':
+                            this.selected = this.selected.filter(item => {
+                                return item.type !== res[0]
+                            })
+                            this.act = this.selected.reduce((arr, cur) => {
+                                arr.push(cur.id)
+                                return arr;
+                            }, []);
+                            if (res[0] === 'cabinet') {
+                                this.senseData = this.senseData.filter(item => {
+                                    return item.type !== 'sense'
+                                })
+                            }
+                            break;
+                        case 'wall':
+                        case 'door':
+                            break;
+                    }
+                    console.log(this.senseData)
+                }).catch(()=>{
+
+                });
+
+            },
+            submit() {
+                this.$parent.close({
+                    cabinetData: this.selected,
+                    wallData: this.wallData,
+                    senseData: this.senseData,
+                    groundData: this.groundData,
+                    centerData: this.centerData,
+                });
+            }
         }
     }
-}
 </script>
 
