@@ -77,6 +77,7 @@ import Vue from 'vue'
 import mapPopup from '@/pages/videoPlayer/_videoPopup.vue'
 
 let controls = null;// 鼠标控制器
+let textureLoader = null;// 材质加载器
 let cssRender = null;// 自定义css渲染器
 let GLTFLoader = null;// 外部模型加载器 .GLTF，.GLB
 let cameraObj = null;
@@ -85,6 +86,8 @@ let emptyMesh = null;
 let beforeSelected = null;
 let videoVm = null;// 用以存储弹窗实例，用以销毁视频播放
 let videoComponent = null;
+let cabinetGeometry = null; // 机柜的Geometry 和 材质
+let wallMaterial = null; // 围墙材质
 export default {
     data() {
         return {
@@ -122,6 +125,10 @@ export default {
         this.getEmptyMesh();
         //初始化性能插件
         this.initStats();
+        // 初始化机柜相关材质
+        this.initCabinetGeometry();
+        // 初始化围墙材质
+        this.initWallMaterial();
 
         // 添加拖拽控件
         // this.initTransformControl();
@@ -136,6 +143,9 @@ export default {
 
         // 添加点击事件
         this.initRayCaster();
+
+        // 创建背景地板
+        this.createGround()
 
         // 轨迹动画
         // this.animate();
@@ -158,8 +168,6 @@ export default {
             this.initMyDom();
         }, 1000)
 
-        // vue实例
-        videoComponent = Vue.extend(mapPopup)
     },
     methods: {
         // 机房编辑
@@ -211,8 +219,6 @@ export default {
         initCenter(item) {
             spotLight.position.set(item.x,150,item.z);
             controls.target = new THREE.Vector3( item.x,0,item.z);
-            //动态阻尼系数 就是鼠标拖拽旋转灵敏度
-            controls.dampingFactor = 0.5;
             controls.update();
         },
         // 初始化摄像机
@@ -339,6 +345,7 @@ export default {
         },
         // 初始化外部模型加载器
         initLoader() {
+            textureLoader = new THREE.TextureLoader();
             GLTFLoader = new THREE.GLTFLoader();
             let vm = this;
             GLTFLoader.load('static/three/model/scene.gltf', function (obj) {
@@ -408,10 +415,12 @@ export default {
             cssRender.setSize(window.innerWidth, window.innerHeight);
             cssRender.domElement.style.position = 'absolute';
             cssRender.domElement.style.top = 0;
-            // document.body.appendChild(cssRender.domElement);
             this.$el.parentElement.appendChild(cssRender.domElement);
         },
         initMyDom() {
+            // vue实例
+            videoComponent = Vue.extend(mapPopup)
+
             // 编辑按钮
             let control = document.querySelector('.control').cloneNode(true)
             control.style.display = 'block'
@@ -429,6 +438,25 @@ export default {
             material.transparent = true;
             material.opacity = 0;
             emptyMesh = new THREE.Mesh(geometry, material);
+        },
+        // 创建各模型
+        createSense() {
+            const popupDiv = document.getElementsByClassName('model-popup')[0].cloneNode(true);
+            popupDiv.style.overflow = 'hidden';
+            popupDiv.style.width = '0px';
+            popupDiv.style.height = '0px';
+            popupDiv.style.padding = '0px';
+            popupDiv.style.fontSize = '0px';
+            let moonLabel = new CSS2DObject(popupDiv);
+            this.senseList.forEach(item => {
+                if (item.type === 'camera') {
+                    this.cameraNum++;
+                    this.addCamera(item.data,moonLabel.clone())
+                } else {
+                    this.sensorNum++;
+                    this.addSensor(item.data,moonLabel.clone())
+                }
+            })
         },
         // 添加温湿度传感器模型
         addSensor(item, moonLabel) {
@@ -455,25 +483,14 @@ export default {
             model.scale.set(scale, scale, scale) // scale here
             model.name = item.dataName;
             model.userData.dataId = item.dataId;
-            // // 给模型定制弹窗
-            // const popupDiv = document.getElementsByClassName('model-popup')[0].cloneNode(true);
-            //
-            // popupDiv.style.overflow = 'hidden';
-            // popupDiv.style.width = '0px';
-            // popupDiv.style.height = '0px';
-            // popupDiv.style.padding = '0px';
-            // popupDiv.style.fontSize = '0px';
-            // let moonLabel = new CSS2DObject(popupDiv);
+            // 给模型定制弹窗
             moonLabel.element.id = item.dataId
             moonLabel.position.set(0, 1, 0);
             model.add(moonLabel)
 
             let other = emptyMesh.clone();
-
             other.position.set(x, y, z);
-
             other.add(model)
-
 
             group.add(other)
         },
@@ -483,9 +500,6 @@ export default {
             switch (item.senseId) {
                 case 'rightBack':
                     mesh.rotateY(Math.PI / 4);
-                    break;
-                case 'back':
-                    // mesh.rotateY(Math.PI / 2);
                     break;
                 case 'leftBack':
                     mesh.rotateY(Math.PI / -4);
@@ -510,7 +524,7 @@ export default {
             }
             mesh.isCustomer = true
             let scale = 0.2
-            mesh.scale.set(scale, scale, scale) // scale here
+            mesh.scale.set(scale, scale, scale) // 缩放
             mesh.name = item.dataName;
             mesh.userData.dataId = item.dataId;
 
@@ -524,30 +538,11 @@ export default {
 
             group.add(other)
 
+        },
 
-        },
-        // 创建各模型
-        createSense() {
-            const popupDiv = document.getElementsByClassName('model-popup')[0].cloneNode(true);
-            popupDiv.style.overflow = 'hidden';
-            popupDiv.style.width = '0px';
-            popupDiv.style.height = '0px';
-            popupDiv.style.padding = '0px';
-            popupDiv.style.fontSize = '0px';
-            let moonLabel = new CSS2DObject(popupDiv);
-            this.senseList.forEach(item => {
-                if (item.type === 'camera') {
-                    this.cameraNum++;
-                    this.addCamera(item.data,moonLabel.clone())
-                } else {
-                    this.sensorNum++;
-                    this.addSensor(item.data,moonLabel.clone())
-                }
-            })
-        },
         // 创建墙体
-        createWall(item, materials,type,obj) {
-            let material;
+        createWall(item, type,obj) {
+            let material ;
             let rotate = false, x = item.x, z = item.z;
             if (type === 'v' || type === 'vDoor') {
                 rotate = true;
@@ -557,9 +552,9 @@ export default {
             }
 
             if (type === 'vDoor' || type === 'hDoor') {
-                material = materials[0]
+                material = wallMaterial[0]
             } else {
-                material = materials[1]
+                material = wallMaterial[1]
             }
 
 
@@ -569,8 +564,8 @@ export default {
             if (rotate) plane.rotateY(Math.PI / 2);
             otherGroup.add(plane);
         },
-        getWallMaterial() {
-            let texture = new THREE.TextureLoader().load('static/images/door.png');
+        initWallMaterial() {
+            let texture = textureLoader.load('static/images/door.png');
 
             let materials1 = new THREE.MeshPhongMaterial(
                 {
@@ -583,7 +578,6 @@ export default {
                     shininess: shininessNum
                 }
             );
-
 
             let color = "#425fac";
             let materials2 = [
@@ -607,27 +601,26 @@ export default {
                     transparent: true
                 }),
             ]
-            return [materials1, materials2];
+            wallMaterial = [materials1, materials2]
         },
         // 创建面
         createPlane(type) {
             if (type === 'wall') {
-                let materials = this.getWallMaterial();
                 let geometry = new THREE.BoxBufferGeometry(4, 10, 0.3);
                 let plane = new THREE.Mesh(geometry);
 
                 this.wallList.forEach((item) => {
                     if (item.leftBorder) {
-                        this.createWall(item, materials,'v',plane);
+                        this.createWall(item, 'v',plane);
                     }
                     if (item.topBorder) {
-                        this.createWall(item, materials,'h',plane);
+                        this.createWall(item, 'h',plane);
                     }
                     if (item.leftDoor) {
-                        this.createWall(item, materials,'vDoor',plane);
+                        this.createWall(item, 'vDoor',plane);
                     }
                     if (item.topDoor) {
-                        this.createWall(item, materials,'hDoor',plane);
+                        this.createWall(item, 'hDoor',plane);
                     }
                 })
 
@@ -660,7 +653,6 @@ export default {
                 }
 
                 this.createSelfGround(result)
-                this.createGround(res)
                 if (this.groundDataList.length) this.groundText(res)
 
             }
@@ -697,8 +689,6 @@ export default {
         },
         // 创建地板
         createGround() {
-
-            const textureLoader = new THREE.TextureLoader();
             let floorMat = new THREE.MeshStandardMaterial({
                 roughness: 0.8,
                 color: 0xffffff,
@@ -717,18 +707,15 @@ export default {
                 floorMat.side = THREE.DoubleSide;
             });
             let width = window.innerWidth, height = window.innerWidth;
-            let geometry = new THREE.PlaneGeometry(width, height);
+            let geometry = new THREE.PlaneBufferGeometry(width, height);
             let plane = new THREE.Mesh(geometry, floorMat);
             plane.position.set(60, 0, 60)
             // plane.rotateY(- Math.PI / 2); // 沿 Y 轴旋转 90°
             plane.rotateX(-Math.PI / 2); // 沿 X 轴旋转 90°
             plane.receiveShadow = true; // 接受阴影
-            otherGroup.add(plane);
-            // this.objects.push(plane)
+            scene.add(plane);
         },
         createSelfGround(arr) {
-            const textureLoader = new THREE.TextureLoader();
-            // let map = textureLoader.load("static/images/地板2.jpg");
             let width = 4, height = 4;
             let geometry = new THREE.PlaneBufferGeometry(width, height);
             let material = new THREE.MeshPhongMaterial(
@@ -798,14 +785,6 @@ export default {
                     }
                 }
 
-                //
-                // let edgesMtl = new THREE.LineBasicMaterial({color: '#777'})
-                // let cubeEdges = new THREE.EdgesGeometry(geometry, 1);
-                // let cubeLine = new THREE.LineSegments(cubeEdges, edgesMtl);
-                //
-                //
-                // plane.add(cubeLine);
-
             }
         },
         // 获取轨道线路
@@ -837,32 +816,28 @@ export default {
             }
 
         },
-        groupBy(array, f) {
-            let groups = {};
-            array.forEach(function (o) {
-                let group = JSON.stringify(f(o));
-                groups[group] = groups[group] || [];
-                groups[group].push(o);
-            });
-            return Object.keys(groups).map(function (group) {
-                return groups[group];
-            });
-        },
-        // 创建机柜
-        createCabinet() {
+        initCabinetGeometry() {
             //添加长方体
             let geometry = new THREE.BoxBufferGeometry(3.7, 8, 3);
             let texture = {
-                fuwuqiTex: new THREE.TextureLoader().load('static/images/fuwuqi.png'),
-                kontiaoTex: new THREE.TextureLoader().load('static/images/空调.png'),
-                odfTex: new THREE.TextureLoader().load('static/images/ODF.png')
+                fuwuqiTex: textureLoader.load('static/images/fuwuqi.png'),
+                kontiaoTex: textureLoader.load('static/images/空调.png'),
+                odfTex: textureLoader.load('static/images/ODF.png')
             }
-            let cabinetCube = new THREE.Mesh(geometry);
+            cabinetGeometry = {
+                geometry:geometry,
+                texture:texture
+            }
+        },
+        // 创建机柜
+        createCabinet() {
+
+            let cabinetCube = new THREE.Mesh(cabinetGeometry.geometry);
 
             this.cubeList.forEach(item => {
                 this.cabinetNum++;
                 let cube = cabinetCube.clone();
-                let material = this.getMaterial(item,texture);
+                let material = this.getMaterial(item,cabinetGeometry.texture);
                 cube.material = material;
                 cube.material.map.needsUpdate = true;
                 cube.position.set(item.x, 4, item.z);
@@ -964,8 +939,6 @@ export default {
         // 移除所有Mesh
         removeMesh() {
             return new Promise(resolve => {
-                // scene.remove(group)
-                // scene.remove(otherGroup)
                 this.dispose(scene,group)
                 this.dispose(scene,otherGroup)
                 this.objects = [];
@@ -1015,11 +988,6 @@ export default {
             }
 
         },
-        unique(arr, key) {
-            const res = new Map();
-            return arr.filter((a) => !res.has(a[key]) && res.set(a[key], 1))
-        },
-
         /*沿线动画*/
         animate() {
             let other;
@@ -1030,6 +998,7 @@ export default {
             mesh.name = '610-西南侧-热成像';
             mesh.userData.dataId = '29e3fbfc923d11eb908d0242ac110004';
             mesh.userData.isAnimation = true;
+
             const popupDiv = document.getElementsByClassName('model-popup')[0].cloneNode(true);
             popupDiv.style.overflow = 'hidden';
             popupDiv.style.width = '0px';
@@ -1039,15 +1008,15 @@ export default {
             let moonLabel = new CSS2DObject(popupDiv);
             moonLabel.element.id = '29e3fbfc923d11eb908d0242ac110004';
             moonLabel.element.addEventListener('mouseover', event => {
-                AnimationAction.paused = true;
                 this.flag = false;
+                AnimationAction.paused = true;
             });
             moonLabel.element.addEventListener('mouseleave', event => {
-                AnimationAction.paused = false;
                 this.flag = true;
             });
             moonLabel.position.set(0, 1, 0);
             mesh.add(moonLabel)
+
             // 添加一个透明的Mesh 将模型添加进去，用以点击
             let geometry = new THREE.BoxBufferGeometry(4, 4, 4);
             let material = new THREE.MeshBasicMaterial({color: 0xffffff});
@@ -1056,10 +1025,8 @@ export default {
             other = new THREE.Mesh(geometry, material);
             other.add(mesh)
             other.position.set(10, 15, 20)
-
-
-
             group.add(other);
+
 
             let pointsArr = []
             vm.linePoints.forEach(item => {
@@ -1080,9 +1047,7 @@ export default {
                 color: "#dbb14a"
             });
             let line = new THREE.Line(geometryLine, lineMaterial);
-            group.add(line)
-
-            // 通过Threejs的帧动画相关API播放网格模型沿着曲线做动画运动
+            otherGroup.add(line)
 
             // 声明一个数组用于存储时间序列
             let arr = []
@@ -1107,8 +1072,6 @@ export default {
             AnimationAction = mixer.clipAction(clip);
             AnimationAction.timeScale = 10;
             AnimationAction.play();
-
-
         },
         initHoverRayCaster() {
             //监听全局点击事件,通过ray检测选中哪一个object
@@ -1165,7 +1128,7 @@ export default {
                 // 更新帧动画的时间
                 mixer.update(clock.getDelta());
             }
-        }
+        },
     },
     beforeDestroy() {
         this.closeVideo();
