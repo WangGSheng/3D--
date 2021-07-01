@@ -381,9 +381,7 @@ export default {
                     })
                 }
 
-                if (item.groundData && item.groundData.length) {
-                    this.groundDataList = item.groundData;
-                }
+                this.groundDataList = item.groundData;
                 if (item.senseData && item.senseData.length) {
                     this.senseList = item.senseData;
                     this.createSense();
@@ -403,9 +401,7 @@ export default {
                 setTimeout(() => {
                     this.loading = false
                     this.showStatusUi = true;
-                    for (let i = 0; i < 2; i++) {
-                        this.render();
-                    }
+                    this.render();
                 }, 1000)
             });
         },
@@ -571,11 +567,8 @@ export default {
                 {
                     map: texture,
                     side: THREE.DoubleSide,
-                    wireframe: false,
                     transparent: true,
                     opacity: 1,
-                    specular: 0x4488ee,
-                    shininess: shininessNum
                 }
             );
 
@@ -588,15 +581,11 @@ export default {
                 new THREE.MeshLambertMaterial({color: color, opacity: 0.4, transparent: true}),
                 new THREE.MeshPhongMaterial({
                     color: color,
-                    specular: 0x4488ee,
-                    shininess: shininessNum,
                     opacity: 0.6,
                     transparent: true
                 }),
                 new THREE.MeshPhongMaterial({
                     color: color,
-                    specular: 0x4488ee,
-                    shininess: shininessNum,
                     opacity: 0.6,
                     transparent: true
                 }),
@@ -639,6 +628,23 @@ export default {
                 }
 
                 for (let i = 0; i < result.length; i++) {
+                    if (i === 0 && result.length > 1 && result[i].length === 1) {
+                        result[i].push({
+                            x:this.getDistance(result[i + 1]).max.x,
+                            z:result[i][0].z
+                        },{
+                            x:this.getDistance(result[i + 1]).min.x,
+                            z:result[i][0].z
+                        })
+                    }else if(i > 0 && result[i].length === 1){
+                        result[i].push({
+                            x:result[i - 1].max.x,
+                            z:result[i][0].z
+                        },{
+                            x:result[i - 1].min.x,
+                            z:result[i][0].z
+                        })
+                    }
                     result[i] = this.getDistance(result[i])
                 }
 
@@ -720,7 +726,6 @@ export default {
             let geometry = new THREE.PlaneBufferGeometry(width, height);
             let material = new THREE.MeshPhongMaterial(
                 {
-                    // map: map,
                     color:'#555',
                     side: THREE.DoubleSide,
                     specular: "#8D93AB",
@@ -765,13 +770,11 @@ export default {
                 for (let j = 0; j < this.groundDataList.length; j++) {
                     if (x === this.groundDataList[j].x && z === this.groundDataList[j].z) {
                         let width = 4, height = 4;
-                        let geometry = new THREE.PlaneGeometry(width, height);
+                        let geometry = new THREE.PlaneBufferGeometry(width, height);
                         let textMaterial = new THREE.MeshPhongMaterial(
                             {
                                 map: new THREE.CanvasTexture(this.getTextCanvas(this.groundDataList[j].name, "#182245", '#fff')),
                                 side: THREE.DoubleSide,
-                                specular: "#8D93AB",
-                                shininess: shininessNum,
                             }
                         );
                         let plane = new THREE.Mesh(geometry, textMaterial);
@@ -780,7 +783,6 @@ export default {
                         plane.rotateX(-Math.PI / 2); // 沿 X 轴旋转 90°
                         plane.receiveShadow = true; // 接受阴影
                         otherGroup.add(plane);
-                        // this.objects.push(plane)
                         break;
                     }
                 }
@@ -880,6 +882,7 @@ export default {
             }
             //导入材质
             texture.matrixAutoUpdate = false;
+            texture.needsUpdate = true;
             //直接使用材质数组来构建物体，数组里的材质分别对应物体的右、左、上、下、前、后
             let material = [
                 new THREE.MeshPhongMaterial({
@@ -959,14 +962,14 @@ export default {
                 })
             }
             if (child.type !== 'Group') {
+                child.remove();
+                parent.remove(child);
                 if(child instanceof THREE.Mesh
                     ||child instanceof THREE.Object3D
                     ||child instanceof THREE.LineSegments
                     ||child instanceof THREE.Line){
+                    child.geometry ?.dispose();
                     if (child.material) {
-                        if(child.material.map && typeof  child.material.map !== 'function') {
-                            child.material.map.dispose();
-                        }
                         if (child.material.length) {
                             child.material.forEach(i => {
                                 i.dispose()
@@ -974,13 +977,15 @@ export default {
                         } else {
                             child.material.dispose();
                         }
+                        if(child.material.map && typeof  child.material.map !== 'function') {
+                            child.material.map.dispose();
+                        }
+
                     }
-                    child.geometry ?.dispose();
                 }else if(child.material){
                     child.material.dispose();
                 }
-                child.remove();
-                parent.remove(child);
+
             }else if (child.isScene) {
                 child.dispose();
             }else {
@@ -1036,7 +1041,7 @@ export default {
             })
             // 通过类CatmullRomCurve3创建一个3D样条曲线
             let curve = new THREE.CatmullRomCurve3(pointsArr);
-            let divisions = 800;
+            let divisions = pointsArr.length * 8;
             // 样条曲线均匀分割200分，返回102个顶点坐标
             let points = curve.getPoints(divisions);
             // console.log('points', points);//控制台查看返回的顶点坐标

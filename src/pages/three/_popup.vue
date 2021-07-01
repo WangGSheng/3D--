@@ -4,9 +4,6 @@
 </style>
 <template>
     <ui-main :title="title">
-        <div class="m-b-10">
-            <el-button type="primary" @click="setCenter">设为中心点</el-button>
-        </div>
         <div class="content-title">
             {{ canAddCamera ? '摄像头(朝向)' : '传感器' }}
         </div>
@@ -33,7 +30,7 @@
                 编辑名称
             </div>
             <div>
-                <el-input v-model="name" placeholder="请输入名称"></el-input>
+                <el-input v-model="name" placeholder="请输入名称" clearable></el-input>
             </div>
         </div>
 
@@ -61,6 +58,7 @@
             <div class="m-l-15">
                 <el-button type="primary" size="medium" @click="submit">确认
                 </el-button>
+                <el-button type="primary" @click="setCenter">设为中心点</el-button>
                 <el-button size="medium" @click="$parent.close()">取消</el-button>
             </div>
         </div>
@@ -84,6 +82,7 @@ export default {
                 {label: '正后', id: 'back', icon: 'ali-iconjiantou_xiangxia'},
                 {label: '右后', id: 'rightBack', icon: 'ali-iconjiantou_youxia'},
             ],
+            oldName: '',
             currentSelect: '',
             dataList: [],
             options: [],
@@ -104,6 +103,7 @@ export default {
             this.currentDeviceId = this.selected.dataId;
             this.currentSelect = this.selected.senseId;
             this.name = this.$parent.params.currentSense.name;
+            this.oldName = this.name;
         }
 
         if (this.$parent.params.canAddCamera) {
@@ -132,7 +132,7 @@ export default {
                 method: 'post',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjamdseSIsImlhdCI6MTYyNDI2NzE2OCwiZXhwIjoxNjI0ODcxOTY4fQ.XeWQE3nbUwpHRQm0dS0HPhGNSRIaD5fbJR5jiyByhLfURAfnUixwHsKw35BEykFw7tmxU0eFMCfmVk1m-gF24g'
+                    Authorization: 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjamdseSIsImlhdCI6MTYyNTEwNzg4NiwiZXhwIjoxNjI1NzEyNjg2fQ.IEzrz6kyt7duzmZYevpw7m4pSss-UVIBobPtLuhQ6vLidwa83cYKFBCqyd9F8Ir_Yv4c67_M_Dsn_S5ogEfJjA'
                 }
             }).then(response => {
                 this.dataList = response.data.data;
@@ -182,7 +182,7 @@ export default {
             this.$parent.close('setCenter')
         },
         submit() {
-            if (this.selected.type !== 'delete' && !this.name) {
+            if (this.selected.type !== 'delete' && !this.name && !this.oldName) {
                 if (this.canAddCamera && !this.selected.senseId) {
                     this.$message.warning('请选择摄像头朝向！');
                     return false;
@@ -196,7 +196,8 @@ export default {
 
             this.$parent.close({
                 data:this.selected,
-                name:this.name
+                name:this.name,
+                oldName:this.oldName
             });
         }
     }

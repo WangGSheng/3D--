@@ -12,7 +12,7 @@
         <!--工具栏-->
         <div class="toolbar">
             <el-radio-group v-model="editType">
-                <el-radio-button label="room">编辑机柜</el-radio-button>
+                <el-radio-button label="cabinet">编辑机柜</el-radio-button>
                 <el-radio-button label="kt">编辑空调</el-radio-button>
                 <el-radio-button label="odf">编辑ODF架</el-radio-button>
                 <el-radio-button label="wall">编辑围墙</el-radio-button>
@@ -25,9 +25,18 @@
                 <el-radio label="vertical">|</el-radio>
             </el-radio-group>
 
-            <i class="icon question circle outline help-btn" @click="dialogVisible = true" title="帮助手册"></i>
+
+                <el-image
+                    fit="contain"
+                    class="help-btn"
+                    src="static/images/help-btn.png"
+                    title="帮助手册"
+                    :preview-src-list="['static/images/help.png']">
+                </el-image>
+
+
             <span class="m-l-50">
-                <el-dropdown @command="handleCommand">
+                <el-dropdown @command="handleCommand" trigger="click" placement="bottom-start">
                       <span class="el-dropdown-link t-blue" style="cursor: pointer">
                         清除<i class="el-icon-arrow-down el-icon--right"></i>
                       </span>
@@ -38,8 +47,9 @@
                         <el-dropdown-item command="wall-围墙线条">围墙线条</el-dropdown-item>
                         <el-dropdown-item command="door-门线条">门线条</el-dropdown-item>
                         <el-dropdown-item command="line-轨道线条">轨道线条</el-dropdown-item>
-                        <el-dropdown-item command="camera-轨道线条">摄像头</el-dropdown-item>
-                        <el-dropdown-item command="all-all">全部</el-dropdown-item>
+                        <el-dropdown-item command="camera-摄像头">摄像头</el-dropdown-item>
+                        <el-dropdown-item command="ground-地板名称">地板名称</el-dropdown-item>
+                        <el-dropdown-item command="all-所有数据" divided>全部</el-dropdown-item>
                     </el-dropdown-menu>
                 </el-dropdown>
             </span>
@@ -96,23 +106,6 @@
             </template>
         </div>
         <div class="current-mask" v-show="showMark"></div>
-        <el-dialog
-            title="帮助手册"
-            append-to-body
-            :visible.sync="dialogVisible"
-            top="48px"
-            width="75%">
-            <!--<img class="w-100p" src="static/images/help.png" alt="">-->
-            <el-image
-                style="width: 100%; height: 100%"
-                src="static/images/help.png"
-                fit="contain"
-                :preview-src-list="['static/images/help.png']">
-            </el-image>
-            <span slot="footer" class="dialog-footer">
-                <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
-            </span>
-        </el-dialog>
 
         <!--页脚工具栏 插槽 -->
         <div slot="footerBar" class="ui flex col-center bottom-button-box">
@@ -121,7 +114,7 @@
                 </el-button>
                 <el-button size="medium" @click="$parent.close()">取消</el-button>
             </div>
-            <div style="position:absolute;left: 48%;bottom: 10px;text-align: center">
+            <div style="position:absolute;width: 100px; left:calc(50% - 50px);bottom: 10px;text-align: center">
                 <i class="iconfont ali-iconjiantou_xiangshang"></i>
                 <div>视角朝向</div>
             </div>
@@ -140,6 +133,7 @@
                 showMark: false,
                 canAddCamera: true,
                 roomList: [],// 网格数据
+                oldRoomList: [],// 网格数据
                 act: [],// 被选中的网格
                 actWall: [], // 选中的墙
                 wallData: [], // 墙数据
@@ -150,9 +144,9 @@
                 wallType: "horizontal",
                 widthNum: 36,
                 heightNum: 50,
-                editType: "room",
+                editType: "cabinet",
                 editTypeOption: [
-                    "room",
+                    "cabinet",
                     "kt",
                     "odf",
                     "wall",
@@ -205,7 +199,7 @@
                     this.initSenseData();
                     this.initGroundData();
                     this.loading = false;
-                    this.dialogVisible = true;
+                    // this.dialogVisible = true;
                     // setTimeout(()=>{
                     //
                     //
@@ -244,7 +238,26 @@
                         num: '',
                         name: '',
                     });
+                    this.oldRoomList.push({
+                        type: 'cabinet',
+                        x: x,
+                        z: z,
+                        id: i,
+                        pos: ['head'],
+                        leftBorder: false,
+                        topBorder: false,
+                        topDoor: false,
+                        leftDoor: false,
+                        leftLine: false,
+                        topLine: false,
+                        isCenter: false,
+                        senseId: '',
+                        dataId: '',
+                        num: '',
+                        name: '',
+                    })
                 }
+
             },
             /*初始化机柜数据*/
             initCabinetPos() {
@@ -295,7 +308,7 @@
             /*初始化地板数据*/
             initGroundData() {
                 this.$parent.params.groundData && this.$parent.params.groundData.forEach(item => {
-                    this.groundData.push(item)
+                    // this.groundData.push(item)
                     this.roomList.forEach(room => {
                         if (room.id === item.id) {
                             room.name = item.name;
@@ -328,20 +341,16 @@
             },
             /*网格选中事件*/
             select(item) {
+                item.type = this.editType;
                 if (this.editType === 'kt') {
-                    item.type = 'kt';
                     this.changeSelect(item)
                 } else if (this.editType === 'odf') {
-                    item.type = 'odf'
                     this.changeSelect(item)
-                } else if (this.editType === 'room') {
-                    item.type = 'cabinet'
+                } else if (this.editType === 'cabinet') {
                     this.changeSelect(item)
                 } else if (this.editType === 'door') {
-                    item.type = 'door'
                     this.changeDoorOrWall(item)
                 } else {
-                    item.type = 'line'
                     this.changeDoorOrWall(item)
                 }
             },
@@ -417,9 +426,11 @@
                         }
                     }
 
-                    this.wallData.push(item)
                     this.actWall.push(item.id);
                 }
+
+                // this.wallData.push(item)
+
             },
             changeSelect(item) {
                 if (this.act.length && this.act.includes(item.id)) {
@@ -436,7 +447,7 @@
             },
             /*墙体方向切换方法*/
             changeWallType() {
-                if (this.editType !== 'room' && this.editType !== 'kt'
+                if (this.editType !== 'cabinet' && this.editType !== 'kt'
                     && this.editType !== 'odf') {
                     this.wallType === 'horizontal' ?
                         this.wallType = 'vertical' : this.wallType = 'horizontal';
@@ -447,9 +458,9 @@
                 this.actWall = this.actWall.filter((source) => {
                     return id !== source;
                 });
-                this.wallData = this.wallData.filter((source) => {
-                    return id !== source.id;
-                });
+                // this.wallData = this.wallData.filter((source) => {
+                //     return id !== source.id;
+                // });
             },
             /*改变机柜柜门朝向*/
             changePos(item, pos) {
@@ -509,6 +520,7 @@
                                 item.senseId = '';
                                 item.dataId = '';
                             } else {
+                                item.type = data.data.type;
                                 item.senseId = data.data.senseId;
                                 item.dataId = data.data.dataId;
                                 item.dataName = data.data.dataName;
@@ -518,11 +530,9 @@
                                 })
                             }
                         } else if (data?.name) {
-                            vm.groundData = vm.groundData.filter((source) => {
-                                return item.id !== source.id;
-                            });
                             item.name = data.name;
-                            vm.groundData.push(item)
+                        }else if (data?.oldName && !data?.name) {
+                            item.name = '';
                         }
                         vm.showMark = false;
                     }
@@ -562,15 +572,76 @@
                             break;
                         case 'wall':
                         case 'door':
+                        case 'line':
+                            this.wallData = this.wallData.filter(item => {
+                                return item.type !== res[0]
+                            })
+                            this.actWall = this.wallData.reduce((arr, cur) => {
+                                arr.push(cur.id)
+                                return arr;
+                            }, []);
+                            this.initRoomWall(res[0]);
+                            break;
+                        case 'camera':
+                            this.senseData = this.senseData.filter(item => {
+                                return item.type !== 'camera'
+                            })
+                            break;
+                        case 'ground':
+                            this.roomList.forEach(item => {
+                                item.name = '';
+                            })
+                            break;
+                        case 'all':
+                            this.selected = [];
+                            this.act = [];
+                            this.wallData = [];
+                            this.actWall = [];
+                            this.centerData = null;
+                            this.roomList = this.oldRoomList;
                             break;
                     }
-                    console.log(this.senseData)
+
                 }).catch(()=>{
 
                 });
-
+            },
+            initRoomWall(type) {
+                switch (type){
+                    case 'wall':
+                        this.roomList.forEach(item => {
+                            item.leftBorder = false;
+                            item.topBorder = false;
+                        });
+                        break;
+                    case 'door':
+                        this.roomList.forEach(item => {
+                            item.leftDoor = false;
+                            item.topDoor = false;
+                        })
+                        break;
+                    case 'line':
+                        this.roomList.forEach(item => {
+                            item.leftLine = false;
+                            item.topLine = false;
+                        })
+                        break;
+                }
             },
             submit() {
+                this.wallData = this.roomList.reduce((arr, cur) => {
+                    if (cur.topBorder || cur.leftBorder
+                        || cur.topDoor || cur.leftDoor
+                        || cur.topLine || cur.leftLine) {
+                        arr.push(cur);
+                    }
+                    return arr;
+                }, []);
+
+                this.groundData = this.roomList.filter((item) => {
+                    return item.name !== '';
+                });
+
                 this.$parent.close({
                     cabinetData: this.selected,
                     wallData: this.wallData,
