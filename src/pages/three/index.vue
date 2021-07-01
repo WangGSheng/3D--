@@ -557,7 +557,9 @@ export default {
             let plane = obj.clone();
             plane.material = material;
             plane.position.set(x, 5, z)
-            if (rotate) plane.rotateY(Math.PI / 2);
+            if (rotate) {
+                plane.rotateY(Math.PI / 2);
+            }
             otherGroup.add(plane);
         },
         initWallMaterial() {
@@ -802,13 +804,13 @@ export default {
                     this.linePoints.push({
                         x:item.x,
                         y:16,
-                        z:item.z + 4
+                        z:item.z
                     })
                 });
                 this.linePoints.push({
                     x:lineData[0].x,
                     y:16,
-                    z:lineData[0].z + 4
+                    z:lineData[0].z
                 })
                 if (this.linePoints.length) {
                     /*加载沿线动画*/

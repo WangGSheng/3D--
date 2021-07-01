@@ -388,6 +388,12 @@
                             item.topDoor = false;
                         }
                     }
+                    for (let i = 0; i < this.wallData.length; i++) {
+                        if (this.wallData[i].id === item.id) {
+                            this.wallData[i] = item;
+                            break;
+                        }
+                    }
 
                     if (!item.topBorder && !item.leftBorder
                         && !item.topDoor && !item.leftDoor
@@ -426,6 +432,7 @@
                         }
                     }
 
+                    this.wallData.push(item)
                     this.actWall.push(item.id);
                 }
 
@@ -629,14 +636,6 @@
                 }
             },
             submit() {
-                this.wallData = this.roomList.reduce((arr, cur) => {
-                    if (cur.topBorder || cur.leftBorder
-                        || cur.topDoor || cur.leftDoor
-                        || cur.topLine || cur.leftLine) {
-                        arr.push(cur);
-                    }
-                    return arr;
-                }, []);
 
                 this.groundData = this.roomList.filter((item) => {
                     return item.name !== '';
