@@ -16,8 +16,8 @@
             </template>
         </div>
         <div class="ui flex w-100p" v-else>
-            <div class="sense-item" :class="{active:currentSelect === 'sense'}"
-                 @click="selectChange('sense','sense')">
+            <div class="sense-item" :class="{active:currentSelect === 'sensor'}"
+                 @click="selectChange('sensor','sensor')">
                 <i class="w-50p h-100p iconfont ali-iconchuanganqi"></i>
             </div>
             <div class="sense-item"
@@ -44,7 +44,7 @@
                         {{ item.label }}
                     </div>
                     <template v-for="(child,childIndex) in item.children">
-                        <div class="list-item-label" :class="{active : currentDeviceId == child.id}"
+                        <div class="list-item-label" :class="{active : currentDeviceId === child.id}"
                              :key="childIndex" @click="selectData(child)">
                             {{ child.label }}
                         </div>
@@ -111,10 +111,10 @@ export default {
             this.selected.type = 'camera';
         } else {
             this.canAddCamera = false;
-            this.selected.type = 'sense';
-            this.selected.senseId = 'sense';
+            this.selected.type = 'sensor';
+            this.selected.senseId = 'sensor';
             // this.currentDeviceId = 'sense';
-            this.currentSelect = 'sense';
+            this.currentSelect = 'sensor';
         }
 
 
@@ -169,7 +169,7 @@ export default {
             this.currentSelect = id;
             if (id === 'delete') {
                 this.selected.type = id;
-            } else if (id !== 'sense') {
+            } else if (id !== 'sensor') {
                 this.selected.senseId = id;
             }
         },

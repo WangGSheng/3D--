@@ -1,5 +1,5 @@
 <style scoped lang="scss">
- @import "scss/_index.scss";
+@import "scss/_index.scss";
 </style>
 
 <template>
@@ -108,9 +108,12 @@ export default {
             cabinetNum: 0,
             cameraNum: 0,
             sensorNum: 0,
+            FPS: 30,
+            renderT: 0,
+            timeS: 0
         }
     },
-    mounted() {
+    created() {
         // 创建场景
         this.initScene();
         // 创建相机
@@ -121,6 +124,14 @@ export default {
         this.initLight();
         // 初始化外部模型加载器
         this.initLoader();
+
+    },
+    mounted() {
+        this.renderT = 1 / this.FPS;
+
+        // 加载CSS2DRenderer
+        this.initCssRender();
+
         // 初始化空白Mesh
         this.getEmptyMesh();
         //初始化性能插件
@@ -129,14 +140,6 @@ export default {
         this.initCabinetGeometry();
         // 初始化围墙材质
         this.initWallMaterial();
-
-        // 添加拖拽控件
-        // this.initTransformControl();
-        // 添加删除事件
-        // this.initDeleteEvent();
-
-        // 加载CSS2DRenderer
-        this.initCssRender();
 
         // 鼠标控制器
         this.getOrbitControls()
@@ -147,8 +150,6 @@ export default {
         // 创建背景地板
         this.createGround()
 
-        // 轨迹动画
-        // this.animate();
         //加入事件监听器,窗口自适应
         let vm = this;
         window.addEventListener('resize', function () {
@@ -217,8 +218,8 @@ export default {
             scene.add(otherGroup);
         },
         initCenter(item) {
-            spotLight.position.set(item.x,150,item.z);
-            controls.target = new THREE.Vector3( item.x,0,item.z);
+            spotLight.position.set(item.x, 150, item.z);
+            controls.target = new THREE.Vector3(item.x, 0, item.z);
             controls.update();
         },
         // 初始化摄像机
@@ -254,7 +255,7 @@ export default {
             renderer.setSize(window.innerWidth, window.innerHeight);// 渲染面大小（在二维平面上的窗口大小）
             renderer.setPixelRatio(window.devicePixelRatio); //设备像素比 可以清晰物体
             renderer.shadowMap.enabled = true;
-            renderer.shadowMapType=THREE.PCFSoftShadowMap;
+            renderer.shadowMapType = THREE.PCFSoftShadowMap;
             this.$nextTick(() => {
                 this.$refs.threeDom.appendChild(renderer.domElement);
             })
@@ -362,7 +363,6 @@ export default {
                 function (error) {
                     console.error(error)
                 });
-
         },
 
         // 初始化数据
@@ -376,8 +376,8 @@ export default {
                 if (item.centerData) {
                     this.centerData = item.centerData;
                     this.initCenter({
-                        x:item.centerData.x,
-                        z:item.centerData.z
+                        x: item.centerData.x,
+                        z: item.centerData.z
                     })
                 }
 
@@ -447,10 +447,10 @@ export default {
             this.senseList.forEach(item => {
                 if (item.type === 'camera') {
                     this.cameraNum++;
-                    this.addCamera(item.data,moonLabel.clone())
+                    this.addCamera(item.data, moonLabel.clone())
                 } else {
                     this.sensorNum++;
-                    this.addSensor(item.data,moonLabel.clone())
+                    this.addSensor(item.data, moonLabel.clone())
                 }
             })
         },
@@ -460,7 +460,6 @@ export default {
             model.rotateZ(Math.PI);
             if (item.pos.includes('head')) {
                 model.rotateY(Math.PI / -2)
-                // x += 4;
                 z -= 2;
             } else if (item.pos.includes('back')) {
                 model.rotateY(Math.PI / 2)
@@ -491,7 +490,7 @@ export default {
             group.add(other)
         },
         // 添加摄像头模型
-        addCamera(item,moonLabel) {
+        addCamera(item, moonLabel) {
             let mesh = cameraObj.clone();
             switch (item.senseId) {
                 case 'rightBack':
@@ -537,8 +536,8 @@ export default {
         },
 
         // 创建墙体
-        createWall(item, type,obj) {
-            let material ;
+        createWall(item, type, obj) {
+            let material;
             let rotate = false, x = item.x, z = item.z;
             if (type === 'v' || type === 'vDoor') {
                 rotate = true;
@@ -602,16 +601,16 @@ export default {
 
                 this.wallList.forEach((item) => {
                     if (item.leftBorder) {
-                        this.createWall(item, 'v',plane);
+                        this.createWall(item, 'v', plane);
                     }
                     if (item.topBorder) {
-                        this.createWall(item, 'h',plane);
+                        this.createWall(item, 'h', plane);
                     }
                     if (item.leftDoor) {
-                        this.createWall(item, 'vDoor',plane);
+                        this.createWall(item, 'vDoor', plane);
                     }
                     if (item.topDoor) {
-                        this.createWall(item, 'hDoor',plane);
+                        this.createWall(item, 'hDoor', plane);
                     }
                 })
 
@@ -632,24 +631,23 @@ export default {
                 for (let i = 0; i < result.length; i++) {
                     if (i === 0 && result.length > 1 && result[i].length === 1) {
                         result[i].push({
-                            x:this.getDistance(result[i + 1]).max.x,
-                            z:result[i][0].z
-                        },{
-                            x:this.getDistance(result[i + 1]).min.x,
-                            z:result[i][0].z
+                            x: this.getDistance(result[i + 1]).max.x,
+                            z: result[i][0].z
+                        }, {
+                            x: this.getDistance(result[i + 1]).min.x,
+                            z: result[i][0].z
                         })
-                    }else if(i > 0 && result[i].length === 1){
+                    } else if (i > 0 && result[i].length === 1) {
                         result[i].push({
-                            x:result[i - 1].max.x,
-                            z:result[i][0].z
-                        },{
-                            x:result[i - 1].min.x,
-                            z:result[i][0].z
+                            x: result[i - 1].max.x,
+                            z: result[i][0].z
+                        }, {
+                            x: result[i - 1].min.x,
+                            z: result[i][0].z
                         })
                     }
                     result[i] = this.getDistance(result[i])
                 }
-
 
 
                 // 减 4 是为了让地板往外延伸
@@ -678,11 +676,11 @@ export default {
             let minX = Math.min.apply(Math, arr.map(function (o) {
                 return o.x
             })) // 最小 X 值
-            return {maxX:maxX,minX:minX,maxZ:maxZ,minZ:minZ}
+            return {maxX: maxX, minX: minX, maxZ: maxZ, minZ: minZ}
         },
-        sortArr(arr,sortOrder) {
+        sortArr(arr, sortOrder) {
             const handle = (prop) => {
-                return (a,b) => {
+                return (a, b) => {
                     const val1 = a[prop];
                     const val2 = b[prop];
                     return val1 - val2;
@@ -692,8 +690,8 @@ export default {
             return arr;
         },
         getDistance(arr) {
-            let res = this.sortArr(arr,'x')
-            return {min:res[0],max:res[res.length - 1]}
+            let res = this.sortArr(arr, 'x')
+            return {min: res[0], max: res[res.length - 1]}
         },
         // 创建地板
         createGround() {
@@ -728,7 +726,7 @@ export default {
             let geometry = new THREE.PlaneBufferGeometry(width, height);
             let material = new THREE.MeshPhongMaterial(
                 {
-                    color:'#555',
+                    color: '#555',
                     side: THREE.DoubleSide,
                     specular: "#8D93AB",
                     shininess: 2,
@@ -736,13 +734,13 @@ export default {
                     // transparent:true
                 }
             );
-            let plane = new THREE.Mesh(geometry,  material);
+            let plane = new THREE.Mesh(geometry, material);
             //描边
             let edgesMtl = new THREE.LineBasicMaterial({color: '#666'})
             let cubeEdges = new THREE.EdgesGeometry(geometry, 1);
             let cubeLine = new THREE.LineSegments(cubeEdges, edgesMtl);
             arr.forEach(item => {
-                for (let i = item.min.x; i < item.max.x ; i+= 4) {
+                for (let i = item.min.x; i < item.max.x; i += 4) {
                     let pal = plane.clone();
                     pal.position.set(i, 0.1, item.min.z)
                     // plane.rotateY(- Math.PI / 2); // 沿 Y 轴旋转 90°
@@ -793,30 +791,23 @@ export default {
         },
         // 获取轨道线路
         initLineData() {
-            let lineData = this.wallList.reduce((arr,cur) => {
+            let lineData = this.wallList.reduce((arr, cur) => {
                 if (cur.type === 'line') {
                     arr.push(cur)
                 }
                 return arr;
-            },[]);
+            }, []);
             if (lineData.length) {
                 lineData.forEach(item => {
                     this.linePoints.push({
-                        x:item.x,
-                        y:16,
-                        z:item.z
+                        x: item.x,
+                        y: 16,
+                        z: item.z
                     })
                 });
-                this.linePoints.push({
-                    x:lineData[0].x,
-                    y:16,
-                    z:lineData[0].z
-                })
-                if (this.linePoints.length) {
-                    /*加载沿线动画*/
-                    this.animate()
-                    this.initHoverRayCaster()
-                }
+                /*加载沿线动画*/
+                this.animate()
+                this.initHoverRayCaster()
             }
 
         },
@@ -829,8 +820,8 @@ export default {
                 odfTex: textureLoader.load('static/images/ODF.png')
             }
             cabinetGeometry = {
-                geometry:geometry,
-                texture:texture
+                geometry: geometry,
+                texture: texture
             }
         },
         // 创建机柜
@@ -841,7 +832,7 @@ export default {
             this.cubeList.forEach(item => {
                 this.cabinetNum++;
                 let cube = cabinetCube.clone();
-                let material = this.getMaterial(item,cabinetGeometry.texture);
+                let material = this.getMaterial(item, cabinetGeometry.texture);
                 cube.material = material;
                 cube.material.map.needsUpdate = true;
                 cube.position.set(item.x, 4, item.z);
@@ -857,7 +848,7 @@ export default {
                 otherGroup.add(cube);
             })
         },
-        getMaterial(item,textures) {
+        getMaterial(item, textures) {
             let color1, // 左右
                 color2, // 上下
                 bgcolor, // 贴图背景
@@ -944,8 +935,8 @@ export default {
         // 移除所有Mesh
         removeMesh() {
             return new Promise(resolve => {
-                this.dispose(scene,group)
-                this.dispose(scene,otherGroup)
+                this.dispose(scene, group)
+                this.dispose(scene, otherGroup)
                 this.objects = [];
                 this.linePoints = [];
                 this.cabinetNum = 0;
@@ -956,21 +947,21 @@ export default {
                 resolve()
             })
         },
-        dispose(parent,child){
-            if(child.children.length){
-                let arr  = child.children.filter(x=>x);
-                arr.forEach(a=>{
-                    this.dispose(child,a)
+        dispose(parent, child) {
+            if (child.children.length) {
+                let arr = child.children.filter(x => x);
+                arr.forEach(a => {
+                    this.dispose(child, a)
                 })
             }
             if (child.type !== 'Group') {
                 child.remove();
                 parent.remove(child);
-                if(child instanceof THREE.Mesh
-                    ||child instanceof THREE.Object3D
-                    ||child instanceof THREE.LineSegments
-                    ||child instanceof THREE.Line){
-                    child.geometry ?.dispose();
+                if (child instanceof THREE.Mesh
+                    || child instanceof THREE.Object3D
+                    || child instanceof THREE.LineSegments
+                    || child instanceof THREE.Line) {
+                    child.geometry?.dispose();
                     if (child.material) {
                         if (child.material.length) {
                             child.material.forEach(i => {
@@ -979,18 +970,18 @@ export default {
                         } else {
                             child.material.dispose();
                         }
-                        if(child.material.map && typeof  child.material.map !== 'function') {
+                        if (child.material.map && typeof child.material.map !== 'function') {
                             child.material.map.dispose();
                         }
 
                     }
-                }else if(child.material){
+                } else if (child.material) {
                     child.material.dispose();
                 }
 
-            }else if (child.isScene) {
+            } else if (child.isScene) {
                 child.dispose();
-            }else {
+            } else {
                 parent.remove(child)
             }
 
@@ -1038,20 +1029,20 @@ export default {
             let pointsArr = []
             vm.linePoints.forEach(item => {
                 pointsArr.push(
-                    new THREE.Vector3(item.x, item.y, item.z),
+                    new THREE.Vector3(item.x, item.y, item.z + 4),
                 )
             })
             // 通过类CatmullRomCurve3创建一个3D样条曲线
-            let curve = new THREE.CatmullRomCurve3(pointsArr);
-            let divisions = pointsArr.length * 8;
+            let curve = new THREE.CatmullRomCurve3(pointsArr, true, 'catmullrom', 0.1);
+            let divisions = Math.round(10 * pointsArr.length);
             // 样条曲线均匀分割200分，返回102个顶点坐标
             let points = curve.getPoints(divisions);
             // console.log('points', points);//控制台查看返回的顶点坐标
-            let geometryLine = new THREE.Geometry();
+            let geometryLine = new THREE.BufferGeometry();
             // 把从曲线轨迹上获得的顶点坐标赋值给几何体
-            geometryLine.vertices = points
+            geometryLine.setFromPoints(points)
             let lineMaterial = new THREE.LineBasicMaterial({
-                color: "#dbb14a"
+                color: "#12D497"
             });
             let line = new THREE.Line(geometryLine, lineMaterial);
             otherGroup.add(line)
@@ -1127,25 +1118,38 @@ export default {
         render() {
             requestAnimationFrame(this.render);
 
-            cssRender.render(scene, camera)
-            renderer.render(scene, camera);
-            //更新性能插件
-            stats.update();
-            if (this.linePoints.length) {
-                // 更新帧动画的时间
-                mixer.update(clock.getDelta());
+            let T = clock.getDelta();
+            this.timeS = this.timeS + T;
+            if (this.timeS > this.renderT) {
+                renderer && renderer.render(scene, camera); //执行渲染操作
+                cssRender && cssRender.render(scene, camera);
+                //更新性能插件
+                stats.update();
+
+                if (this.linePoints.length) {
+                    // 更新帧动画的时间
+                    mixer.update(T);
+                }
+                //renderer.render每执行一次，timeS置0
+                this.timeS = 0;
             }
+
         },
     },
-    beforeDestroy() {
+    destroyed() {
         this.closeVideo();
-        this.removeMesh();
-        scene.remove();
-        renderer.dispose();
-        renderer.forceContextLoss();
-        renderer.content = null;
-        renderer.domElement = null;
-        cancelAnimationFrame(this.render)
+        this.removeMesh().then(() => {
+            scene.remove();
+            renderer.dispose();
+            renderer.forceContextLoss();
+            renderer.content = null;
+            cssRender.content = null;
+            renderer.domElement = null;
+            cssRender.domElement = null;
+            renderer = null;
+            cssRender = null;
+            cancelAnimationFrame(this.render)
+        });
     }
 }
 </script>
