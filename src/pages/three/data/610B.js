@@ -6432,7 +6432,7 @@ export default {
         }, {
             "type": "sensor",
             "data": {
-                "type": "cabinet",
+                "type": "sensor",
                 "x": 100,
                 "z":  48,
                 "id": 421,
@@ -6450,7 +6450,7 @@ export default {
         }, {
             "type": "sensor",
             "data": {
-                "type": "cabinet",
+                "type": "sensor",
                 "x": 96,
                 "z":  48,
                 "id": 420,
@@ -6468,7 +6468,7 @@ export default {
         }, {
             "type": "sensor",
             "data": {
-                "type": "cabinet",
+                "type": "sensor",
                 "x": 92,
                 "z":  48,
                 "id": 419,
@@ -6486,7 +6486,7 @@ export default {
         }, {
             "type": "sensor",
             "data": {
-                "type": "cabinet",
+                "type": "sensor",
                 "x": 96,
                 "z":  60,
                 "id": 528,
@@ -6504,7 +6504,7 @@ export default {
         }, {
             "type": "sensor",
             "data": {
-                "type": "cabinet",
+                "type": "sensor",
                 "x": 92,
                 "z":  60,
                 "id": 527,
@@ -6522,7 +6522,7 @@ export default {
         }, {
             "type": "sensor",
             "data": {
-                "type": "cabinet",
+                "type": "sensor",
                 "x": 104,
                 "z":  80,
                 "id": 710,
@@ -6540,7 +6540,7 @@ export default {
         }, {
             "type": "sensor",
             "data": {
-                "type": "cabinet",
+                "type": "sensor",
                 "x": 100,
                 "z":  80,
                 "id": 709,
@@ -6558,7 +6558,7 @@ export default {
         }, {
             "type": "sensor",
             "data": {
-                "type": "cabinet",
+                "type": "sensor",
                 "x": 96,
                 "z":  80,
                 "id": 708,
@@ -6576,7 +6576,7 @@ export default {
         }, {
             "type": "sensor",
             "data": {
-                "type": "cabinet",
+                "type": "sensor",
                 "x": 92,
                 "z":  80,
                 "id": 707,
@@ -6594,7 +6594,7 @@ export default {
         }, {
             "type": "sensor",
             "data": {
-                "type": "cabinet",
+                "type": "sensor",
                 "x": 88,
                 "z":  80,
                 "id": 706,
@@ -6612,7 +6612,7 @@ export default {
         }, {
             "type": "sensor",
             "data": {
-                "type": "cabinet",
+                "type": "sensor",
                 "x": 84,
                 "z":  80,
                 "id": 705,
@@ -6630,7 +6630,7 @@ export default {
         }, {
             "type": "sensor",
             "data": {
-                "type": "cabinet",
+                "type": "sensor",
                 "x": 80,
                 "z":  80,
                 "id": 704,
@@ -6648,7 +6648,7 @@ export default {
         }, {
             "type": "sensor",
             "data": {
-                "type": "cabinet",
+                "type": "sensor",
                 "x": 60,
                 "z":  80,
                 "id": 699,
@@ -6666,7 +6666,7 @@ export default {
         }, {
             "type": "sensor",
             "data": {
-                "type": "cabinet",
+                "type": "sensor",
                 "x": 92,
                 "z":  96,
                 "id": 851,
@@ -6684,7 +6684,7 @@ export default {
         }, {
             "type": "sensor",
             "data": {
-                "type": "cabinet",
+                "type": "sensor",
                 "x": 88,
                 "z":  96,
                 "id": 850,
@@ -6702,7 +6702,7 @@ export default {
         }, {
             "type": "sensor",
             "data": {
-                "type": "cabinet",
+                "type": "sensor",
                 "x": 84,
                 "z":  96,
                 "id": 849,
@@ -6720,7 +6720,7 @@ export default {
         }, {
             "type": "sensor",
             "data": {
-                "type": "cabinet",
+                "type": "sensor",
                 "x": 80,
                 "z":  96,
                 "id": 848,
@@ -6738,7 +6738,7 @@ export default {
         }, {
             "type": "sensor",
             "data": {
-                "type": "cabinet",
+                "type": "sensor",
                 "x": 76,
                 "z":  96,
                 "id": 847,
@@ -6756,7 +6756,7 @@ export default {
         }, {
             "type": "sensor",
             "data": {
-                "type": "cabinet",
+                "type": "sensor",
                 "x": 48,
                 "z":  112,
                 "id": 984,
@@ -6774,7 +6774,7 @@ export default {
         }, {
             "type": "sensor",
             "data": {
-                "type": "cabinet",
+                "type": "sensor",
                 "x": 52,
                 "z":  112,
                 "id": 985,
@@ -6792,7 +6792,7 @@ export default {
         }, {
             "type": "sensor",
             "data": {
-                "type": "cabinet",
+                "type": "sensor",
                 "x": 64,
                 "z":  112,
                 "id": 988,
@@ -6810,7 +6810,7 @@ export default {
         }, {
             "type": "sensor",
             "data": {
-                "type": "cabinet",
+                "type": "sensor",
                 "x": 68,
                 "z":  112,
                 "id": 989,
@@ -6828,7 +6828,7 @@ export default {
         }, {
             "type": "sensor",
             "data": {
-                "type": "cabinet",
+                "type": "sensor",
                 "x": 72,
                 "z":  112,
                 "id": 990,
@@ -6846,7 +6846,7 @@ export default {
         }, {
             "type": "sensor",
             "data": {
-                "type": "cabinet",
+                "type": "sensor",
                 "x": 76,
                 "z":  112,
                 "id": 991,
@@ -6864,7 +6864,7 @@ export default {
         }, {
             "type": "sensor",
             "data": {
-                "type": "cabinet",
+                "type": "sensor",
                 "x": 80,
                 "z":  112,
                 "id": 992,
@@ -6882,7 +6882,7 @@ export default {
         }, {
             "type": "sensor",
             "data": {
-                "type": "cabinet",
+                "type": "sensor",
                 "x": 84,
                 "z":  112,
                 "id": 993,
@@ -6900,7 +6900,7 @@ export default {
         }, {
             "type": "sensor",
             "data": {
-                "type": "cabinet",
+                "type": "sensor",
                 "x": 88,
                 "z":  112,
                 "id": 994,
@@ -6918,7 +6918,7 @@ export default {
         }, {
             "type": "sensor",
             "data": {
-                "type": "cabinet",
+                "type": "sensor",
                 "x": 92,
                 "z":  112,
                 "id": 995,

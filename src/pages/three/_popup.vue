@@ -20,7 +20,7 @@
                  @click="selectChange('sensor','sensor')">
                 <i class="w-50p h-100p iconfont ali-iconchuanganqi"></i>
             </div>
-            <div class="sense-item"
+            <div class="sense-item" :class="{active:currentSelect === 'delete'}"
                  @click="selectChange('delete')">
                 <i class="w-50p h-100p t-red iconfont ali-iconshanchu"></i>
             </div>

@@ -51,7 +51,7 @@
                         <el-dropdown-item command="camera-摄像头">摄像头</el-dropdown-item>
                         <el-dropdown-item command="sensor-传感器">传感器</el-dropdown-item>
                         <el-dropdown-item command="ground-地板名称">地板名称</el-dropdown-item>
-                        <el-dropdown-item command="all-所有数据" divided>全部</el-dropdown-item>
+                        <el-dropdown-item command="all-数据" divided>全部</el-dropdown-item>
                     </el-dropdown-menu>
                 </el-dropdown>
             </span>
@@ -528,7 +528,9 @@ export default {
                             item.senseId = '';
                             item.dataId = '';
                         } else {
-                            item.type = data.data.type;
+                            if (data.data.type === 'camera') {
+                                item.type = 'camera';
+                            }
                             item.senseId = data.data.senseId;
                             item.dataId = data.data.dataId;
                             item.dataName = data.data.dataName;
@@ -596,8 +598,7 @@ export default {
                             return item.type !== res[0]
                         })
                         this.roomList.forEach(item => {
-                            console.log(item.type)
-                            if (item.type === res[0]) {
+                            if (item.type === res[0] || item.senseId === res[0]) {
                                 item.senseId = '';
                                 item.dataId = '';
                             }
@@ -649,7 +650,6 @@ export default {
             this.groundData = this.roomList.filter((item) => {
                 return item.name !== '';
             });
-
             this.$parent.close({
                 cabinetData: this.selected,
                 wallData: this.wallData,
@@ -657,6 +657,7 @@ export default {
                 groundData: this.groundData,
                 centerData: this.centerData,
             });
+
         }
     }
 }
