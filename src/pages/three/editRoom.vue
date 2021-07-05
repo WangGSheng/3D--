@@ -466,9 +466,9 @@ export default {
             this.actWall = this.actWall.filter((source) => {
                 return id !== source;
             });
-            // this.wallData = this.wallData.filter((source) => {
-            //     return id !== source.id;
-            // });
+            this.wallData = this.wallData.filter((source) => {
+                return id !== source.id;
+            });
         },
         /*改变机柜柜门朝向*/
         changePos(item, pos) {
