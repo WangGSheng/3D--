@@ -20,7 +20,7 @@
                 <el-radio-button label="line">编辑轨道</el-radio-button>
             </el-radio-group>
             <el-radio-group v-model="wallType" class="m-l-20"
-                            :disabled="editType !== 'wall' && editType !== 'door'&& editType !== 'line'">
+                            :disabled="!['wall','door','line'].includes(editType)">
                 <el-radio label="horizontal">—</el-radio>
                 <el-radio label="vertical">|</el-radio>
             </el-radio-group>

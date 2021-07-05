@@ -6160,7 +6160,23 @@ export default {
             "name": ""
         }
     ],
-    "groundData": [],
+    "groundData": [{
+        "type": "cabinet",
+        "x": 28,
+        "z": 112,
+        "id": 979,
+        "pos": [
+            "head"
+        ],
+        "leftBorder": false,
+        "topBorder": false,
+        "topDoor": false,
+        "leftDoor": false,
+        "senseId": "",
+        "dataId": "",
+        "num": "",
+        "name": "测试入口"
+    },],
     "centerData": {
         dataId: "",
         id: 738,

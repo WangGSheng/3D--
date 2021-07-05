@@ -108,7 +108,7 @@ export default {
             cabinetNum: 0,
             cameraNum: 0,
             sensorNum: 0,
-            FPS: 30,
+            FPS: 40,
             renderT: 0,
             timeS: 0
         }
@@ -125,9 +125,9 @@ export default {
         // 初始化外部模型加载器
         this.initLoader();
 
+        this.renderT = 1 / this.FPS;
     },
     mounted() {
-        this.renderT = 1 / this.FPS;
 
         // 加载CSS2DRenderer
         this.initCssRender();
@@ -200,6 +200,7 @@ export default {
         // 创建场景
         initScene() {
             scene = new THREE.Scene();
+            // 迷雾
             scene.fog = new THREE.Fog("#0f1e3e", 20, 700);
             scene.position.set(0, 0, 0);
 
@@ -217,6 +218,7 @@ export default {
             scene.add(group);
             scene.add(otherGroup);
         },
+        // 更新中心点
         initCenter(item) {
             spotLight.position.set(item.x, 150, item.z);
             controls.target = new THREE.Vector3(item.x, 0, item.z);
@@ -398,10 +400,10 @@ export default {
                 this.createPlane('ground');
 
 
+                this.render();
                 setTimeout(() => {
                     this.loading = false
                     this.showStatusUi = true;
-                    this.render();
                 }, 1000)
             });
         },
@@ -771,9 +773,9 @@ export default {
                     if (x === this.groundDataList[j].x && z === this.groundDataList[j].z) {
                         let width = 4, height = 4;
                         let geometry = new THREE.PlaneBufferGeometry(width, height);
-                        let textMaterial = new THREE.MeshPhongMaterial(
+                        let textMaterial = new THREE.MeshBasicMaterial(
                             {
-                                map: new THREE.CanvasTexture(this.getTextCanvas(this.groundDataList[j].name, "#182245", '#fff')),
+                                map: new THREE.CanvasTexture(this.getTextCanvas(this.groundDataList[j].name, "rgba(29,39,80,1)", '#fff')),
                                 side: THREE.DoubleSide,
                             }
                         );
@@ -819,9 +821,32 @@ export default {
                 kontiaoTex: textureLoader.load('static/images/空调.png'),
                 odfTex: textureLoader.load('static/images/ODF.png')
             }
+            let leftAndRight1 = new THREE.MeshPhongMaterial({
+                name: 'leftAndRightMaterial',
+                color: '#222',
+                specular: 0x4488ee,
+                shininess: shininessNum
+            });
+            let leftAndRight2 = new THREE.MeshPhongMaterial({
+                name: 'leftAndRightMaterial',
+                color: '#eee',
+                specular: 0x4488ee,
+                shininess: shininessNum
+            });
+            let leftAndRight3 = new THREE.MeshPhongMaterial({
+                name: 'leftAndRightMaterial',
+                color: '#ddd',
+                specular: 0x4488ee,
+                shininess: shininessNum
+            });
+            let down = new THREE.MeshPhongMaterial({color: '#000'})// 下
             cabinetGeometry = {
                 geometry: geometry,
-                texture: texture
+                texture: texture,
+                leftAndRight1: leftAndRight1,
+                leftAndRight2: leftAndRight2,
+                leftAndRight3: leftAndRight3,
+                down: down,
             }
         },
         // 创建机柜
@@ -849,28 +874,28 @@ export default {
             })
         },
         getMaterial(item, textures) {
-            let color1, // 左右
-                color2, // 上下
-                bgcolor, // 贴图背景
-                textcolor, // 字体颜色
+            let leftAndRightMaterial, // 左右
+                color, // 上下
+                bgColor, // 贴图背景
+                textColor, // 字体颜色
                 texture // 材质
             if (item.type === 'cabinet') {
-                color1 = '#222';
-                color2 = '#111';
-                bgcolor = '#333';
-                textcolor = '#fff';
+                leftAndRightMaterial = cabinetGeometry.leftAndRight1;
+                color = '#111';
+                bgColor = '#333';
+                textColor = '#fff';
                 texture = textures.fuwuqiTex;
             } else if (item.type === 'kt') {
-                color1 = '#eee';
-                color2 = '#ddd';
-                bgcolor = '#fff';
-                textcolor = '#000';
+                leftAndRightMaterial = cabinetGeometry.leftAndRight2;
+                color = '#ddd';
+                bgColor = '#fff';
+                textColor = '#000';
                 texture = textures.kontiaoTex;
             } else {
-                color1 = '#ddd';
-                color2 = '#999';
-                bgcolor = '#ddd';
-                textcolor = '#000';
+                leftAndRightMaterial = cabinetGeometry.leftAndRight3;
+                color = '#999';
+                bgColor = '#ddd';
+                textColor = '#000';
                 texture = textures.odfTex;
             }
             //导入材质
@@ -878,34 +903,27 @@ export default {
             texture.needsUpdate = true;
             //直接使用材质数组来构建物体，数组里的材质分别对应物体的右、左、上、下、前、后
             let material = [
-                new THREE.MeshPhongMaterial({
-                    color: color1,
-                    specular: 0x4488ee,
-                    shininess: shininessNum
-                }),// 右
-                new THREE.MeshPhongMaterial({
-                    color: color1,
-                    specular: 0x4488ee,
-                    shininess: shininessNum
-                }),// 左
+                leftAndRightMaterial,// 右
+                leftAndRightMaterial,// 左
                 new THREE.MeshPhongMaterial(
-                    {map: new THREE.CanvasTexture(this.getTextCanvas(item.num, bgcolor, textcolor))}
+                    {map: new THREE.CanvasTexture(this.getTextCanvas(item.num, bgColor, textColor))}
                 ),// 上
-                new THREE.MeshPhongMaterial({color: '#000'}),// 下
+                cabinetGeometry.down,// 下
                 new THREE.MeshPhongMaterial(
                     item.pos.includes('head') ||
                     item.pos.includes('left') ||
                     item.pos.includes('right')
                         ? {map: texture} : {
-                            color: color2,
+                            color: color,
                             specular: 0x4488ee,
                             shininess: shininessNum
                         }
                 ),                                                       // 前
                 new THREE.MeshPhongMaterial(
-                    item.pos.includes('back') || (item.pos.includes('left') && item.pos.includes('right'))
+                    item.pos.includes('back') ||
+                    (item.pos.includes('left') && item.pos.includes('right'))
                         ? {map: texture} : {
-                            color: color2,
+                            color: color,
                             specular: 0xeeeeee,
                             shininess: shininessNum
                         }
@@ -921,7 +939,7 @@ export default {
             canvas.height = height;
             let ctx = canvas.getContext('2d', {
                 antialias: true,
-                depth: true
+                depth: true,
             });
             ctx.fillStyle = bgColor ? bgColor : 'rgba(255,255,255,0)'; // 背景颜色
             ctx.fillRect(0, 0, width, height);

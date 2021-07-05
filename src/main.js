@@ -50,7 +50,7 @@ window.API_URL = 'http://203.6.239.8:7070/'
 // 全局开关
 Vue.config.productionTip = false // vue 在启动时生成生产提示
 Vue.config.addFormCache = false // addFormCache 新增表单页面数据自动缓存
-Vue.config.drawerEsc = true //抽屉页面按下Esc键关闭, 默认为开启状态
+Vue.config.drawerEsc = false //抽屉页面按下Esc键关闭, 默认为开启状态
 new Vue({
     el: '#app',
     router,
