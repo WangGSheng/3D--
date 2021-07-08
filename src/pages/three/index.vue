@@ -627,11 +627,10 @@ export default {
                             arr.push(item)
                         }
                     })
-                    result.push(arr)
+                    result.push(arr);
                 }
-
                 for (let i = 0; i < result.length; i++) {
-                    if (i === 0 && result.length > 1 && result[i].length === 1) {
+                    if (i === 0 && result.length > 1 && result[i].length < 2) {
                         result[i].push({
                             x: this.getDistance(result[i + 1]).max.x,
                             z: result[i][0].z
@@ -659,6 +658,7 @@ export default {
                     maxX: obj.maxX,
                     minX: obj.minX - 4,
                 }
+
 
                 this.createSelfGround(result)
                 if (this.groundDataList.length) this.groundText(res)
@@ -711,7 +711,7 @@ export default {
                 map.repeat.set(250, 250);
                 map.encoding = THREE.sRGBEncoding;
                 floorMat.map = map;
-                floorMat.needsUpdate = true;
+                // floorMat.needsUpdate = true;
                 floorMat.side = THREE.DoubleSide;
             });
             let width = window.innerWidth, height = window.innerWidth;
@@ -853,13 +853,12 @@ export default {
         createCabinet() {
 
             let cabinetCube = new THREE.Mesh(cabinetGeometry.geometry);
-
             this.cubeList.forEach(item => {
                 this.cabinetNum++;
                 let cube = cabinetCube.clone();
                 let material = this.getMaterial(item, cabinetGeometry.texture);
                 cube.material = material;
-                cube.material.map.needsUpdate = true;
+                // cube.material.map.needsUpdate = true;
                 cube.position.set(item.x, 4, item.z);
 
 
@@ -900,7 +899,7 @@ export default {
             }
             //导入材质
             texture.matrixAutoUpdate = false;
-            texture.needsUpdate = true;
+            // texture.needsUpdate = true;
             //直接使用材质数组来构建物体，数组里的材质分别对应物体的右、左、上、下、前、后
             let material = [
                 leftAndRightMaterial,// 右
@@ -941,7 +940,7 @@ export default {
                 antialias: true,
                 depth: true,
             });
-            ctx.fillStyle = bgColor ? bgColor : 'rgba(255,255,255,0)'; // 背景颜色
+            ctx.fillStyle = bgColor ? bgColor : '#ddd'; // 背景颜色
             ctx.fillRect(0, 0, width, height);
             ctx.font = 50 + 'px " bold';
             ctx.fillStyle = textColor; // 字体颜色

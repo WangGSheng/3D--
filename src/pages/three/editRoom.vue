@@ -192,6 +192,7 @@ export default {
         })
     },
     beforeMount() {
+        this.centerData = this.$parent.params.centerData;
         this.initDom();
         this.initWallData();
         this.initCabinetPos();
@@ -220,7 +221,7 @@ export default {
                 }
 
                 this.roomList.push({
-                    type: 'cabinet',
+                    type: '',
                     x: x,
                     z: z,
                     id: i,
@@ -649,6 +650,10 @@ export default {
 
             this.groundData = this.roomList.filter((item) => {
                 return item.name !== '';
+            });
+
+            this.selected = this.roomList.filter((item) => {
+                return ['cabinet','kt','odf'].includes(item.type);
             });
             this.$parent.close({
                 cabinetData: this.selected,
