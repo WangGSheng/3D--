@@ -58,7 +58,7 @@
         </div>
         <!--编辑网格-->
         <div class="grid-box auto-center"
-             :style="`grid-template-columns:repeat(${widthNum}, 40px);grid-template-rows: repeat(${heightNum}, 40px)`">
+             :style="`grid-template-columns:repeat(${widthNum}, 1fr);grid-template-rows: repeat(${heightNum}, ${heightPX}px)`">
             <template v-for="item in roomList">
                 <div
                     :class="{'grid-item':true,
@@ -146,6 +146,7 @@ export default {
             wallType: "horizontal",
             widthNum: 36,
             heightNum: 50,
+            heightPX: 0,
             editType: "cabinet",
             editTypeOption: [
                 "cabinet",
@@ -200,12 +201,15 @@ export default {
         this.initGroundData();
     },
     mounted() {
+        this.$nextTick(() => {
+            this.heightPX = Math.floor((this.$el.clientWidth - 40) / this.widthNum)
+            this.loading = false;
+        })
+
         setTimeout(() => {
             $('#help-btn').trigger('click')
         },500)
-        this.$nextTick(() => {
-            this.loading = false;
-        })
+
     },
     methods: {
         /*初始化网格数据，固定宽高*/
@@ -652,9 +656,6 @@ export default {
                 return item.name !== '';
             });
 
-            this.selected = this.roomList.filter((item) => {
-                return ['cabinet','kt','odf'].includes(item.type);
-            });
             this.$parent.close({
                 cabinetData: this.selected,
                 wallData: this.wallData,

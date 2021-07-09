@@ -46,6 +46,7 @@ let group = null;
 let otherGroup = null;
 // 相机
 let camera = null;
+let rotateX = 0;
 // 渲染器
 let renderer = null;
 // 灯光
@@ -80,9 +81,9 @@ let controls = null;// 鼠标控制器
 let textureLoader = null;// 材质加载器
 let cssRender = null;// 自定义css渲染器
 let GLTFLoader = null;// 外部模型加载器 .GLTF，.GLB
-let cameraObj = null;
-let sensorObj = null;
-let emptyMesh = null;
+let cameraObj = null;// 摄像头模型
+let sensorObj = null;// 传感器模型
+let emptyMesh = null;// 空白Mesh
 let beforeSelected = null;
 let videoVm = null;// 用以存储弹窗实例，用以销毁视频播放
 let videoComponent = null;
@@ -1033,13 +1034,12 @@ export default {
             mesh.add(moonLabel)
 
             // 添加一个透明的Mesh 将模型添加进去，用以点击
-            let geometry = new THREE.BoxBufferGeometry(4, 4, 4);
-            let material = new THREE.MeshBasicMaterial({color: 0xffffff});
-            material.transparent = true;
-            material.opacity = 0;
-            other = new THREE.Mesh(geometry, material);
+            // let geometry = new THREE.BoxBufferGeometry(4, 4, 4);
+            // let material = new THREE.MeshBasicMaterial({color: 0xffffff});
+            // material.transparent = true;
+            // material.opacity = 0;
+            other = emptyMesh.clone();
             other.add(mesh)
-            other.position.set(10, 15, 20)
             group.add(other);
 
 
