@@ -8,7 +8,7 @@
              element-loading-text="拼命绘制中"
              element-loading-spinner="el-icon-loading"
              element-loading-background="rgba(0, 0, 0, 0.8)">
-        <div ref="threeDom" class="w-100p h-100p"></div>
+        <div ref="threeDom" class="w-100p h-100p" style="overflow: hidden"></div>
 
         <div class="control" title="编辑" v-show="false">
             <i class="icon edit"></i>
@@ -38,11 +38,19 @@
 
 <script>
 /*eslint-disable*/
+
+// 鼠标控件 旋转缩放
+import OrbitControls from 'three-orbitcontrols';
+import {CSS2DRenderer, CSS2DObject} from 'three/examples/jsm/renderers/CSS2DRenderer';
+import room3D from './data/610B.js';
+import Vue from 'vue';
+import mapPopup from '@/pages/videoPlayer/_videoPopup.vue';
+
+
 // 场景
 let scene = null;
 // Mesh 集合
 let group = null;
-
 let otherGroup = null;
 // 相机
 let camera = null;
@@ -70,13 +78,6 @@ let mixer = null;
 let AnimationAction = null;
 // 鼠标拖拽
 // let dragControls = null;
-// 鼠标控件 旋转缩放
-import OrbitControls from 'three-orbitcontrols'
-import {CSS2DRenderer, CSS2DObject} from 'three/examples/jsm/renderers/CSS2DRenderer'
-import room3D from './data/610B.js'
-import Vue from 'vue'
-import mapPopup from '@/pages/videoPlayer/_videoPopup.vue'
-
 let controls = null;// 鼠标控制器
 let textureLoader = null;// 材质加载器
 let cssRender = null;// 自定义css渲染器
@@ -129,7 +130,6 @@ export default {
         this.renderT = 1 / this.FPS;
     },
     mounted() {
-
         // 加载CSS2DRenderer
         this.initCssRender();
 
@@ -414,6 +414,10 @@ export default {
             cssRender.setSize(window.innerWidth, window.innerHeight);
             cssRender.domElement.style.position = 'absolute';
             cssRender.domElement.style.top = 0;
+            cssRender.domElement.style.left = 0;
+            cssRender.domElement.style.right = 0;
+            cssRender.domElement.style.bottom = 0;
+            cssRender.domElement.style.overflow = 'hidden';
             this.$el.parentElement.appendChild(cssRender.domElement);
         },
         initMyDom() {
@@ -427,8 +431,8 @@ export default {
             this.$el.parentElement.appendChild(control);
 
             // 统计面板
-            let statusUi = this.$el.querySelector('.status-ui');
-            this.$el.parentElement.appendChild(statusUi);
+            // let statusUi = this.$el.querySelector('.status-ui');
+            // this.$el.parentElement.appendChild(statusUi);
         },
         getEmptyMesh() {
             // 添加一个透明的Mesh 将模型添加进去
@@ -774,10 +778,12 @@ export default {
                     if (x === this.groundDataList[j].x && z === this.groundDataList[j].z) {
                         let width = 4, height = 4;
                         let geometry = new THREE.PlaneBufferGeometry(width, height);
-                        let textMaterial = new THREE.MeshBasicMaterial(
+                        let textMaterial = new THREE.MeshPhongMaterial(
                             {
-                                map: new THREE.CanvasTexture(this.getTextCanvas(this.groundDataList[j].name, "rgba(29,39,80,1)", '#fff')),
+                                map: new THREE.CanvasTexture(this.getTextCanvas(this.groundDataList[j].name, "#555", '#000')),
                                 side: THREE.DoubleSide,
+                                specular: "#8D93AB",
+                                shininess: 2
                             }
                         );
                         let plane = new THREE.Mesh(geometry, textMaterial);
@@ -906,7 +912,10 @@ export default {
                 leftAndRightMaterial,// 右
                 leftAndRightMaterial,// 左
                 new THREE.MeshPhongMaterial(
-                    {map: new THREE.CanvasTexture(this.getTextCanvas(item.num, bgColor, textColor))}
+                    item.num ?
+                        {map: new THREE.CanvasTexture(this.getTextCanvas(item.num, bgColor, textColor))}
+                        :
+                        {color: bgColor, specular: bgColor, shininess: shininessNum}
                 ),// 上
                 cabinetGeometry.down,// 下
                 new THREE.MeshPhongMaterial(

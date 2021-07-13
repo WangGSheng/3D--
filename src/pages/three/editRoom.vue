@@ -208,7 +208,7 @@ export default {
 
         setTimeout(() => {
             $('#help-btn').trigger('click')
-        },500)
+        }, 500)
 
     },
     methods: {
@@ -348,21 +348,20 @@ export default {
         /*网格选中事件*/
         select(item) {
             item.type = this.editType;
-            if (this.editType === 'kt') {
-                this.changeSelect(item)
-            } else if (this.editType === 'odf') {
-                this.changeSelect(item)
-            } else if (this.editType === 'cabinet') {
-                this.changeSelect(item)
-            } else if (this.editType === 'door') {
-                this.changeDoorOrWall(item)
-            } else {
-                this.changeDoorOrWall(item)
+            switch (this.editType) {
+                case "cabinet":
+                case "kt":
+                case "odf":
+                    this.changeSelect(item);
+                    break;
+                default:
+                    this.changeDoorOrWall(item);
+                    break;
             }
         },
         changeDoorOrWall(item) {
-            if (this.actWall.length && this.actWall.includes(item.id)) {
-                if (this.editType === 'wall') {
+            switch (this.editType) {
+                case "wall":
                     if (this.wallType === 'vertical') {
                         item.leftBorder = !item.leftBorder;
                         item.leftDoor = false;
@@ -372,8 +371,8 @@ export default {
                         item.topDoor = false;
                         item.topLine = false;
                     }
-
-                } else if (this.editType === 'door') {
+                    break;
+                case "door":
                     if (this.wallType === 'vertical') {
                         item.leftDoor = !item.leftDoor;
                         item.leftBorder = false;
@@ -383,7 +382,8 @@ export default {
                         item.topBorder = false;
                         item.topLine = false;
                     }
-                } else {
+                    break;
+                default:
                     if (this.wallType === 'vertical') {
                         item.leftLine = !item.leftLine;
                         item.leftDoor = false;
@@ -393,7 +393,8 @@ export default {
                         item.topBorder = false;
                         item.topDoor = false;
                     }
-                }
+            }
+            if (this.actWall.length && this.actWall.includes(item.id)) {
                 for (let i = 0; i < this.wallData.length; i++) {
                     if (this.wallData[i].id === item.id) {
                         this.wallData[i] = item;
@@ -407,42 +408,9 @@ export default {
                     this.deleteData(item.id);
                 }
             } else {
-                if (this.wallType === 'horizontal') {
-                    if (this.editType === 'wall') {
-                        item.topBorder = true;
-                        item.topDoor = false;
-                        item.topLine = false;
-                    } else if (this.editType === 'door') {
-                        item.topDoor = true;
-                        item.topBorder = false;
-                        item.topLine = false;
-                    } else {
-                        item.topLine = true;
-                        item.topBorder = false;
-                        item.topDoor = false;
-                    }
-
-                } else {
-                    if (this.editType === 'wall') {
-                        item.leftBorder = true;
-                        item.leftDoor = false;
-                        item.leftLine = false;
-                    } else if (this.editType === 'door') {
-                        item.leftDoor = true;
-                        item.leftBorder = false;
-                        item.leftLine = false;
-                    } else {
-                        item.leftLine = true;
-                        item.leftDoor = false;
-                        item.leftBorder = false;
-                    }
-                }
-
                 this.wallData.push(item)
                 this.actWall.push(item.id);
             }
-
-            // this.wallData.push(item)
 
         },
         changeSelect(item) {
@@ -460,10 +428,13 @@ export default {
         },
         /*墙体方向切换方法*/
         changeWallType() {
-            if (this.editType !== 'cabinet' && this.editType !== 'kt'
-                && this.editType !== 'odf') {
-                this.wallType === 'horizontal' ?
-                    this.wallType = 'vertical' : this.wallType = 'horizontal';
+            switch (this.editType) {
+                case "door":
+                case "wall":
+                case "line":
+                    this.wallType === 'horizontal' ?
+                        this.wallType = 'vertical' : this.wallType = 'horizontal';
+                    break;
             }
         },
         /*数据过滤*/
@@ -488,7 +459,6 @@ export default {
                     }
                 }
             })
-
         },
         /*选择摄像头或传感器*/
         selectSense(item) {
@@ -521,34 +491,40 @@ export default {
                     padding: '50px 0 0 0'
                 },
                 callback: (data) => {
-                    if (data === 'setCenter') {
-                        vm.initCenter();
-                        item.isCenter = true;
-                        vm.centerData = item;
-                    } else if (data?.data.dataId) {
-                        if (data.data.type === 'delete') {
-                            vm.senseData = vm.senseData.filter((source) => {
-                                return item.id !== source.data.id;
-                            });
-                            item.senseId = '';
-                            item.dataId = '';
-                        } else {
-                            if (data.data.type === 'camera') {
-                                item.type = 'camera';
+                    if (data && data !== 'setCenter') {
+                        if (data.data.dataId) {
+                            if (data.data.type === 'delete') {
+                                vm.senseData = vm.senseData.filter((source) => {
+                                    return item.id !== source.data.id;
+                                });
+                                item.senseId = '';
+                                item.dataId = '';
+                            } else {
+                                if (data.data.type === 'camera') {
+                                    item.type = 'camera';
+                                }
+                                item.senseId = data.data.senseId;
+                                item.dataId = data.data.dataId;
+                                item.dataName = data.data.dataName;
+                                vm.senseData.push({
+                                    type: data.data.type,
+                                    data: item
+                                })
                             }
-                            item.senseId = data.data.senseId;
-                            item.dataId = data.data.dataId;
-                            item.dataName = data.data.dataName;
-                            vm.senseData.push({
-                                type: data.data.type,
-                                data: item
-                            })
+                        }else if (data.name) {
+                            item.name = data.name;
+                        } else if (data.oldName && !data.name) {
+                            item.name = '';
                         }
-                    } else if (data?.name) {
-                        item.name = data.name;
-                    } else if (data?.oldName && !data?.name) {
-                        item.name = '';
+
+                    } else {
+                        if (data) {
+                            vm.initCenter();
+                            item.isCenter = true;
+                            vm.centerData = item;
+                        }
                     }
+
                     vm.showMark = false;
                 }
             })
@@ -651,11 +627,9 @@ export default {
             }
         },
         submit() {
-
-            this.groundData = this.roomList.filter((item) => {
-                return item.name !== '';
-            });
-
+            // this.groundData = this.roomList.filter((item) => {
+            //     return item.name !== '';
+            // });
             this.$parent.close({
                 cabinetData: this.selected,
                 wallData: this.wallData,
