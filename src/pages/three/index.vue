@@ -110,7 +110,7 @@ export default {
             cabinetNum: 0,
             cameraNum: 0,
             sensorNum: 0,
-            FPS: 40,
+            FPS: 80,
             renderT: 0,
             timeS: 0
         }
@@ -257,12 +257,13 @@ export default {
             renderer.setClearColor('#0f1e3e', 1);// 设置渲染颜色（背景底色）
             renderer.setSize(window.innerWidth, window.innerHeight);// 渲染面大小（在二维平面上的窗口大小）
             renderer.setPixelRatio(window.devicePixelRatio); //设备像素比 可以清晰物体
-            renderer.shadowMap.enabled = true;
-            renderer.shadowMapType = THREE.PCFSoftShadowMap;
+            renderer.shadowMap.enabled = true; // 接受阴影
+            renderer.shadowMapType = THREE.PCFSoftShadowMap; // 阴影类型
             this.$nextTick(() => {
                 this.$refs.threeDom.appendChild(renderer.domElement);
             })
         },
+        // 性能检测
         initStats() {
             stats = new Stats();
             this.$el.parentElement.appendChild(stats.dom);
@@ -356,8 +357,8 @@ export default {
                     cameraObj = obj.scene;
                     GLTFLoader.load('static/three/model/温湿度/scene.gltf', function (obj) {
                             sensorObj = obj.scene;
-                            // 本地数据
-                            vm.initData(room3D);
+                            // 本地数据 room3D
+                            vm.initData();
                         }, undefined,
                         function (error) {
                             console.error(error)
@@ -444,6 +445,7 @@ export default {
         },
         // 创建各模型
         createSense() {
+            /*弹框dom*/
             const popupDiv = document.getElementsByClassName('model-popup')[0].cloneNode(true);
             popupDiv.style.overflow = 'hidden';
             popupDiv.style.width = '0px';
@@ -482,7 +484,7 @@ export default {
 
             model.isCustomer = true
             let scale = 1;
-            model.scale.set(scale, scale, scale) // scale here
+            model.scale.set(scale, scale, scale) // 缩放
             model.name = item.dataName;
             model.userData.dataId = item.dataId;
             // 给模型定制弹窗
@@ -625,9 +627,11 @@ export default {
                 let obj = this.getMinAndMax(this.wallList);
 
                 let result = []
+                /*以z轴为主轴，往x轴方向绘制*/
                 for (let i = obj.minZ; i < obj.maxZ; i += 4) {
                     let arr = [];
                     this.wallList.forEach(item => {
+                        /*拿到所有平行于z轴的墙数据*/
                         if (item.z === i && (!item.topBorder || (item.topBorder && item.leftBorder))) {
                             arr.push(item)
                         }
@@ -635,15 +639,15 @@ export default {
                     result.push(arr);
                 }
                 for (let i = 0; i < result.length; i++) {
-                    if (i === 0 && result.length > 1 && result[i].length < 2) {
+                    if (i === 0 && result.length > 1 && result[i].length < 2) {// 第一条数据如果只有一条 就取后一条数据补全
                         result[i].push({
-                            x: this.getDistance(result[i + 1]).max.x,
+                            x: this.getDistance(result[i + 1]).max.x,      //  得到同z轴的最大最小x
                             z: result[i][0].z
                         }, {
                             x: this.getDistance(result[i + 1]).min.x,
                             z: result[i][0].z
                         })
-                    } else if (i > 0 && result[i].length === 1) {
+                    } else if (i > 0 && result[i].length === 1) {// 如果当前x方向只有一条数据 就取上一条数据的x
                         result[i].push({
                             x: result[i - 1].max.x,
                             z: result[i][0].z
@@ -670,6 +674,7 @@ export default {
 
             }
         },
+        /*获取x,z的最大最小值*/
         getMinAndMax(arr) {
             let maxZ = Math.max.apply(Math, arr.map(function (o) {
                 return o.z
@@ -685,6 +690,7 @@ export default {
             })) // 最小 X 值
             return {maxX: maxX, minX: minX, maxZ: maxZ, minZ: minZ}
         },
+        /*将地板数据按照x排序*/
         sortArr(arr, sortOrder) {
             const handle = (prop) => {
                 return (a, b) => {
@@ -708,6 +714,7 @@ export default {
                 metalness: 0.2,
                 bumpScale: 0.0005,
             });
+            // 地板贴图
             textureLoader.load("static/images/地板2.jpg", function (map) {
 
                 map.wrapS = THREE.RepeatWrapping;
@@ -728,6 +735,7 @@ export default {
             plane.receiveShadow = true; // 接受阴影
             scene.add(plane);
         },
+        // 生产围墙区域内的地板
         createSelfGround(arr) {
             let width = 4, height = 4;
             let geometry = new THREE.PlaneBufferGeometry(width, height);
@@ -753,7 +761,7 @@ export default {
                     // plane.rotateY(- Math.PI / 2); // 沿 Y 轴旋转 90°
                     pal.rotateX(-Math.PI / 2); // 沿 X 轴旋转 90°
                     pal.receiveShadow = true; // 接受阴影
-                    let cubeLines = cubeLine.clone();
+                    let cubeLines = cubeLine.clone(); // 描边
                     pal.add(cubeLines);
                     otherGroup.add(pal);
                 }
@@ -820,6 +828,7 @@ export default {
             }
 
         },
+        // 添加机柜
         initCabinetGeometry() {
             //添加长方体
             let geometry = new THREE.BoxBufferGeometry(3.7, 8, 3);
@@ -1060,8 +1069,7 @@ export default {
             })
             // 通过类CatmullRomCurve3创建一个3D样条曲线
             let curve = new THREE.CatmullRomCurve3(pointsArr, true, 'catmullrom', 0.1);
-            let divisions = Math.round(10 * pointsArr.length);
-            // 样条曲线均匀分割200分，返回102个顶点坐标
+            let divisions = Math.round(10 * pointsArr.length); // 样条曲线均匀分割200分，返回102个顶点坐标
             let points = curve.getPoints(divisions);
             // console.log('points', points);//控制台查看返回的顶点坐标
             let geometryLine = new THREE.BufferGeometry();
@@ -1097,6 +1105,7 @@ export default {
             AnimationAction.timeScale = 10;
             AnimationAction.play();
         },
+        // 鼠标经过事件
         initHoverRayCaster() {
             //监听全局点击事件,通过ray检测选中哪一个object
             cssRender.domElement.addEventListener("mousemove", (event) => {
