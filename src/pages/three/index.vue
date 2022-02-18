@@ -158,6 +158,7 @@ export default {
             let height = window.innerHeight;
             renderer.setSize(width, height);
             camera.aspect = width / height;
+            // 更新摄像机投影矩阵。在任何参数被改变以后必须被调用。
             camera.updateProjectionMatrix();
             vm.render()
         })
@@ -277,6 +278,7 @@ export default {
         // },
         // 初始化点击事件
         initRayCaster() {
+            /*一根射线，通过碰撞获取物体*/
             rayCaster = new THREE.Raycaster();
             mouse = new THREE.Vector2();
             //监听全局点击事件,通过ray检测选中哪一个object
@@ -341,6 +343,7 @@ export default {
                 oldDom.lastElementChild.remove();
             }
         },
+        /*关闭打开弹框*/
         openOrClose(dom) {
             dom.style.fontSize = dom.style.fontSize === '0px' ? '16px' : '0px';
             dom.style.overflow = dom.style.overflow === 'hidden' ? 'unset' : 'hidden';
@@ -357,8 +360,8 @@ export default {
                     cameraObj = obj.scene;
                     GLTFLoader.load('static/three/model/温湿度/scene.gltf', function (obj) {
                             sensorObj = obj.scene;
-                            // 本地数据 room3D
-                            vm.initData();
+                            // 本地数据
+                            vm.initData(room3D);
                         }, undefined,
                         function (error) {
                             console.error(error)
@@ -374,6 +377,7 @@ export default {
             if (!item) {
                 return;
             }
+            /*先移除所有的网格物体*/
             this.removeMesh().then(() => {
                 this.initGroup();
 
@@ -435,6 +439,7 @@ export default {
             // let statusUi = this.$el.querySelector('.status-ui');
             // this.$el.parentElement.appendChild(statusUi);
         },
+        /*外部模型不太好做事件绑定，用一个透明的Mesh包裹来做*/
         getEmptyMesh() {
             // 添加一个透明的Mesh 将模型添加进去
             let geometry = new THREE.BoxBufferGeometry(3, 3, 3);
@@ -570,6 +575,7 @@ export default {
             }
             otherGroup.add(plane);
         },
+        /*初始化墙体贴图*/
         initWallMaterial() {
             let texture = textureLoader.load('static/images/door.png');
 
@@ -627,6 +633,7 @@ export default {
                 let obj = this.getMinAndMax(this.wallList);
 
                 let result = []
+                /*组装墙内地板区域数据*/
                 /*以z轴为主轴，往x轴方向绘制*/
                 for (let i = obj.minZ; i < obj.maxZ; i += 4) {
                     let arr = [];
@@ -656,6 +663,7 @@ export default {
                             z: result[i][0].z
                         })
                     }
+                    /*得到同z的最大最小x*/
                     result[i] = this.getDistance(result[i])
                 }
 
@@ -668,7 +676,7 @@ export default {
                     minX: obj.minX - 4,
                 }
 
-
+                // 生产围墙区域内的地板
                 this.createSelfGround(result)
                 if (this.groundDataList.length) this.groundText(res)
 
@@ -888,6 +896,7 @@ export default {
                 otherGroup.add(cube);
             })
         },
+        /*获取材质*/
         getMaterial(item, textures) {
             let leftAndRightMaterial, // 左右
                 color, // 上下

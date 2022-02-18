@@ -59,7 +59,7 @@
         <!--编辑网格-->
         <div class="grid-box auto-center"
              :style="`grid-template-columns:repeat(${widthNum}, 1fr);grid-template-rows: repeat(${heightNum}, ${heightPX}px)`">
-            <template v-for="item in roomList">
+            <template v-for="item in roomList">  <!-- 对象编辑区域 -->
                 <div
                     :class="{'grid-item':true,
                     'left-border':item.leftBorder,
@@ -76,10 +76,10 @@
                     :id="'room-' + item.id"
                 >
                     <div style="overflow: hidden" class="w-100p h-100p" @click.stop="select(item)"
-                         @contextmenu="selectSense(item)">
+                         @contextmenu="selectSense(item)"> <!-- 右键菜单 -->
                         <template v-if="act.includes(item.id)">
-                            <div class="item-position" :title="item.num">
-                                <div @click.stop="open(item)" class="pos-tip">
+                            <div class="item-position" :title="item.num">  <!-- 方块朝向箭头 -->
+                                <div @click.stop="open(item)" class="pos-tip"> <!-- 左上角三角区域 编辑名称 -->
                                     <div class="pos-tip-num">{{ item.num }}</div>
                                 </div>
                                 <div class="pos-up" :class="{active:item.pos.includes('back')}"
@@ -93,7 +93,7 @@
                                      @click.stop="changePos(item,'head')"><i class="icon caret down"></i></div>
                             </div>
                         </template>
-                        <div class="sense-pos" v-if="item.senseId">
+                        <div class="sense-pos" v-if="item.senseId">  <!-- 摄像头显示朝向箭头 -->
                             <template v-for="(camera) in cameraPos">
                                 <div class="sense-item"
                                      :class="camera.id === item.senseId ?  `iconfont ${camera.icon}` :''"
@@ -193,12 +193,12 @@ export default {
         })
     },
     beforeMount() {
-        this.centerData = this.$parent.params.centerData;
-        this.initDom();
-        this.initWallData();
-        this.initCabinetPos();
-        this.initSenseData();
-        this.initGroundData();
+        this.centerData = this.$parent.params.centerData;// 中心点数据
+        this.initDom();// 初始化网格
+        this.initWallData(); // 初始化墙、门、轨道数据
+        this.initCabinetPos();// 初始化方块数据
+        this.initSenseData();// 初始化摄像头传感器数据
+        this.initGroundData();// 初始化地板数据
     },
     mounted() {
         this.$nextTick(() => {
@@ -322,6 +322,7 @@ export default {
                 })
             })
         },
+        /*编辑对象名称*/
         open(item) {
             let text;
             if (item.type === 'kt') {
@@ -359,42 +360,48 @@ export default {
                     break;
             }
         },
+        /*改变墙、门的朝向*/
         changeDoorOrWall(item) {
-            switch (this.editType) {
-                case "wall":
-                    if (this.wallType === 'vertical') {
+            if (this.wallType === 'vertical') {
+                switch (this.editType) {
+                    case "wall":
                         item.leftBorder = !item.leftBorder;
                         item.leftDoor = false;
                         item.leftLine = false;
-                    } else {
-                        item.topBorder = !item.topBorder;
-                        item.topDoor = false;
-                        item.topLine = false;
-                    }
-                    break;
-                case "door":
-                    if (this.wallType === 'vertical') {
+                        break;
+                    case "door":
                         item.leftDoor = !item.leftDoor;
                         item.leftBorder = false;
                         item.leftLine = false;
-                    } else {
-                        item.topDoor = !item.topDoor;
-                        item.topBorder = false;
-                        item.topLine = false;
-                    }
-                    break;
-                default:
-                    if (this.wallType === 'vertical') {
+                        break;
+                    default:
                         item.leftLine = !item.leftLine;
                         item.leftDoor = false;
                         item.leftBorder = false;
-                    } else {
+                        break;
+                }
+            }else {
+                switch (this.editType) {
+                    case "wall":
+                        item.topBorder = !item.topBorder;
+                        item.topDoor = false;
+                        item.topLine = false;
+                        break;
+                    case "door":
+                        item.topDoor = !item.topDoor;
+                        item.topBorder = false;
+                        item.topLine = false;
+                        break;
+                    default:
                         item.topLine = !item.topLine;
                         item.topBorder = false;
                         item.topDoor = false;
-                    }
+                        break;
+                }
             }
+
             if (this.actWall.length && this.actWall.includes(item.id)) {
+                /*已存在数据的 改变朝向*/
                 for (let i = 0; i < this.wallData.length; i++) {
                     if (this.wallData[i].id === item.id) {
                         this.wallData[i] = item;
@@ -413,6 +420,7 @@ export default {
             }
 
         },
+        /*选中取消网格方块*/
         changeSelect(item) {
             if (this.act.length && this.act.includes(item.id)) {
                 this.act = this.act.filter((source) => {
@@ -472,6 +480,7 @@ export default {
             this.showMark = true;
             let vm = this;
 
+            /*筛选出已经存在的摄像头或传感器数据*/
             let selectedData = this.roomList.reduce((arr, cur) => {
                 if (cur.dataId) {
                     arr.push(cur.dataId)
@@ -534,6 +543,7 @@ export default {
                 item.isCenter = false;
             })
         },
+        /*下拉菜单*/
         handleCommand(command) {
 
             let res = command.split('-')
@@ -604,6 +614,7 @@ export default {
 
             });
         },
+        /*初始化线条数据*/
         initRoomWall(type) {
             switch (type) {
                 case 'wall':
@@ -626,6 +637,7 @@ export default {
                     break;
             }
         },
+        /*提交*/
         submit() {
             // this.groundData = this.roomList.filter((item) => {
             //     return item.name !== '';

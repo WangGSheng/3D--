@@ -1,17 +1,17 @@
 export default {
     "cabinetData": [{
-        "type": "cabinet",
-        "x": 60,
+        "type": "cabinet", // 方块类型  有机房 cabinet 、空调 kt、ODF架 odf
+        "x": 60,        // 坐标相关
         "z":  12,
         "id": 87,
-        "pos": ["left"],
-        "leftBorder": false,
-        "topBorder": false,
-        "topDoor": false,
-        "leftDoor": false,
-        "senseId": "",
-        "dataId": "",
-        "num": "",
+        "pos": ["left"],    // 开门方向
+        "leftBorder": false, // 竖直围墙
+        "topBorder": false, // 横向围墙
+        "topDoor": false, //  横向门
+        "leftDoor": false, //  竖直门
+        "senseId": "", //  设备id
+        "dataId": "", //   数据id
+        "num": "", //  方块顶部编号
         "name": ""
     }, {
         "type": "cabinet",
@@ -6175,7 +6175,7 @@ export default {
         "senseId": "",
         "dataId": "",
         "num": "",
-        "name": "测试入口"
+        "name": "测试入口" //  地板名称
     },],
     "centerData": {
         dataId: "",
